@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Push IndianaDell to GitHub (webaugur/IndianaDell).
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+REMOTE="${INDIANADELL_REMOTE:-https://github.com/webaugur/IndianaDell.git}"
+BRANCH="${INDIANADELL_BRANCH:-main}"
+
+cd "$REPO_DIR"
+
+if ! command -v git >/dev/null; then
+    echo "error: git is required" >&2
+    exit 1
+fi
+
+if [[ ! -d .git ]]; then
+    echo "error: $REPO_DIR is not a git repository" >&2
+    exit 1
+fi
+
+if ! git remote get-url origin >/dev/null 2>&1; then
+    git remote add origin "$REMOTE"
+fi
+git remote set-url origin "$REMOTE"
+
+if command -v gh >/dev/null && ! gh auth status >/dev/null 2>&1; then
+    echo "GitHub CLI is not authenticated."
+    echo "Run:  gh auth login"
+    echo "Then rerun:  bin/push-repo"
+    exit 1
+fi
+
+if command -v gh >/dev/null; then
+    gh auth setup-git >/dev/null 2>&1 || true
+fi
+
+echo "Pushing ${BRANCH} to ${REMOTE} ..."
+git push -u origin "${BRANCH}"
+echo "Done: https://github.com/webaugur/IndianaDell"
