@@ -77,3 +77,22 @@ Exit code 0 means all checks passed.
 | | Install FactoryDocs CABs to Windows |
 
 After a successful rebuild, continue with **Chapter 3 — Post-Rebuild Checklist**.
+
+## ZFS rpool recovery
+
+When the Hitachi `rpool` install is not bootable, recover from Ventoy live (or any environment where `rpool` is not the running root):
+
+```bash
+cd ~/Documents/IndianaDell
+sudo ./mount-rpool-recovery.sh mount      # altroot /recovery — full chroot tree
+sudo ./mount-rpool-recovery.sh chroot     # enter with dev/proc/sys bound
+sudo ./mount-rpool-recovery.sh umount
+```
+
+**Overlay fallback** (already booted from `rpool`):
+
+```bash
+sudo ./mount-rpool-recovery.sh mount --overlay
+```
+
+See also **Chapter 15** for Ventoy persistence and seeding a portable live session.

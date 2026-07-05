@@ -1,15 +1,13 @@
 # Appendix A — bin/ Launchers
 
-All launchers live in `~/Documents/IndianaDell/bin/`. Add to PATH optionally:
-
-```bash
-export PATH="$HOME/Documents/IndianaDell/bin:$PATH"
-```
+All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
 | Launcher | Runs | Chapter |
 |----------|------|---------|
 | `rebuild-machine` | `scripts/rebuild/rebuild-machine.sh` | 2 |
 | `build-software-manual` | `scripts/docs/build-software-manual.sh` | 1 |
+| `build-all-docs` | `scripts/docs/build-all-docs.sh` | 1, 3 |
+| `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` | 15 |
 | `dellmerge` | `scripts/dell/dellmerge.sh` | 12 |
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |
@@ -31,6 +29,14 @@ export PATH="$HOME/Documents/IndianaDell/bin:$PATH"
 | `hackrf-flash-mayhem` | `hackrf/scripts/flash-mayhem.sh` | 10 |
 | `hackrf-build-mayhem` | `hackrf/scripts/build-mayhem.sh` | 10 |
 
+**Home scripts (not in `bin/`):**
+
+| Script | Purpose |
+|--------|---------|
+| `~/bin/seed-ventoy-persistence.sh` | Snapshot session into Ventoy casper image |
+| `~/bin/grok-indianadell-launch.sh` | Grok fullscreen autostart launcher |
+| `mount-rpool-recovery.sh` | ZFS rpool chroot recovery (workspace root) |
+
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
-**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`
+**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `mount-rpool-recovery.sh`

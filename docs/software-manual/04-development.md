@@ -50,7 +50,7 @@ xelatex --version | head -1
 - **New Python project venv:** `python3 -m venv myproject/.venv && . myproject/.venv/bin/activate`
 - **Rust toolchain:** `rustup toolchain install stable`, `rustup component add clippy`
 - **Per-project Rust SDR crates:** `cargo add rtlsdr` etc. — no workspace scaffold ships with IndianaDell
-- **Manual PDF:** `bin/build-software-manual` or pandoc on any `.md` in the repo
+- **Manual PDFs:** `bin/build-all-docs` (all docs) or `bin/build-software-manual` (software manual only)
 
 ## What rebuild does / does not do
 

@@ -7,7 +7,7 @@
 
 **Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)
 
-This manual documents every **host-facing install** the IndianaDell workspace provides: apt packages, rustup, Python venvs, built tools, Flatpak apps, GNOME preferences, Plymouth themes, and optional GPU/ROCm tooling. Each chapter covers one topic using the same structure:
+This manual documents every **host-facing install** the IndianaDell workspace provides: apt packages, rustup, Python venvs, built tools, Flatpak apps, GNOME preferences, Plymouth themes, optional GPU/ROCm tooling, ZFS recovery, Ventoy live persistence, and GitHub sync. Each chapter covers one topic using the same structure:
 
 1.  What gets installed
 2.  How it is installed
@@ -15,9 +15,11 @@ This manual documents every **host-facing install** the IndianaDell workspace pr
 4.  How to customize
 5.  What `bin/rebuild-machine` does and does not do
 
-**Build PDF:** `bin/build-software-manual` from the workspace root.
+**Build PDFs:** `bin/build-all-docs` (all manuals) or `bin/build-software-manual` (this book only).
 
 **Quick reference:** `docs/features-available.md` (cheat sheet, not a replacement for this manual).
+
+**GitHub:** https://github.com/webaugur/IndianaDell (private)
 
 **Supersedes:** flat `B1GMB42-software-inventory.md` (now a stub with links here).
 
@@ -95,25 +97,31 @@ Software arrives in three layers. Understanding the order prevents skipped steps
 
 ## Reading guide
 
-  If you need...                 Read
-  ------------------------------ ---------------
-  Full restore after reinstall   Ch. 2 + Ch. 3
-  Python, Rust, pandoc           Ch. 4
-  Boot/login/desktop look        Ch. 5 + Ch. 7
-  FirePro GPUs, ROCm             Ch. 6
-  GNU Radio, gqrx, SoapySDR      Ch. 8
-  fldigi, WSJT-X, CHIRP          Ch. 9
-  HackRF, Mayhem, URH            Ch. 10
-  Telegram                       Ch. 11
-  iotest, dellmerge              Ch. 12
-  Dell driver CABs               Ch. 13
-  Known gaps                     Ch. 14
-  All `bin/` commands            Appendix A
-  All apt package names          Appendix B
+  If you need...                            Read
+  ----------------------------------------- -----------------------------------
+  Full restore after reinstall              Ch. 2 + Ch. 3
+  Python, Rust, pandoc                      Ch. 4
+  Boot/login/desktop look                   Ch. 5 + Ch. 7
+  FirePro GPUs, ROCm                        Ch. 6
+  GNU Radio, gqrx, SoapySDR                 Ch. 8
+  fldigi, WSJT-X, CHIRP                     Ch. 9
+  HackRF, Mayhem, URH                       Ch. 10
+  Telegram                                  Ch. 11
+  iotest, dellmerge                         Ch. 12
+  Dell driver CABs                          Ch. 13
+  Known gaps                                Ch. 14
+  Ventoy live persistence, Grok autostart   Ch. 15
+  ZFS `rpool` recovery                      `mount-rpool-recovery.sh`, Ch. 15
+  All `bin/` commands                       Appendix A
+  All apt package names                     Appendix B
+
+## PATH and launchers
+
+IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.config/indianadell/path.sh` (sourced from `~/.bashrc`). Project tools override same-named system binaries.
 
 ## Related documents
 
-- **Hardware:** `B1GMB42-slot-port-inventory.md` --- GPUs, PERC, bays, ports
+- **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF --- GPUs, PERC, bays, ports
 - **Themes deep-dive:** `Themes/README.md` and per-folder READMEs (27 files)
 - **HackRF inventory:** `hackrf/MANIFEST.txt`
 - **Apt snapshots:** `apt-full-manifest.txt`, `apt-hamradio-dev-manifest.txt`
@@ -219,6 +227,25 @@ Exit code 0 means all checks passed.
 
 After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist**.
 
+## ZFS rpool recovery
+
+When the Hitachi `rpool` install is not bootable, recover from Ventoy live (or any environment where `rpool` is not the running root):
+
+``` bash
+cd ~/Documents/IndianaDell
+sudo ./mount-rpool-recovery.sh mount      # altroot /recovery — full chroot tree
+sudo ./mount-rpool-recovery.sh chroot     # enter with dev/proc/sys bound
+sudo ./mount-rpool-recovery.sh umount
+```
+
+**Overlay fallback** (already booted from `rpool`):
+
+``` bash
+sudo ./mount-rpool-recovery.sh mount --overlay
+```
+
+See also **Chapter 15** for Ventoy persistence and seeding a portable live session.
+
 # Chapter 3 --- Post-Rebuild Checklist
 
 `bin/rebuild-machine` intentionally stops before steps that need a logged-in desktop, a reboot, or hardware attached. Run this checklist once per fresh install.
@@ -288,10 +315,12 @@ See Chapter 10.
 ## 5. Documentation PDFs
 
 ``` bash
-bin/build-software-manual             # this manual
-pandoc B1GMB42-slot-port-inventory.md -o B1GMB42-slot-port-inventory.pdf \
-  --pdf-engine=xelatex -V mainfont="Noto Sans" -V monofont="DejaVu Sans Mono"
+bin/build-all-docs                    # software manual + hardware + inventory PDFs
+# or:
+bin/build-software-manual             # this manual only
 ```
+
+Outputs: `B1GMB42-software-manual.pdf`, `B1GMB42-slot-port-inventory.pdf`, `B1GMB42-software-inventory.pdf`.
 
 ## 6. Machine inventory baseline
 
@@ -320,15 +349,16 @@ bin/urh --version
 
 ## Summary table
 
-  Step              Command                           Reboot?
-  ----------------- --------------------------------- ---------
-  GPU configs       `sudo bin/apply-amdgpu`           Yes
-  Dark mode         `bin/apply-dark-mode`             No
-  Max performance   `bin/apply-max-performance`       No
-  Custom boot       `sudo bin/themes-install-boot`    Yes
-  HackRF flash      `bin/hackrf-flash-mayhem` + DFU   Maybe
-  ROCm (optional)   `bin/amd-install`                 Yes
-  Manual PDF        `bin/build-software-manual`       No
+  Step                      Command                              Reboot?
+  ------------------------- ------------------------------------ ---------
+  GPU configs               `sudo bin/apply-amdgpu`              Yes
+  Dark mode                 `bin/apply-dark-mode`                No
+  Max performance           `bin/apply-max-performance`          No
+  Custom boot               `sudo bin/themes-install-boot`       Yes
+  HackRF flash              `bin/hackrf-flash-mayhem` + DFU      Maybe
+  ROCm (optional)           `bin/amd-install`                    Yes
+  All doc PDFs              `bin/build-all-docs`                 No
+  Ventoy persistence seed   `~/bin/seed-ventoy-persistence.sh`   No
 
 # Chapter 4 --- Development Toolchain
 
@@ -394,7 +424,7 @@ xelatex --version | head -1
 - **New Python project venv:** `python3 -m venv myproject/.venv && . myproject/.venv/bin/activate`
 - **Rust toolchain:** `rustup toolchain install stable`, `rustup component add clippy`
 - **Per-project Rust SDR crates:** `cargo add rtlsdr` etc. --- no workspace scaffold ships with IndianaDell
-- **Manual PDF:** `bin/build-software-manual` or pandoc on any `.md` in the repo
+- **Manual PDFs:** `bin/build-all-docs` (all docs) or `bin/build-software-manual` (software manual only)
 
 ## What rebuild does / does not do
 
@@ -1070,9 +1100,9 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
 
 ## Not installed
 
-  ---------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------
   Item                             Notes
-  -------------------------------- ------------------------------------------------------------
+  -------------------------------- -----------------------------------------------------------------
   SDRangel, SigDigger              Not on Flathub; use gqrx + URH + inspectrum
 
   Rust SDR crate workspace         Toolchain only --- add crates per project with `cargo add`
@@ -1081,8 +1111,10 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
 
   Windows / dual-boot              FactoryDocs holds CABs; no auto-install
 
-  HackRF hardware test             No device attached at last verify (2026-07-03)
-  ---------------------------------------------------------------------------------------------
+  HackRF hardware test             No device attached at last verify (2026-07-05)
+
+  Ventoy seed on every boot        Manual --- run `~/bin/seed-ventoy-persistence.sh` after changes
+  --------------------------------------------------------------------------------------------------
 
 ## Lost in TPM/ZFS crash
 
@@ -1145,13 +1177,124 @@ bin/rebuild-machine --verify-only 2>&1 | tee verify.log
 uname -a && lsb_release -a
 ```
 
-# Appendix A --- bin/ Launchers
+# Chapter 15 --- Ventoy Live Session & Persistence
 
-All launchers live in `~/Documents/IndianaDell/bin/`. Add to PATH optionally:
+Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so login state, apps, Grok, and IndianaDell survive reboots.
+
+## What gets persisted
+
+  -------------------------------------------------------------------------------------------
+  Item                    Location (live boot)              Seeded to casper image
+  ----------------------- --------------------------------- ---------------------------------
+  User home               `/home/ubuntu`                    `cow/upper/home/ubuntu/`
+
+  Installed packages      dpkg overlay                      `cow/upper/var/lib/dpkg/`
+
+  GDM autologin           `/etc/gdm3/custom.conf`           `cow/upper/etc/gdm3/`
+
+  Grok auth + sessions    `~/.grok/`                        same
+
+  GitHub CLI auth         `~/.config/gh/`                   same
+
+  SSH keys                `~/.ssh/`                         same
+
+  IndianaDell workspace   `~/Documents/IndianaDell`         same (git clone or rsync)
+
+  PATH overrides          `~/.config/indianadell/path.sh`   same
+  -------------------------------------------------------------------------------------------
+
+**Persistence image:** `/persistence/ubuntu-26.04.dat` (14 GB ext4, label `casper-rw`) on the Ventoy exFAT volume (**Wiggly**).
+
+**Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`.
+
+## How it is installed
+
+From a running session with the stick mounted (e.g. `/mnt/wiggly`):
 
 ``` bash
-export PATH="$HOME/Documents/IndianaDell/bin:$PATH"
+# One-time or after changes — seeds current ubuntu session into the .dat image
+~/bin/seed-ventoy-persistence.sh
+# or, if the image is already mounted:
+PERSIST_MOUNT=/mnt/persist-check ~/bin/seed-ventoy-persistence.sh
 ```
+
+The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including `/home/user/.ssh/id_rsa` when present), and the IndianaDell tree.
+
+## Login experience (configured)
+
+1.  **GDM autologin** --- user `ubuntu` (`/etc/gdm3/custom.conf`)
+2.  **PATH** --- IndianaDell `bin/` and `scripts/` override system (`~/.config/indianadell/path.sh`)
+3.  **Grok autostart** --- Ptyxis fullscreen, resumes IndianaDell session (`~/.config/autostart/grok-indianadell.desktop`)
+
+Launcher: `~/bin/grok-indianadell-launch.sh`\
+Default session: `~/Documents/IndianaDell` (session ID in script env vars).
+
+## ZFS recovery (installed rpool)
+
+When booted from Ventoy **without** importing `rpool`, use the workspace recovery script:
+
+``` bash
+cd ~/Documents/IndianaDell
+sudo ./mount-rpool-recovery.sh mount      # chroot layout under /recovery
+sudo ./mount-rpool-recovery.sh chroot
+sudo ./mount-rpool-recovery.sh umount
+```
+
+Use `mount --overlay` only when already booted from `rpool` and a full chroot tree is impossible.
+
+## GitHub repository
+
+Full workspace (including FactoryDocs): https://github.com/webaugur/IndianaDell (private)
+
+``` bash
+gh auth login          # once per session
+bin/push-repo          # full git push (HTTPS via gh)
+```
+
+Large FactoryDocs installers (\>100 MB) use **Git LFS**. Run `git lfs install` after clone.
+
+## How to verify
+
+Boot Ventoy → Ubuntu 26.04 (persistence auto-selected). Then:
+
+``` bash
+findmnt / | grep -q cow && echo "persistence overlay active"
+grep AutomaticLogin=ubuntu /etc/gdm3/custom.conf
+echo "$INDIANADELL_ROOT"    # should be ~/Documents/IndianaDell
+which dellmerge push-repo grok
+gh auth status
+google-chrome --version
+```
+
+## How to customize
+
+  -----------------------------------------------------------------------------------------------
+  Goal                           Action
+  ------------------------------ ----------------------------------------------------------------
+  Re-seed after changes          `~/bin/seed-ventoy-persistence.sh`
+
+  Change Grok session            Edit `GROK_SESSION_ID` in `grok-indianadell-launch.sh`
+
+  Disable autostart              Remove `~/.config/autostart/grok-indianadell.desktop`, re-seed
+
+  Enlarge persistence            Recreate `.dat` (Ventoy plugin or `dd` + `mkfs.ext4`)
+  -----------------------------------------------------------------------------------------------
+
+## What rebuild does / does not do
+
+  ---------------------------------------------------------------------------------------------------
+  Does                                                   Does not
+  ------------------------------------------------------ --------------------------------------------
+  Install Chrome, gh, git-lfs when run on live session   Configure Ventoy `ventoy.json`
+
+  Document seed script in this chapter                   Auto-run seed on reboot
+
+                                                         Manage Ventoy ISO partition layout
+  ---------------------------------------------------------------------------------------------------
+
+# Appendix A --- bin/ Launchers
+
+All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
   ---------------------------------------------------------------------------------------------------------------
   Launcher                     Runs                                                     Chapter
@@ -1159,6 +1302,10 @@ export PATH="$HOME/Documents/IndianaDell/bin:$PATH"
   `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                     2
 
   `build-software-manual`      `scripts/docs/build-software-manual.sh`                  1
+
+  `build-all-docs`             `scripts/docs/build-all-docs.sh`                         1, 3
+
+  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell`          15
 
   `dellmerge`                  `scripts/dell/dellmerge.sh`                              12
 
@@ -1201,9 +1348,21 @@ export PATH="$HOME/Documents/IndianaDell/bin:$PATH"
   `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                         10
   ---------------------------------------------------------------------------------------------------------------
 
+**Home scripts (not in `bin/`):**
+
+  ---------------------------------------------------------------------------------
+  Script                               Purpose
+  ------------------------------------ --------------------------------------------
+  `~/bin/seed-ventoy-persistence.sh`   Snapshot session into Ventoy casper image
+
+  `~/bin/grok-indianadell-launch.sh`   Grok fullscreen autostart launcher
+
+  `mount-rpool-recovery.sh`            ZFS rpool chroot recovery (workspace root)
+  ---------------------------------------------------------------------------------
+
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
-**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`
+**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `mount-rpool-recovery.sh`
 
 # Appendix B --- Apt Packages by Chapter
 

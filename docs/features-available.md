@@ -1,8 +1,10 @@
 # Features Available — Tower5810 (B1GMB42)
 
-Snapshot of what is installed and ready on this system as of 2026-07-03.
+Snapshot of what is installed and ready on this system as of 2026-07-05.
 
-Workspace root: `~/Documents/IndianaDell`
+Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell`)
+
+**PATH:** IndianaDell `bin/` and `scripts/` override system — `~/.config/indianadell/path.sh`
 
 ---
 
@@ -13,10 +15,14 @@ Workspace root: `~/Documents/IndianaDell`
 | **Python 3.14** | `pip`, `venv`, numpy/scipy/matplotlib, GNU Radio Python API, SoapySDR bindings, Hamlib (`import Hamlib`) |
 | **Rust 1.96** | `rustc` / `cargo` via `~/.cargo/env` — build SDR/ham projects (no starter crate workspace yet) |
 | **Build** | `cmake`, `gcc`, ARM cross-compiler (`arm-none-eabi-gcc`) for Mayhem firmware, `clang`/`llvm` for bindgen-style Rust |
-| **Docs/PDF** | `pandoc`, `xelatex` — B1GMB42 manual PDF already built |
+| **Docs/PDF** | `pandoc`, `xelatex` — `bin/build-all-docs` rebuilds all PDFs |
+| **GitHub CLI** | `gh` — authenticated as `webaugur`; `bin/push-repo` |
+| **Git LFS** | Large FactoryDocs installers in repo |
+| **Chrome** | `google-chrome-stable` |
+| **Grok** | `~/.grok/bin/grok` — autostart on Ventoy persistence boot |
 
 Package manifests: `apt-hamradio-dev-manifest.txt` (178 SDR/ham), `apt-full-manifest.txt` (full dpkg list).  
-**Software manual:** `docs/software-manual/` — build PDF with `bin/build-software-manual` → `B1GMB42-software-manual.pdf`.  
+**Software manual:** `docs/software-manual/` (15 chapters) — `bin/build-all-docs` → `B1GMB42-software-manual.pdf` + hardware/inventory PDFs.  
 Rebuild: `bin/rebuild-machine`. Legacy stub: `B1GMB42-software-inventory.md`.
 
 ---
@@ -160,7 +166,7 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
 
-Add to PATH (optional): `export PATH="$HOME/Documents/IndianaDell/bin:$PATH"`
+PATH is automatic via `~/.config/indianadell/path.sh` (see `README.md`).
 
 ## Quick start commands
 
@@ -194,6 +200,18 @@ bin/hackrf-prepare-sdcard
 ```
 
 ---
+
+## Ventoy live persistence (Wiggly stick)
+
+| Item | Detail |
+|------|--------|
+| ISO | `ubuntu-26.04-desktop-amd64.iso` |
+| Overlay | `persistence/ubuntu-26.04.dat` (14 GB) |
+| Autologin | GDM user `ubuntu` |
+| Autostart | Grok fullscreen → IndianaDell session |
+| Seed script | `~/bin/seed-ventoy-persistence.sh` |
+
+See Software Manual **Chapter 15**.
 
 ## Gaps / not set up yet
 

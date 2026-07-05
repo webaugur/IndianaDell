@@ -2,6 +2,8 @@
 
 Dell T5810 (B1GMB42) support packages — sorted by hardware, then OS.
 
+**GitHub:** Archived in https://github.com/webaugur/IndianaDell (private). Installers over 100 MB use Git LFS.
+
 ## Recovery status (post-crash)
 
 | Metric | Before crash | Now |

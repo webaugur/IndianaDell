@@ -10,7 +10,8 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
 | Rust SDR crate workspace | Toolchain only — add crates per project with `cargo add` |
 | ZFS / disk layout tools | Out of scope — handled at OS install time |
 | Windows / dual-boot | FactoryDocs holds CABs; no auto-install |
-| HackRF hardware test | No device attached at last verify (2026-07-03) |
+| HackRF hardware test | No device attached at last verify (2026-07-05) |
+| Ventoy seed on every boot | Manual — run `~/bin/seed-ventoy-persistence.sh` after changes |
 
 ## Lost in TPM/ZFS crash
 

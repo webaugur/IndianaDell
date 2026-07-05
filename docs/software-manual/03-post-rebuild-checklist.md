@@ -67,10 +67,12 @@ See Chapter 10.
 ## 5. Documentation PDFs
 
 ```bash
-bin/build-software-manual             # this manual
-pandoc B1GMB42-slot-port-inventory.md -o B1GMB42-slot-port-inventory.pdf \
-  --pdf-engine=xelatex -V mainfont="Noto Sans" -V monofont="DejaVu Sans Mono"
+bin/build-all-docs                    # software manual + hardware + inventory PDFs
+# or:
+bin/build-software-manual             # this manual only
 ```
+
+Outputs: `B1GMB42-software-manual.pdf`, `B1GMB42-slot-port-inventory.pdf`, `B1GMB42-software-inventory.pdf`.
 
 ## 6. Machine inventory baseline
 
@@ -107,4 +109,5 @@ bin/urh --version
 | Custom boot | `sudo bin/themes-install-boot` | Yes |
 | HackRF flash | `bin/hackrf-flash-mayhem` + DFU | Maybe |
 | ROCm (optional) | `bin/amd-install` | Yes |
-| Manual PDF | `bin/build-software-manual` | No |
+| All doc PDFs | `bin/build-all-docs` | No |
+| Ventoy persistence seed | `~/bin/seed-ventoy-persistence.sh` | No |

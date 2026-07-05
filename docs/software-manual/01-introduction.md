@@ -78,12 +78,18 @@ Fresh Ubuntu 26.04
 | iotest, dellmerge | Ch. 12 |
 | Dell driver CABs | Ch. 13 |
 | Known gaps | Ch. 14 |
+| Ventoy live persistence, Grok autostart | Ch. 15 |
+| ZFS `rpool` recovery | `mount-rpool-recovery.sh`, Ch. 15 |
 | All `bin/` commands | Appendix A |
 | All apt package names | Appendix B |
 
+## PATH and launchers
+
+IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.config/indianadell/path.sh` (sourced from `~/.bashrc`). Project tools override same-named system binaries.
+
 ## Related documents
 
-- **Hardware:** `B1GMB42-slot-port-inventory.md` — GPUs, PERC, bays, ports
+- **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF — GPUs, PERC, bays, ports
 - **Themes deep-dive:** `Themes/README.md` and per-folder READMEs (27 files)
 - **HackRF inventory:** `hackrf/MANIFEST.txt`
 - **Apt snapshots:** `apt-full-manifest.txt`, `apt-hamradio-dev-manifest.txt`

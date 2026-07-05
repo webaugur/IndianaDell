@@ -1,7 +1,7 @@
 ---
 title: "B1GMB42 Software Manual"
 author: "IndianaDell workspace"
-date: "2026-07-03"
+date: "2026-07-05"
 header-includes:
   - \setlength{\parskip}{0.4em}
 ---
@@ -15,7 +15,7 @@ header-includes:
 
 **Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)
 
-This manual documents every **host-facing install** the IndianaDell workspace provides: apt packages, rustup, Python venvs, built tools, Flatpak apps, GNOME preferences, Plymouth themes, and optional GPU/ROCm tooling. Each chapter covers one topic using the same structure:
+This manual documents every **host-facing install** the IndianaDell workspace provides: apt packages, rustup, Python venvs, built tools, Flatpak apps, GNOME preferences, Plymouth themes, optional GPU/ROCm tooling, ZFS recovery, Ventoy live persistence, and GitHub sync. Each chapter covers one topic using the same structure:
 
 1. What gets installed
 2. How it is installed
@@ -23,8 +23,10 @@ This manual documents every **host-facing install** the IndianaDell workspace pr
 4. How to customize
 5. What `bin/rebuild-machine` does and does not do
 
-**Build PDF:** `bin/build-software-manual` from the workspace root.
+**Build PDFs:** `bin/build-all-docs` (all manuals) or `bin/build-software-manual` (this book only).
 
 **Quick reference:** `docs/features-available.md` (cheat sheet, not a replacement for this manual).
+
+**GitHub:** https://github.com/webaugur/IndianaDell (private)
 
 **Supersedes:** flat `B1GMB42-software-inventory.md` (now a stub with links here).
