@@ -1,0 +1,70 @@
+Dell Precision Tower 5810/7810/7910 and
+Rack 7910
+Serial PCIe-Card Setup Guide
+
+
+
+
+October 2020
+Rev. A01
+                                                                                                                                1
+Topics:
+•     Setting up the Serial Add-In-Card
+
+
+
+Setting up the Serial Add-In-Card
+This section describes in brief on how to install the serial add-in-card on a Dell Precision Tower 5810, 7810, 7910, and Rack 7910.
+Jumper Setting on a Serial PCIe-Card
+
+J6 (Serial 1)
+1–2                                                                                           5V
+3–4                                                                                     RI (DEFAULT)
+5–6                                                                                           12V
+
+J65 (Serial 1)
+1–2                                                                                          5V
+3–4                                                                                   DCD (DEFAULT)
+5–6                                                                                          12V
+
+
+
+
+The serial add-in-card has two selectable jumpers:
+●   The setting 1-2 will provide a 5V Power Serial port.
+●   The setting 3-4 will provide a Standard Serial port.
+●   The setting 5-6 will provide a 12V Power Serial port.
+●   Default is a standard serial port (3-4).
+1. Install serial card software before installing the Add-In-Card (AIC).
+        NOTE: To download the drivers for install on both Windows operating system and Linux operating system, go to
+        dell.com/support.
+2. For Precision Tower 7910: the Serial AIC is placed in the slots CPU1-1, CPU1-3, CPU1-4, CPU2-1, CPU2-2.
+3. For Precision Tower 5810/Tower 7810: the Serial AIC is placed in slot 1, 3, 4, 5.
+
+
+
+
+2
+Finding More Information and Resources
+See the safety and regulatory documents that shipped with your computer and the regulatory compliance website at
+www.dell.com/regulatory_compliance for more information on:
+● Safety best practices
+● Regulatory certification
+● Ergonomics
+See www.dell.com for additional information on:
+● Warranty
+● Terms and Conditions (U.S. only)
+● End User License Agreement
+Additional information on your product is available at https://www.dell.com/support.
+
+
+
+Copyright © 2014 Dell Inc. All rights reserved. This product is protected by U.S. and international copyright and intellectual
+property laws. Dell ™ and the Dell logo are trademarks of Dell Inc. in the United States and/or other jurisdictions. All other marks
+and names mentioned herein may be trademarks of their respective companies.
+
+
+
+
+                                                                                                                                   3
+

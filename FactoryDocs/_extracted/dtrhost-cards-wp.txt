@@ -1,0 +1,49 @@
+Dell Precision Tower 5810/7810/7910 and
+Rack 7910
+Dual/Quad Host PCIe Cards Setup Guide
+
+
+
+
+October 2020
+Rev. A02
+                                                                                                                                  1
+Topics:
+•   Installing the Dual/Quad Host Cards
+
+
+
+Installing the Dual/Quad Host Cards
+This section describes in brief on how to install the dual/quad host cards on a Dell Precision Tower 5810, 7810, 7910, and Rack
+7910.
+1. If you purchased a customer install kit, install the host card in a PCIe slot in your Dell Precision computer.
+        NOTE: The purchased customer install kit will be shipped with the host cards.
+2. For instructions on how to install the host card and connect the two-wire cable (included in the kit), see the Owner’s Manual
+   for your computer at www.dell.com/manuals .
+        NOTE: To download the drivers for install, go to www.dell.com/support.
+
+
+
+Finding More Information and Resources
+See the safety and regulatory documents that shipped with your computer and the regulatory compliance website at
+www.dell.com/regulatory_compliance for more information on:
+● Safety best practices
+● Regulatory certification
+● Ergonomics
+See Dell.com for additional information on:
+● Warranty
+● Terms and Conditions (U.S. only)
+● End User License Agreement
+Additional information on your product is available at https://www.dell.com/support.
+
+
+
+Copyright © 2014 Dell Inc. All rights reserved. This product is protected by U.S. and international copyright and intellectual
+property laws. Dell ™ and the Dell logo are trademarks of Dell Inc. in the United States and/or other jurisdictions. All other marks
+and names mentioned herein may be trademarks of their respective companies.
+
+
+
+
+2
+

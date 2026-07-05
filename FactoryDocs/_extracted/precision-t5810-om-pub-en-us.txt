@@ -1,0 +1,2125 @@
+Dell Precision Tower 5810
+Owner's Manual
+
+
+
+
+Regulatory Model: D01T
+Regulatory Type: D01T006
+November 2020
+Rev. A04
+Notes, cautions, and warnings
+
+     NOTE: A NOTE indicates important information that helps you make better use of your product.
+
+     CAUTION: A CAUTION indicates either potential damage to hardware or loss of data and tells you how to avoid
+     the problem.
+
+     WARNING: A WARNING indicates a potential for property damage, personal injury, or death.
+
+
+
+
+© 20162019 Dell Inc. or its subsidiaries. All rights reserved. Dell Technologies, Dell, and other trademarks are trademarks of Dell Inc. or its
+subsidiaries. Other trademarks may be trademarks of their respective owners.
+                                                                                                                                          Contents
+
+Chapter 1: Working on your computer........................................................................................... 5
+  Safety instructions.............................................................................................................................................................. 5
+  Before working inside your computer.............................................................................................................................5
+  Turning off your computer................................................................................................................................................ 6
+  After working inside your computer................................................................................................................................6
+
+
+Chapter 2: Disassembly and reassembly........................................................................................ 7
+  Recommended Tools...........................................................................................................................................................7
+  System Overview.................................................................................................................................................................8
+  Removing the Power Supply Unit - PSU......................................................................................................................10
+  Installing the Power Supply Unit - PSU.........................................................................................................................11
+  Removing the Computer Cover.......................................................................................................................................11
+  Installing the Computer Cover.........................................................................................................................................11
+  Removing the PSU Card.................................................................................................................................................. 12
+  Installing the PSU Card.....................................................................................................................................................12
+  Removing the Front Bezel............................................................................................................................................... 13
+  Installing the Front Bezel................................................................................................................................................. 13
+  Removing the Slim Line Optical Drive ..........................................................................................................................13
+  Installing the Slim Line Optical Drive ............................................................................................................................16
+  Removing the Hard Drive.................................................................................................................................................16
+  Installing the Hard Drive ..................................................................................................................................................18
+  Removing the Speaker......................................................................................................................................................19
+  Installing the Speaker........................................................................................................................................................19
+  Removing the HDD Thermal Sensor..............................................................................................................................19
+  Installing the HDD Thermal Sensor............................................................................................................................... 20
+  Removing the Input-Output Panel................................................................................................................................ 20
+  Installing the Input-Output Panel.................................................................................................................................. 22
+  Removing the Memory Shroud...................................................................................................................................... 23
+  Installing the Memory Shroud........................................................................................................................................ 23
+  Removing the Memory.....................................................................................................................................................23
+  Installing the Memory....................................................................................................................................................... 24
+  Removing the Coin-Cell Battery.................................................................................................................................... 24
+  Installing the Coin-Cell Battery...................................................................................................................................... 24
+  Removing the PCI Card................................................................................................................................................... 25
+  Installing the PCI Card..................................................................................................................................................... 25
+  Removing the PCIe-Card Retention............................................................................................................................. 25
+  Installing the PCIe card retention..................................................................................................................................26
+  Removing the System-Fan Assembly...........................................................................................................................26
+  Installing the System-Fan Assembly............................................................................................................................. 29
+  Removing the Heatsink Assembly................................................................................................................................. 30
+  Installing the Heatsink Assembly................................................................................................................................... 30
+  Removing the Heatsink Fan............................................................................................................................................30
+  Installing the Heatsink Fan...............................................................................................................................................31
+  Removing the Processor.................................................................................................................................................. 31
+
+
+
+
+                                                                                                                                                        Contents                   3
+         Installing the Processor....................................................................................................................................................32
+         System Board Components............................................................................................................................................ 32
+         Removing the System Board.......................................................................................................................................... 33
+         Installing the System Board............................................................................................................................................ 35
+
+
+    Chapter 3: Additional Information............................................................................................... 36
+      Memory Module Guidelines.............................................................................................................................................36
+      Power Supply Unit - PSU Lock...................................................................................................................................... 37
+
+
+    Chapter 4: System setup............................................................................................................. 38
+      Boot Sequence...................................................................................................................................................................38
+      Navigation keys..................................................................................................................................................................38
+      System Setup Options..................................................................................................................................................... 39
+      Updating the BIOS in Windows .................................................................................................................................... 45
+      System and setup password...........................................................................................................................................45
+         Assigning a system setup password....................................................................................................................... 46
+         Deleting or changing an existing system setup password.................................................................................46
+         Disabling a System Password................................................................................................................................... 47
+
+    Chapter 5: Diagnostics................................................................................................................ 48
+      Enhanced Pre-Boot System Assessment - ePSA Diagnostics............................................................................... 48
+
+
+    Chapter 6: Troubleshooting your computer................................................................................. 49
+      Diagnostic LEDs.................................................................................................................................................................49
+      Error Messages...................................................................................................................................................................51
+
+
+    Chapter 7: Technical Specifications............................................................................................ 53
+
+
+    Chapter 8: Contacting Dell.......................................................................................................... 58
+
+
+
+
+4   Contents
+                                                                                                                           1
+                                                        Working on your computer
+Topics:
+•   Safety instructions
+•   Before working inside your computer
+•   Turning off your computer
+•   After working inside your computer
+
+
+
+Safety instructions
+Use the following safety guidelines to protect your computer from potential damage and to ensure your personal safety. Unless
+otherwise noted, each procedure included in this document assumes that the following conditions exist:
+● You have read the safety information that shipped with your computer.
+● A component can be replaced or, if purchased separately, installed by performing the removal procedure in reverse order.
+    WARNING: Before working inside your computer, read the safety information that shipped with your computer.
+    For additional safety best practices information, see the Regulatory Compliance Homepage
+
+    CAUTION: Many repairs may only be done by a certified service technician. You should only perform
+    troubleshooting and simple repairs as authorized in your product documentation, or as directed by the online or
+    telephone service and support team. Damage due to servicing that is not authorized by Dell is not covered by
+    your warranty. Read and follow the safety instructions that came with the product.
+
+    CAUTION: To avoid electrostatic discharge, ground yourself by using a wrist grounding strap or by periodically
+    touching an unpainted metal surface at the same time as touching a connector on the back of the computer.
+
+    CAUTION: Handle components and cards with care. Do not touch the components or contacts on a card. Hold a
+    card by its edges or by its metal mounting bracket. Hold a component such as a processor by its edges, not by
+    its pins.
+
+    CAUTION: When you disconnect a cable, pull on its connector or on its pull-tab, not on the cable itself. Some
+    cables have connectors with locking tabs; if you are disconnecting this type of cable, press in on the locking
+    tabs before you disconnect the cable. As you pull connectors apart, keep them evenly aligned to avoid bending
+    any connector pins. Also, before you connect a cable, ensure that both connectors are correctly oriented and
+    aligned.
+
+    NOTE: Disconnect all power sources before opening the computer cover or panels. After you finish working inside the
+    computer, replace all covers, panels, and screws before connecting to the power source.
+
+    CAUTION: Exercise caution when handling Lithium-ion batteries in laptops. Swollen batteries should not be used
+    and should be replaced and disposed properly.
+
+    NOTE: The color of your computer and certain components may appear differently than shown in this document.
+
+
+
+Before working inside your computer
+    NOTE: The images in this document may differ from your computer depending on the configuration you ordered.
+
+1. Save and close all open files and exit all open applications.
+2. Shut down your computer. For Windows operating system, click Start >       Power > Shut down.
+
+
+
+
+                                                                                         Working on your computer               5
+        NOTE: If you are using a different operating system, see the documentation of your operating system for shut-down
+        instructions.
+
+3. Disconnect your computer and all attached devices from their electrical outlets.
+4. Disconnect all attached network devices and peripherals, such as keyboard, mouse, and monitor from your computer.
+        CAUTION: To disconnect a network cable, first unplug the cable from your computer and then unplug the
+        cable from the network device.
+
+5. Remove any media card and optical disc from your computer, if applicable.
+
+
+
+Turning off your computer
+    CAUTION: To avoid losing data, save and close all open files and exit all open programs before you turn off your
+    computer.
+1. Turning off your computer (Windows 8.1):
+   ● Using a touch enabled device:
+    a. Swipe in from the right edge of the screen, opening the Charms menu and select Settings.
+
+    b. Select     and then select Shut down.
+       or
+
+    a. On the Home screen, touch        and then select Shut down.
+    ● Using a mouse:
+    a. Point to upper-right corner of the screen and click Settings.
+
+    b. Click     and then select Shut down.
+       or
+
+    a. On the Home screen, click       and then select Shut down.
+2. Turning off your computer (Windows 7):
+
+    a. Click Start  .
+    b. Click Shut Down.
+       or
+
+    a. Click Start    .
+    b. Click the arrow in the lower-right corner of the Start menu, and then click Log off.
+3. Ensure that the computer and all attached devices are turned off. If your computer and attached devices did not
+   automatically turn off when you shut down your operating system, press and hold the power button for about 6 seconds to
+   turn them off.
+
+
+
+After working inside your computer
+    CAUTION: Leaving stray or loose screws inside your computer may severely damage your computer.
+
+1. Replace all screws and ensure that no stray screws remain inside your computer.
+2. Connect any external devices, peripherals, or cables you removed before working on your computer.
+3. Replace any media cards, discs, or any other parts that you removed before working on your computer.
+4. Connect your computer and all attached devices to their electrical outlets.
+5. Turn on your computer.
+
+
+
+
+6        Working on your computer
+                                                                                                2
+                                               Disassembly and reassembly
+Topics:
+•   Recommended Tools
+•   System Overview
+•   Removing the Power Supply Unit - PSU
+•   Installing the Power Supply Unit - PSU
+•   Removing the Computer Cover
+•   Installing the Computer Cover
+•   Removing the PSU Card
+•   Installing the PSU Card
+•   Removing the Front Bezel
+•   Installing the Front Bezel
+•   Removing the Slim Line Optical Drive
+•   Installing the Slim Line Optical Drive
+•   Removing the Hard Drive
+•   Installing the Hard Drive
+•   Removing the Speaker
+•   Installing the Speaker
+•   Removing the HDD Thermal Sensor
+•   Installing the HDD Thermal Sensor
+•   Removing the Input-Output Panel
+•   Installing the Input-Output Panel
+•   Removing the Memory Shroud
+•   Installing the Memory Shroud
+•   Removing the Memory
+•   Installing the Memory
+•   Removing the Coin-Cell Battery
+•   Installing the Coin-Cell Battery
+•   Removing the PCI Card
+•   Installing the PCI Card
+•   Removing the PCIe-Card Retention
+•   Installing the PCIe card retention
+•   Removing the System-Fan Assembly
+•   Installing the System-Fan Assembly
+•   Removing the Heatsink Assembly
+•   Installing the Heatsink Assembly
+•   Removing the Heatsink Fan
+•   Installing the Heatsink Fan
+•   Removing the Processor
+•   Installing the Processor
+•   System Board Components
+•   Removing the System Board
+•   Installing the System Board
+
+
+
+Recommended Tools
+The procedures in this document may require the following tools:
+● Small slotted-tip screwdriver
+
+
+
+
+                                                                   Disassembly and reassembly   7
+● #2 Phillips screwdriver
+● #1 Phillips screwdriver
+● Small plastic scribe
+For how-to videos, documentation, and troubleshooting solutions, scan this QR code, or click here: http://www.Dell.com/QRL/
+
+
+
+
+Workstation/T5810
+
+
+
+System Overview
+
+
+
+
+Figure 1. Front and Back View of T5810 Computer
+
+1. microphone connector
+2. power button/Power light
+3. hard-drive activity light
+4. USB 3.0 connector
+5. USB 2.0 connectors
+6. optical-drive (optional)
+7. optical-drive eject button (optional)
+8. optical-drive (optional)
+9. optical-drive eject button (optional)
+10. headphone connector
+11. line-in/microphone connector
+12. serial connector
+13. USB 2.0 connectors
+
+
+
+
+8       Disassembly and reassembly
+14. PS/2 Keyboard connector
+15. USB 3.0 connectors
+16. line-out connector
+17. security cable slot
+18. padlock ring
+19. network connector
+20. PS/2 Mouse connector
+21. USB 3.0 connector
+22. USB 2.0 connector
+23. active expansion card slots
+24. mechanical slot
+25. power cable connector
+26. power-supply unit (PSU) release latch
+
+
+
+
+Figure 2. Inside View of T5810 Computer
+1.   heatsink with integrated fan              2.   memory shrouds
+3.   front bezel                               4.   optical drive bay (5.25”) and slimline optical drive bay
+5.   primary hard-drive slots (3.5” or 2.5”)   6.   PSU-cable shroud
+7.   graphics card                             8.   intrusion switch
+
+
+
+
+                                                                          Disassembly and reassembly           9
+Figure 3. Inside View of T5810 Computer
+
+1.   PCIe-card retention
+2.   internal speaker
+3.   power-supply unit
+4.   mother board
+
+
+
+Removing the Power Supply Unit - PSU
+1. Follow the procedures in Before Working Inside Your Computer.
+2. If the PSU is locked, remove the screw to unlock the PSU. For more information, see the PSU Lock Feature.
+3. Perform the following steps as shown in the illustration:
+     a. Hold the handle bar and press down on the blue latch to release the PSU [1,2].
+     b. Hold the handle bar to slide the PSU out of the computer.
+
+
+
+
+10       Disassembly and reassembly
+Installing the Power Supply Unit - PSU
+1. Hold the PSU handle and slide the PSU into the computer.
+2. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Computer Cover
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Lift up the cover-release latch.
+
+
+
+
+3. Lift the cover upward to a 45–degree angle, and remove it from the computer.
+
+
+
+
+Installing the Computer Cover
+1. Place the computer cover on the chassis.
+2. Press down on the computer cover until it clicks into place.
+3. Follow the procedures in After Working Inside Your Computer.
+
+
+
+
+                                                                                  Disassembly and reassembly   11
+Removing the PSU Card
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+     a. computer cover
+     b. PSU
+3. Perform the following steps as shown in the illustration:
+     a. Slide the PSU cable shroud from its slot towards the front [1].
+     b. Remove the PSU cable shroud from the computer [2].
+
+
+
+
+4. Perform the following steps as shown in the illustration:
+     a. Disconnect the power cables from the system board [1].
+     b. Remove the screws securing the PSU card to the slot [2].
+     c. Remove the PSU card from the computer [3].
+
+
+
+
+Installing the PSU Card
+1. Replace the PSU card in its slot.
+2. Tighten the screws to secure the PSU card in its slot.
+3. Connect the power cables to the connectors on the PSU card.
+4. Replace the PSU cable shroud in its slot.
+
+
+
+
+12        Disassembly and reassembly
+5. Install:
+   a. PSU
+   b. computer cover
+6. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Front Bezel
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the computer cover.
+3. Pry the front bezel retention clips away from the chassis located at the edge of front bezel.
+
+
+
+
+4. Rotate and pull the bezel panel away from the computer to release the hooks on the opposite edge of the bezel from the
+   chassis.
+
+
+
+
+Installing the Front Bezel
+1. Insert the hooks along the bottom edge of the front panel into the slots on the chassis front.
+2. Rotate the bezel towards the computer to engage the front-bezel retention clips until they click into place.
+3. Install the computer cover.
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Slim Line Optical Drive
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the computer cover.
+3. Disconnect the data and power cables from the optical drive.
+
+
+
+
+                                                                                         Disassembly and reassembly         13
+4. Unthread the cables from the latches.
+
+
+
+
+5. Press on the clasp to release the latch holding the cables on the side of the optical-drive cage.
+
+
+
+
+6. Lift up the cables.
+
+
+
+
+14      Disassembly and reassembly
+7. Lift the release latch on top of the optical-drive cage.
+
+
+
+
+8. Holding the release latch, slide the optical-drive cage from the optical-drive compartment.
+
+
+
+
+9. Remove the screws that secure the optical drive to the optical-drive cage.
+
+
+
+
+10. Remove the screws that secure the optical drive to the optical-drive cage.
+
+
+
+
+                                                                                         Disassembly and reassembly   15
+11. Remove the optical drive from the optical-drive cage.
+
+
+
+
+Installing the Slim Line Optical Drive
+1. Lift the release latch, and slide the optical-drive cage inside the compartment.
+2. Press on the clasp to release the latch and thread the cables into the holder.
+3. Connect the power cable to the back of the optical drive.
+4. Connect the data cable to the back of the optical drive.
+5. Install the computer cover.
+6. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Hard Drive
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the computer cover.
+3. Disconnect the power supply and data cables from the hard drive.
+
+
+
+
+16      Disassembly and reassembly
+4. Press in on the latches on both sides of the hard-drive bracket.
+
+
+
+
+5. Slide the hard drive out of the compartment.
+
+
+
+
+6. If a 2.5–inch hard drive is installed, flex the hard-drive bracket on both sides to loosen the hard drive and lift it to remove it
+   from the hard-drive bracket [1, 2].
+
+
+
+
+                                                                                             Disassembly and reassembly             17
+7. If a 3.5–inch hard drive is installed, flex the hard-drive bracket on both sides to loosen the hard drive.
+
+
+
+
+8. Lift the hard drive in an upward direction to remove it from the hard-drive bracket.
+
+
+
+
+Installing the Hard Drive
+1. If a 3.5–inch hard drive is installed on the computer, place the hard drive and press in on the latches of the hard-drive caddy.
+2. If a 2.5–inch hard drive is installed on the computer, place the hard drive on the hard-drive caddy and tighten the screws to
+   secure the hard drive.
+3. Secure the hard-drive in the hard-drive cage and slide it inside the compartment.
+4. Connect the hard-drive power supply cable and data cable.
+5. Install the computer cover.
+6. Follow the procedures in After Working Inside Your Computer.
+
+
+
+
+18      Disassembly and reassembly
+Removing the Speaker
+1. Follow the procedures inBefore Working Inside Your Computer.
+2. Remove the computer cover.
+3. Perform the following steps as shown in the illustration:
+   a. Disconnect the speaker cable from the system board [1].
+   b. Press down the clasp, lift and remove the speaker [2,3].
+
+
+
+
+Installing the Speaker
+1. Replace the speaker and fix the clasp.
+2. Connect the speaker cable to the system board.
+3. Install the computer cover.
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the HDD Thermal Sensor
+    NOTE: The HDD thermal sensor is an optional component and your computer may not ship with it.
+
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the computer cover.
+3. Identify the HDD thermal sensor connected to the system board.
+
+
+
+
+                                                                                   Disassembly and reassembly   19
+4. Disconnect the HDD thermal sensor cable from the system board.
+
+
+
+
+5. Release the latch that secures the HDD thermal sensor. Here, the HDD thermal sensor is attached to the hard drive.
+
+
+
+
+Installing the HDD Thermal Sensor
+     NOTE: The HDD thermal sensor is an optional component and your computer may not ship with it.
+
+1. Connect the HDD thermal sensor to the SAS HDD component that you wish to monitor the temperature, and secure it with
+   the latch.
+2. Attach the HDD thermal sensor cable to the system board.
+3. Install the computer cover.
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Input-Output Panel
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+     a. computer cover
+     b. front bezel
+
+
+
+20       Disassembly and reassembly
+3. Remove the screws that secure the Input/Output (I/O) panel cage to the chassis.
+
+
+
+
+4. Remove the I/O panel cage from the chassis.
+
+
+
+
+5. Disconnect the cables to release the I/O panel to remove it from the computer.
+
+
+
+
+6. Remove the screws that secure the I/O panel to the I/O panel cage.
+
+
+
+
+                                                                                     Disassembly and reassembly   21
+7. Remove the I/O panel from the I/O panel cage.
+
+
+
+
+Installing the Input-Output Panel
+1. Replace the Input/Output (I/O) panel in the I/O panel cage.
+2. Tighten the screws to secure the I/O panel to the I/O panel cage.
+3. Connect the cables to the I/O panel.
+4. Place the USB 3.0 module in its slot.
+5. Tighten the screws that secure the USB 3.0 module to the I/O panel cage.
+6. Replace the I/O panel cage into its slot.
+7. Tighten the screws that secure I/O panel cage to the chassis.
+8. Install:
+     a. front bezel
+     b. computer cover
+9. Follow the procedures in After Working Inside Your Computer.
+
+
+
+
+22       Disassembly and reassembly
+Removing the Memory Shroud
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+   a. computer cover
+   b. optical drive
+3. Press down on the blue retaining tab.
+
+
+
+
+4. Lift the memory shroud module upwards to remove it from the computer.
+
+
+
+
+5. Repeat Step 3 and Step 4 to remove the second memory shroud module from the computer.
+
+
+
+Installing the Memory Shroud
+1. Install the memory shroud module and press downwards until it clicks into place.
+2. Install:
+   a. optical drive
+   b. computer cover
+3. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Memory
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+   a. computer cover
+   b. optical drive
+   c. memory shroud
+3. Press down on the memory-securing clips on each side of the memory module, and lift the memory module upwards to
+   remove it from the computer.
+
+
+
+
+                                                                                      Disassembly and reassembly      23
+        NOTE: Tilting of DIMM during removal can cause damage to the DIMM.
+
+
+
+
+Installing the Memory
+1. Insert the memory module into the memory socket.
+2. Press down on the memory module until the securing clips secure the memory in place.
+        NOTE: Tilting of DIMM during insertion can cause damage to the DIMM.
+
+3. Install:
+     a. memory shroud
+     b. optical drive
+     c. computer cover
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Coin-Cell Battery
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+     a. computer cover
+     b. optical drive
+     c. memory shroud
+3. Press the release latch away from the battery to allow the battery to pop-up from the socket. Lift the coin-cell battery out
+   of the computer.
+
+
+
+
+Installing the Coin-Cell Battery
+1. Place the coin-cell battery into the slot on the system board.
+2. Press the coin-cell battery downward until the release latch springs back into place and secures it.
+3. Install:
+     a. memory shroud
+     b. optical drive
+     c. computer cover
+
+
+
+24       Disassembly and reassembly
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the PCI Card
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the computer cover.
+3. Open the plastic latch fastening the PCI card in its slot.
+
+
+
+
+4. Press down the latch and pull the PCI card away from the computer.
+
+
+
+
+Installing the PCI Card
+1. Push the expansion card into the card slot and secure the latch.
+2. Install the plastic latch that secures the PCI card to the card slot.
+3. Install the computer cover.
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the PCIe-Card Retention
+1. Follow the procedures in Before Working Inside Your Computer.
+
+
+
+                                                                           Disassembly and reassembly   25
+2. Remove:
+     a. computer cover
+     b. PCIe cards
+3. Perform the following steps as shown in the illustration:
+     a. Unthread the cable from the clips [1].
+     b. Press and slide the latch out to release the PCIe-card retention [2].
+     c. Remove the PCIe-card retention out of the computer [3].
+
+
+
+
+Installing the PCIe card retention
+1. Place the PCIe card retention in its slot and insert the latches.
+2. Route the cables through the clips to secure them.
+3. Install:
+     a. PCIe cards
+     b. computer cover
+4. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the System-Fan Assembly
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+     a.   computer cover
+     b.   optical drive
+     c.   PCIe-card retention
+     d.   memory shroud
+3. Unthread the system-board cable from the clips.
+
+
+
+
+26         Disassembly and reassembly
+4. Remove the screw that secures metal plate to the system fan.
+
+
+
+
+5. Press the latches on either side of the metal plate to release it.
+
+
+
+
+6. Lift the metal plate out of the chassis.
+
+
+
+
+                                                                        Disassembly and reassembly   27
+7. Remove the screws that secure the drive bay.
+
+
+
+
+8. Disconnect the system-fan cables from the system board.
+
+
+
+
+9. Perform the following steps as shown in the illustration:
+     a. Remove the screws that secure system-fan assembly to the chassis [1].
+     b. Lift the system-fan assembly from the chassis [2].
+
+
+
+
+28       Disassembly and reassembly
+10. Pry away the grommets to remove the system fans from the system-fan assembly.
+
+
+
+
+       CAUTION: Using excessive force may damage the grommets.
+
+11. Remove the system fans from the system-fan assembly.
+
+
+
+
+Installing the System-Fan Assembly
+1. Place the fans in the fan assembly and attach the grommets.
+2. Place the fan assembly in the chassis.
+3. Tighten the screws to secure the fan assembly to the chassis.
+4. Connect the system-fan cables to their connectors on the system board.
+5. Route the system-fan cables out of the opening in the system-fan module in the direction of the system board.
+6. Tighten the screws that secure the drive bay.
+7. Replace the metal plate and install the screw that secures metal plate to the system fan.
+
+
+
+                                                                                        Disassembly and reassembly   29
+8. Route and connect the system-board cable to its connector.
+9. Install:
+     a.   PCIe-card retention
+     b.   memory shroud
+     c.   optical drive
+     d.   computer cover
+10. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Heatsink Assembly
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the computer cover.
+3. Perform the following steps:
+     a. Disconnect the heatsink fan cable from the system board [1].
+     b. Loosen the captive screws that secure the heatsink assembly [2].
+     c. Lift the heatsink assembly and remove it from the computer [3].
+
+
+
+
+Installing the Heatsink Assembly
+1. Place the heatsink assembly inside the computer.
+2. Tighten the captive screws to secure the heatsink assembly to the system board.
+          NOTE: Mis-alignment of screws can damage the system.
+
+3. Connect the heatsink cable to the system board.
+4. Install the computer cover.
+5. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Heatsink Fan
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+     a. computer cover
+     b. heatsink assembly
+3. Perform the following steps:
+     a. Remove the screws that secure the heatsink fan from the assembly.
+     b. Push the grommets outward to release the heatsink fan from the assembly.
+     c. Remove the heatsink fan from the heatsink assembly.
+
+
+
+
+30         Disassembly and reassembly
+Installing the Heatsink Fan
+1. Slide the heatsink fan into heatsink assembly.
+2. Install the screws that secure the heatsink fan to the heatsink assembly.
+3. Plug in the grommets to secure the heatsink fan to the heatsink assembly.
+4. Install:
+   a. heatsink assembly
+   b. computer cover
+5. Follow the procedures in After Working Inside Your Computer.
+
+
+
+Removing the Processor
+1. Follow the procedures inBefore Working Inside Your Computer.
+2. Remove:
+   a. computer cover
+   b. heatsink assembly
+3. To remove the processor:
+        NOTE: The processor cover is secured by two levers. They have icons that indicate which lever needs to be opened
+        first and which lever closes first.
+
+   a.   Press down on the first lever that holds the processor cover in place and release it sideways from its retention hook [1].
+   b.   Repeat step 'a' to release the second lever from its retention hook [2].
+   c.   Lift the lever from its retention hook [3].
+   d.   Press down on the first lever [4].
+   e.   Lift and remove the processor cover [5].
+   f.   Lift the processor to remove it from the socket and place it in antistatic package [6].
+
+
+
+
+                                                                                           Disassembly and reassembly            31
+         NOTE: Damaging pins during removal of the processor can cause damage to the processor.
+
+4. Repeat the above steps to remove the second processor (if available) from the computer.
+     To verify if your computer has dual processor slots, see the System Board components.
+
+
+
+Installing the Processor
+1. Place the processor in its socket.
+2. Replace the processor cover.
+         NOTE: The processor cover is secured by two levers. They have icons that indicate which lever needs to be opened
+         first and which lever closes first.
+
+3. Slide the first lever sideways into the retention hook to secure the processor.
+4. Repeat step '3' to slide the second lever into the retention hook.
+5. Install:
+     a. heatsink assembly
+     b. computer cover
+6. Follow the procedures in After Working Inside Your Computer.
+
+
+
+System Board Components
+The following image displays the system board components .
+
+
+
+
+32       Disassembly and reassembly
+1. PCI slot (slot 6)                                         2. PCIe x16 slot (PCIe 2.0 wired as x4) (slot 5)
+3. PCIe 3.0 x16 slot (slot 4)                                4. PCIe 2.0 x1 slot (slot 3)
+5. PCIe 3.0 x16 slot (slot 2)                                6. PCIe x16 slot (PCIe 3.0 wired as x8) (slot 1)
+7. DIMM slots                                                8. intrusion-switch connector
+9. CPU heatsink fan connector                                10. processor socket
+11. DIMM slots                                               12. front-panel audio connector
+13. internal USB 2.0 connector                               14. coin-cell battery
+15. optional hard-drive fan connector                        16. system-fan connector
+17. HDD temperature sensor connector                         18. system-fan connector
+19. PWR_REMOTE connector (for Teradici Host Card)            20. thunderbolt sideband connector
+21. system-fan connector                                     22. password jumper
+23. front panel and USB 2.0 connector                        24. internal speaker connector
+25. USB 3.0 front-panel connector                            26. internal USB 2.0 connector for flexbay
+27. SATA Connectors (HDD0-HDD3 & SATA0-1)                    28. RTC_RST Jumper
+29. 24-pin system power connector                            30. CPU power connector
+
+
+
+Removing the System Board
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove:
+   a.   computer cover
+   b.   optical drive
+   c.   graphics card and other PCI adapters
+   d.   heatsink assembly
+   e.   memory shrouds
+   f.   memory module(s)
+   g.   processor
+
+
+
+
+                                                                                     Disassembly and reassembly   33
+3. Disconnect all the cables from the system board.
+
+
+
+
+4. Remove the screws that secure the system board to the chassis.
+
+
+
+
+5. Perform the following steps:
+     a. Slide the system board towards front direction [1].
+     b. Tilt the system board [2].
+
+
+
+
+34        Disassembly and reassembly
+6. Lift the system board in an upward direction and remove it from the computer.
+
+
+
+
+Installing the System Board
+1. Align the system board to the port connectors on the back of the chassis and place the system board in the chassis.
+2. Tighten the screws to secure the system board to the chassis.
+3. Connect the cables to the system board.
+4. Install:
+   a.   processor
+   b.   memory module (s)
+   c.   memory shrouds
+   d.   heatsink assembly
+   e.   graphics card and other PCI adapters
+   f.   optical drive
+   g.   computer cover
+5. Follow the procedures in After Working Inside Your Computer.
+
+
+
+
+                                                                                       Disassembly and reassembly        35
+                                                                                                                         3
+                                                                    Additional Information
+This section provides information for the additional features that are part of your computer.
+Topics:
+•     Memory Module Guidelines
+•     Power Supply Unit - PSU Lock
+
+
+
+Memory Module Guidelines
+To ensure optimal performance of your computer, observe the following general guidelines when configuring your system
+memory:
+● Memory modules of different sizes can be mixed (for example, 2 GB and 4 GB). But, all populated channels must have
+   identical configurations.
+● Memory modules must be installed beginning with the first socket.
+● If memory modules with different speeds are installed, they operate at the speed of the slowest installed memory modules.
+            NOTE: If all DIMMs are 2133, the CPU ordered may run the memory at a slower speed.
+
+Memory Configuration
+
+Table 1. Memory configuration
+    Tower 5810                     Chassis 0           Chassis 1     Chassis 2           Chassis 3
+     Configuration      Total      0        1          0       1     0         1         0       1           RDIMM
+                        (GB)
+            S4            4        4                                                                           2133
+            S8            8        4                   4                                                       2133
+            S16           16       4                   4             4                   4                     2133
+            S32          32        8                   8             8                   8                     2133
+        S32B             32        4        4          4       4     4         4         4       4         1856(2133)
+            S64          64        8        8          8       8     8         8         8       8         1856(2133)
+         S128            128       16       16         16      16    16       16         16      16        1866(2133)
+         S256            256       32      32          32     32    32        32        32       32        1866(2133)
+
+Table 2. Single CPU configuration
+    DIMM1                                       CPU1
+    DIMM2                                       CPU1
+    DIMM3                                       CPU1
+    DIMM4                                       CPU1
+
+Table 3. Dual CPU configuration
+    DIMM1                                       CPU1
+    DIMM1                                       CPU2
+    DIMM2                                       CPU1
+
+
+
+
+36          Additional Information
+Table 3. Dual CPU configuration (continued)
+DIMM2                                      CPU2
+
+
+
+Power Supply Unit - PSU Lock
+The PSU lock prevents the removal of the PSU from the chassis.
+    NOTE: To lock or unlock the PSU, always ensure that the cover of the chassis is removed.
+
+To secure the PSU, remove the screw from the unlock screw location and tighten the screw to the lock location. Similarly, to
+unlock the PSU, remove the screw from the lock screw location and tighten the screw to the unlock screw location.
+
+
+
+
+                                                                                               Additional Information          37
+                                                                                                                                   4
+                                                                                            System setup
+System setup enables you to manage your hardware and specify BIOS level options. From the System setup, you can:
+● Change the NVRAM settings after you add or remove hardware.
+● View the system hardware configuration.
+● Enable or disable integrated devices.
+● Set performance and power management thresholds
+● Manage your computer security
+Topics:
+•      Boot Sequence
+•      Navigation keys
+•      System Setup Options
+•      Updating the BIOS in Windows
+•      System and setup password
+
+
+
+Boot Sequence
+Boot sequence enables you to bypass the System Setup–defined boot device order and boot directly to a specific device (for
+example: optical drive or hard drive). During the Power-on Self-Test (POST), when the Dell logo appears, you can:
+● Access System Setup by pressing F2 key
+● Bring up the one-time boot menu by pressing F12 key.
+The one-time boot menu displays the devices that you can boot from including the diagnostic option. The boot menu options
+are:
+● Removable Drive (if available)
+● STXXXX Drive
+            NOTE: XXXX denotes the SATA drive number.
+● Optical Drive (if available)
+● SATA Hard Drive (if available)
+● Diagnostics
+            NOTE: Choosing Diagnostics, displays the SupportAssist screen.
+
+The boot sequence screen also displays the option to access the System Setup screen.
+
+
+
+Navigation keys
+       NOTE: For most of the System Setup options, changes that you make are recorded but do not take effect until you restart
+       the system.
+
+Table 4. Navigation keys
+    Keys                                                         Navigation
+    Up arrow                                                     Moves to the previous field.
+    Down arrow                                                   Moves to the next field.
+    Enter                                                        Selects a value in the selected field (if applicable) or follow
+                                                                 the link in the field.
+    Spacebar                                                     Expands or collapses a drop-down list, if applicable.
+
+
+
+
+38          System setup
+Table 4. Navigation keys (continued)
+Keys                                                           Navigation
+Tab                                                            Moves to the next focus area.
+Esc                                                            Moves to the previous page until you view the main screen.
+                                                               Pressing Esc in the main screen displays a message that
+                                                               prompts you to save any unsaved changes and restarts the
+                                                               system.
+
+
+
+System Setup Options
+   NOTE: Depending on your computer and its installed devices, the items listed in this section may or may not appear.
+
+Table 5. General
+Option                      Description
+System Information          This section lists the primary hardware features of your computer.
+                            ● System Information
+                            ● Memory Configuration
+                            ● Processor Information
+                            ● Device Information
+                            ● PCI Information
+Boot Sequence               Allows you to change the order in which the computer attempts to find an operating system.
+                            ● Diskette Drive
+                            ● USB Storage Device
+                            ● CD/DVD/CD-RW Drive
+                            ● Onboard NIC
+                            ● Internal HDD
+Boot List Option            Allows you to change the boot list option.
+                            ● Legacy
+                            ● UEFI
+Advanced Boot Options       Allows you to Enable Legacy Option ROMs
+                            ● Enable Legacy Option ROMs (Default)
+Date/Time                   Allows you to set the date and time. The changes to the system date and time takes effect
+                            immediately.
+
+Table 6. System Configuration
+Option                                                         Description
+Integrated NIC                                                 Allows you to configure the integrated network controller. The
+                                                               options are:
+                                                               ● Enable UEFI Network Stack
+                                                               ● Disabled
+                                                                      NOTE: You can use the Disabled option, only if Active
+                                                                      Management Technology (AMT) option is disabled.
+                                                               ● Enabled
+                                                               ● Enabled w/PXE (Default)
+Integrated NIC 2                                               Allows you to configure the integrated network controller. The
+                                                               options are:
+                                                               ● Enabled (Default)
+                                                               ● Enabled w/PXE
+                                                                   NOTE: This feature is supported only on Tower 7910.
+
+
+
+
+                                                                                                      System setup          39
+Table 6. System Configuration (continued)
+Option                                      Description
+Serial Port                                 Identifies and defines the serial port settings. You can set the
+                                            serial port to:
+                                            ● Disabled
+                                            ● COM1 (Default)
+                                            ● COM2
+                                            ● COM3
+                                            ● COM4
+                                                NOTE: The operating system may allocate resources even
+                                                if the setting is disabled.
+
+SATA Operation
+Tower 5810 and Tower 7810                   Allows you to configure the internal SATA hard-drive
+                                            controller. The options are:
+                                            ● Disabled
+                                            ● ATA
+                                            ● AHCI
+                                            ● RAID On (Default)
+                                                NOTE: SATA is configured to support RAID mode. No
+                                                SATA operation support in Tower 7910.
+
+Tower 7910                                  Allows you to configure the internal SATA hard-drive
+                                            controller. The options are:
+                                            ● Disabled
+                                            ● ATA
+                                            ● AHCI (Default)
+                                                NOTE: SATA is configured to support RAID mode. No
+                                                SATA operation support in Tower 7910.
+
+Drives
+Tower 5810 and Tower 7810                   Allows you to configure the SATA drives on board. The
+                                            options are:
+                                            ● HDD–0
+                                            ● HDD–1
+                                            ● HDD–2
+                                            ● HDD–3
+                                            ● ODD–0
+                                            ● ODD–1
+                                            Default Setting: All drives are enabled.
+                                               NOTE: If the hard drives are connected to a RAID
+                                               controller card, the hard drives will display {none} in all the
+                                               fields. The hard drives can be seen in the RAID controller
+                                               card BIOS.
+
+Tower 7910                                  ● SATA–0
+                                            ● SATA–1
+                                            Default Setting: All drives are enabled.
+                                               NOTE: If the hard drives are connected to a RAID
+                                               controller card, the hard drives will display {none} in all the
+                                               fields. The hard drives can be seen in the RAID controller
+                                               card BIOS.
+
+SMART Reporting                             This field controls if the hard drive errors for the integrated
+                                            drives are reported during system startup. This technology is
+
+
+
+
+40       System setup
+Table 6. System Configuration (continued)
+Option                                                      Description
+                                                            part of the SMART (Self Monitoring Analysis and Reporting
+                                                            Technology) specification.
+                                                            ● Enable SMART Reporting - This option is disabled by
+                                                               default.
+USB Configuration                                           Allows you to enable or disable the internal USB configuration.
+                                                            The options are:
+                                                            ● Enable Boot Support
+                                                            ● Enable Front USB Ports
+                                                            ● Enable internal USB ports
+                                                            ● Enable rear USB Ports
+SAS RAID Controller (Tower 7910 only)                       Allows you to control the operation of the integrated SAS
+                                                            RAID HDD controller.
+                                                            ● Enabled (Default)
+                                                            ● Disabled.
+HDD Fans                                                    Allows you to control the HDD fans.
+                                                            Default Setting: depends on the system configuration
+
+Audio                                                       Allows you enable or disable the audio feature.
+                                                            ● Enable Audio (Default)
+Memory Map IO above 4GB                                     Allows you enable or disable Memory Map IO above 4GB.
+                                                            ● Memory Map IO above 4GB - This option is disabled by
+                                                                default.
+Thunderbolt                                                 Allows you to enable or disable Thunderbolt device support
+                                                            capability.
+                                                            ● Enabled
+                                                            ● Disabled (Default)
+Miscellaneous devices                                       Allows you to enable or disable various on board devices.
+                                                            ● Enable PCI Slot
+PCI MMIO Space Size                                         This table gives you POST diagnostic LED pattern information.
+
+Table 7. Video
+Option                   Description
+Primary Video Slot       Allows you to configure primary boot video device. The options are:
+                         ● Auto (Default)
+                         ● SLOT 1
+                         ● SLOT 2: VGA Compatible
+                         ● SLOT 3
+                         ● SLOT 4
+                         ● SLOT 5
+                         ● SLOT 6 ( Tower 5810 and Tower 7810 only)
+                         ● SLOT1_CPU2: VGA Compatible (Tower 7910 only)
+                         ● SLOT2_CPU2 (Tower 7910 only)
+
+Table 8. Security
+Option                   Description
+Strong Password          Allows you to enforce the option to always set strong passwords.
+                         Default Setting: Enable Strong Password is not selected.
+
+Password Configuration   You can define the length of your password. Min = 4 , Max = 32
+
+
+
+
+                                                                                                    System setup          41
+Table 8. Security (continued)
+Option                   Description
+Password Bypass          Allows you to enable or disable the permission to bypass the System password, when it is set. The
+                         options are:
+                         ● Disabled (Default)
+                         ● Reboot bypass
+Password Change          Allows you to enable the disable permission to the System passwords when the administrator
+                         password is set.
+                         Default Setting: Allow Non-Admin Password Changes is selected
+
+TPM Security             Allows you to enable the Trusted Platform Module (TPM) during POST.
+                         Default Setting: The option is disabled.
+
+Computrace (R)           Allows you to activate or disable the optional Computrace software. The options are:
+                         ● Deactivate (Default)
+                         ● Disable
+                         ● Activate
+CPU XD Support           Allows you to enable the Execute Disable mode of the processor.
+                         ● Enable CPU XD Support (Default)
+OROM Keyboard Access     Allows you to determine whether users are able to enter Option ROM Configuration screens via
+                         hotkeys during boot. The options are:
+                         ● Enable (Default)
+                         ● One Time Enable
+                         ● Disable
+Admin Setup Lockout      Allows you to prevent users from entering Setup when an administrator password is set.
+                         ● Enable Admin Setup Lockout
+                         Default Setting: The option is disabled.
+
+Table 9. Secure Boot
+Option                   Description
+Secure Boot Enable       Allows you to enable or disable the Secure Boot Feature. The options are:
+                         ● Disabled (Default)
+                         ● Enabled
+Expert Key Management Allows you to enable or disable Custom Mode Key Management.
+                      ● Disabled (Default)
+
+Table 10. Performance
+Option                   Description
+Multi Core Support       This field specifies whether the processor will have one or all cores enabled. The performance of
+                         some applications will improve with the additional cores. This option is enabled by default. Allows
+                         you to enable or disable multi-core support for the processor. The options are:
+                         ● All (Default)
+                         ● 1
+                         ● 2
+                         ● 4
+                         ● 5
+                         ● 6
+                         ● 7
+                         ● 8
+                         ● 9
+                             NOTE:
+                             ● The options displayed could be different depending on the installed processor(s).
+
+
+
+42       System setup
+Table 10. Performance (continued)
+Option                 Description
+
+                           ● The options depend on the number of cores supported by the installed processor (All, 1, 2,
+                             N-1 for N-Core Processors)
+
+Intel SpeedStep        Allows you to enable or disable the Intel SpeedStep feature.
+                       Default Setting: Enable Intel SpeedStep
+
+C States               Allows you to enable or disable the additional processor sleep states.
+                       Default Setting: Enabled
+
+Limit CPUID Value      This field limits the maximum value the processor Standard CPUID Function will support.
+                       ● Enable CPUID Limit
+                       Default Setting: The option is disabled.
+
+Intel TurboBoost       Allows you to enable or disable the Intel TurboBoost mode of the processor.
+                       Default Setting: Enable Intel TurboBoost
+
+Hyper-Thread           Allows you to enable or disable the HyperThreading in the processor.
+Control
+                       Default Setting: Enabled
+
+Cache Prefetch         Default Setting: Enable Hardware Prefetch and Adjacent Cache Line Prefetch
+
+Dell Reliable Memory   Allows you to identify and isolate memory errors in system RAM..
+Technology (RMT)
+                       Default Setting: Enable Dell Reliable Memory Technology (RMT)
+
+Table 11. Power Management
+Option                 Description
+AC Recovery            Specifies how the computer will respond when AC power is applied after a AC power loss. You
+                       can set the AC Recovery to:
+                       ● Power Off (Default)
+                       ● Power On
+                       ● Last Power State
+Auto On Time           Allows you to set the time at which the computer must turn on automatically. The options are:
+                       ● Disabled (Default)
+                       ● Every Day
+                       ● Weekdays
+                       ● Select Days
+Deep Sleep Control     Allows you to define the controls when Deep Sleep is enabled.
+                       ● Disabled (Default)
+                       ● Enabled in S5 only
+                       ● Enabled in S4 and S5
+Fan Speed Control      Allows you to control the speed of the system fan. The options are:
+                       ● Auto (Default)
+                       ● Medium low
+                       ● Medium high
+                       ● Medium
+                       ● High
+                       ● Low
+USB Wake Support       Allows you to enable USB devices to wake the system from standby.
+                       ● Enable USB Wake Support
+                       Default Setting: The option is disabled.
+
+
+
+
+                                                                                                 System setup          43
+Table 11. Power Management (continued)
+Option                    Description
+Wake on LAN               This option allows the computer to power up from the off state when triggered by a special LAN
+                          signal. Wake-up from the Standby state is unaffected by this setting and must be enabled in the
+                          operating system. This feature only works when the computer is connected to AC power supply.
+                          ● Disabled - Does not allow the system to power on by special LAN signals when it receives a
+                              wake-up signal from the LAN or wireless LAN.
+                          ● LAN Only - Allows the system to be powered on by special LAN signals.
+                          ● LAN with PXE Boot - Allows the system to power on and immediately boot to PXE when it
+                              receives a wake-up packet sent to the system in either the S4 or S5 state.
+                          This option is Disabled by default.
+Block Sleep               Allows you to block entering to sleep (S3 state) in OS Environment.
+                          Default Setting: Disabled
+
+Table 12. POST Behavior
+Option                    Description
+Numlock LED               Specifies if the NumLock function can be enabled when the system boots. This option is enabled
+                          by default.
+Keyboard Errors           Specifies whether keyboard related errors are reported when it boots. This option is enabled by
+                          default.
+Fastboot                  Allows you to speed up the boot process by bypassing some compatibility steps. The options are:
+                          ● Minimal
+                          ● Thorough - This option is enabled by default.
+                          ● Auto
+
+Table 13. Virtualization Support
+Option                    Description
+Virtualization            This option specifies whether a Virtual Machine Monitor (VMM) can utilize the additional
+                          hardware capabilities provided by Intel Virtualization technology.
+                          ● Enable Intel Virtualization Technology - This option is enabled by default.
+VT for Direct I/O         Enables or disables the Virtual Machine Monitor (VMM) from utilizing the additional hardware
+                          capabilities provided by Intel Virtualization technology for direct I/O.
+                          ● Enable VT for Direct I/O - This option is enabled by default.
+Trusted Execution         Allows you to specify whether a Measured Virtual Machine Monitor (MVMM) can utilize the
+                          additional hardware capabilities provided by Intel Trusted Execution Program.
+                          ● Trusted Execution - This option is disabled by default.
+
+Table 14. Maintenance
+Option                    Description
+Service Tag               Displays the service tag of your computer.
+Asset Tag                 Allows you to create a system asset tag if an asset tag is not already set. This option is not set by
+                          default.
+SERR Messages             Controls the SERR message mechanism. This option is not set by default. Some graphics cards
+                          require that the SERR message mechanism be disabled.
+
+Table 15. System Logs
+Option                    Description
+BIOS events               Displays the system event log and allows you to clear the log.
+                          ● Clear Log
+
+
+
+
+44       System setup
+Table 16. Engineering Configurations
+Option                       Description
+ASPM                         ●   Auto (Default)
+                             ●   L1 Only
+                             ●   Disabled
+                             ●   L0s and L1
+                             ●   L0s Only
+Pcie LinkSpeed               ●   Auto (Default)
+                             ●   Gen1
+                             ●   Gen2
+                             ●   Gen3
+
+
+
+Updating the BIOS in Windows
+It is recommended to update your BIOS (System Setup) when you replace the system board or if an update is available.
+    NOTE: If BitLocker is enabled, it must be suspended prior to updating the system BIOS, and then re enabled after the BIOS
+    update is completed.
+
+    CAUTION: If BitLocker is not suspended before updating the BIOS, the next time you reboot the system it
+    will not recognize the BitLocker key. You will then be prompted to enter the recovery key to progress and the
+    system will ask for this on each reboot. If the recovery key is not known this can result in data loss or an
+    unnecessary operating system re-install.
+1. Restart the computer.
+2. Go to Dell.com/support.
+   ● Enter the Service Tag or Express Service Code and click Submit.
+   ● Click Detect Product and follow the instructions on screen.
+3. If you are unable to detect or find the Service Tag, click Choose from all products.
+4. Choose the Products category from the list.
+       NOTE: Choose the appropriate category to reach the product page.
+
+5. Select your computer model and the Product Support page of your computer appears.
+6. Click Get drivers and click Drivers and Downloads.
+   The Drivers and Downloads section opens.
+7. Click Find it myself.
+8. Click BIOS to view the BIOS versions.
+9. Identify the latest BIOS file and click Download.
+10. Select your preferred download method in the Please select your download method below window, click Download File.
+    The File Download window appears.
+11. Click Save to save the file on your computer.
+12. Click Run to install the updated BIOS settings on your computer.
+   Follow the instructions on the screen.
+
+
+
+System and setup password
+Table 17. System and setup password
+Password type                                                   Description
+
+System password                                                 Password that you must enter to log on to your system.
+
+
+
+
+                                                                                                      System setup         45
+Table 17. System and setup password (continued)
+Password type                                                           Description
+
+Setup password                                                          Password that you must enter to access and make changes to
+                                                                        the BIOS settings of your computer.
+
+You can create a system password and a setup password to secure your computer.
+
+     CAUTION: The password features provide a basic level of security for the data on your computer.
+
+     CAUTION: Anyone can access the data stored on your computer if it is not locked and left unattended.
+
+     NOTE: System and setup password feature is disabled.
+
+
+
+Assigning a system setup password
+You can assign a new System or Admin Password only when the status is in Not Set.
+To enter the system setup, press F2 immediately after a power-on or reboot.
+1. In the System BIOS or System Setup screen, select Security and press Enter.
+   The Security screen is displayed.
+2. Select System/Admin Password and create a password in the Enter the new password field.
+     Use the following guidelines to assign the system password:
+     ● A password can have up to 32 characters.
+     ● The password can contain the numbers 0 through 9.
+     ● Only lower case letters are valid, upper case letters are not allowed.
+     ● Only the following special characters are allowed: space, (”), (+), (,), (-), (.), (/), (;), ([), (\), (]), (`).
+3. Type the system password that you entered earlier in the Confirm new password field and click OK.
+4. Press Esc and a message prompts you to save the changes.
+5. Press Y to save the changes.
+   The computer reboots.
+
+
+Deleting or changing an existing system setup password
+Ensure that the Password Status is Unlocked (in the System Setup) before attempting to delete or change the existing
+System and Setup password. You cannot delete or change an existing System or Setup password, if the Password Status is
+Locked.
+To enter the System Setup, press F2 immediately after a power-on or reboot.
+1. In the System BIOS or System Setup screen, select System Security and press Enter.
+   The System Security screen is displayed.
+2. In the System Security screen, verify that Password Status is Unlocked.
+3. Select System Password, alter or delete the existing system password and press Enter or Tab.
+4. Select Setup Password, alter or delete the existing setup password and press Enter or Tab.
+         NOTE: If you change the System and/or Setup password, re enter the new password when prompted. If you delete the
+         System and Setup password, confirm the deletion when prompted.
+
+5. Press Esc and a message prompts you to save the changes.
+6. Press Y to save the changes and exit from System Setup.
+   The computer restarts.
+
+
+
+
+46        System setup
+Disabling a System Password
+The system's software security features include a system password and a setup password. The password jumper disables any
+password(s) currently in use. There are 2–pins for the PSWD jumper.
+
+    NOTE: The password jumper is disabled by default.
+
+1. Follow the procedures in Before Working Inside Your Computer.
+2. Remove the cover.
+3. Identify the PSWD jumper on the system board. For identifying the PSWD jumper on the system board, see the System
+   Board Components.
+4. Remove the PSWD jumper from the system board.
+        NOTE: The existing passwords are not disabled (erased) until the computer boots without the jumper.
+
+5. Install the cover.
+        NOTE: If you assign a new system and/or setup password with the PSWD jumper installed, the system disables the new
+        password(s) the next time it boots.
+
+6. Connect the computer to the electrical outlet and power-on the computer.
+7. Power-off the computer and disconnect the power cable from the electrical outlet.
+8. Remove the cover.
+9. Replace the jumper on the pins.
+10. Install the cover.
+11. Follow the procedures in After Working Inside Your Computer.
+12. Power-on the computer.
+13. Go to the system setup, and assign a new system or setup password.
+
+
+
+
+                                                                                                     System setup          47
+                                                                                                                              5
+                                                                                                 Diagnostics
+If you experience a problem with your computer, run the ePSA diagnostics before contacting Dell for technical assistance. The
+purpose of running diagnostics is to test your computer's hardware without requiring additional equipment or risking data loss. If
+you are unable to fix the problem yourself, service and support personnel can use the diagnostics results to help you solve the
+problem.
+Topics:
+•    Enhanced Pre-Boot System Assessment - ePSA Diagnostics
+
+
+
+Enhanced Pre-Boot System Assessment - ePSA
+Diagnostics
+The ePSA diagnostics (also known as system diagnostics) performs a complete check of your hardware. The ePSA is embedded
+with the BIOS and is launched by the BIOS internally. The embedded system diagnostics provides a set of options for particular
+devices or device groups allowing you to:
+● Run tests automatically or in an interactive mode
+● Repeat tests
+● Display or save test results
+● Run thorough tests to introduce additional test options to provide extra information about the failed device(s)
+● View status messages that inform you if tests are completed successfully
+● View error messages that inform you of problems encountered during testing
+    CAUTION: Use the system diagnostics to test only your computer. Using this program with other computers
+    may cause invalid results or error messages.
+
+     NOTE: Some tests for specific devices require user interaction. Always ensure that you are present at the computer
+     terminal when the diagnostic tests are performed.
+1. Power-on the computer.
+2. As the computer boots, press the <F12> key as the Dell logo appears.
+3. On the boot menu screen, select the Diagnostics option.
+   The Enhanced Pre-boot System Assessment window is displayed, listing all devices detected in the computer. The
+   diagnostics starts running the tests on all the detected devices.
+        NOTE: System may reboot before entering diagnostics depending on the configuration.
+4. If you wish to run a diagnostic test on a specific device, press <Esc> and click Yes to stop the diagnostic test.
+5. Select the device from the left pane and click Run Tests.
+6. If there are any issues, error codes are displayed.
+   Note the error code and contact Dell.
+
+
+
+
+48       Diagnostics
+                                                                                                                                    6
+                                             Troubleshooting your computer
+You can troubleshoot your computer using indicators like diagnostic lights, beep codes, and error messages during the operation
+of the computer.
+Topics:
+•         Diagnostic LEDs
+•         Error Messages
+
+
+
+Diagnostic LEDs
+          NOTE: The diagnostic LEDs only serve as an indicator of the progress through the Power-On Self Test (POST) process.
+          These LEDs do not indicate the problem that caused the POST routine to stop.
+The diagnostic LEDs are located on the front of the chassis next to the power button. These diagnostic LEDs are only active
+and visible during the POST process. Once the operating system starts to load, they turn off and are no longer visible.
+Each LED has two possible states of OFF or ON.
+
+          NOTE: The diagnostic lights will blink when the power button is amber or off, and will not blink when it is white.
+
+Table 18. POST Diagnostic LED Patterns
+    Power LED State                               System State                               Notes
+    Off                                           S5/S4                                      Normal- System is Off/Hibernate
+    Blinking White                                S3                                         Normal- System is in Standby/Suspend
+    Blinking Amber                                N/A                                        Abnormal- PSU cannot turn on,
+                                                                                             recommend PSU BIST. Replace PSU.
+    Steady White                                  S0                                         Normal- System is on functioning
+    Steady Amber                                  N/A                                        Abnormal- System cannot turn
+                                                                                             on, recommend check motherboard
+                                                                                             components or replace motherboard.
+
+          NOTE: Amber LED blinking scheme pattern is 2 or 3 blinks followed by a short pause then X number of blinks up to 7.
+          Pattern has a long pause inserted in the middle. For example 2,3 = 2 amber blinks, short pause, 3 amber blinks followed by
+          long pause then repeats.
+
+Table 19. POST Diagnostic LED Patterns
+    Blink Patter                                  System State                               Notes
+
+    2,1                                           A possible system motherboard failure      Recommend replace motherboard.
+                                                  has occurred.
+
+    2,2                                           A possible PSU or cabling issue has        Run PSU BIST.
+                                                  occurred.
+                                                                                             Check the PSU cabling to Motherboard
+                                                                                             to make sure that all cables are installed
+                                                                                             correctly.
+
+    2,3                                           A possible Motherboard, Memory, or         If two or more memory modules are
+                                                  CPU failure has occurred                   installed, remove the modules, then
+                                                                                             reinstall one module and restart the
+
+
+
+
+                                                                                            Troubleshooting your computer             49
+Table 19. POST Diagnostic LED Patterns (continued)
+
+                                                                                   computer. If the computer starts
+                                                                                   normally, continue to install additional
+                                                                                   memory modules (one at a time) until
+                                                                                   you have identified a faulty module or
+                                                                                   reinstalled all modules without error.
+
+2,4                                   A possible coin cell failure has occurred.
+
+2,5                                   System is in Recovery Mode                   BIOS checksum failure was detected and
+                                                                                   the system is now in recovery mode.
+
+2,6                                   A possible processor failure has occurred Re-seat the processor
+
+2,7                                   Memory modules are detected, but a           If two or more memory modules are
+                                      memory power failure has occurred.           installed, remove the modules, then
+                                                                                   reinstall one module and restart the
+                                                                                   computer. If the computer starts
+                                                                                   normally, continue to install additional
+                                                                                   memory modules (one at a time) until
+                                                                                   you have identified a faulty module or
+                                                                                   reinstalled all modules without error.
+
+3,1                                   PCI device configuration activity is in      Remove all peripheral cards from the
+                                      progress or PCI device failure was           PCI and PCI-E slots and reboot the
+                                      detected.                                    computer. If the computer boots, add
+                                                                                   the peripheral cards back one by one
+                                                                                   until you find the bad one.
+
+3,2                                   A possible HDD or USB failure has            Re-seat all power and data cables to
+                                      occurred.                                    HDD’s. Reinstall all USB devices and
+                                                                                   check all cable connections.
+
+3,3                                   No memory modules installed                  If two or more memory modules
+                                                                                   are installed, remove the modules,
+                                                                                   then reinstall one module and restart
+                                                                                   the computer. If the computer starts
+                                                                                   normally, continue to install additional
+                                                                                   memory modules (one at a time) until
+                                                                                   you have identified all modules without
+                                                                                   error. If available, install working memory
+                                                                                   of the same type into your computer.
+
+3,4                                   Power connector not installed properly.      Re-seat the 2x2 power connector from
+                                                                                   the power supply unit.
+
+3,5                                   Memory modules are detected, but a           Ensure that no special requirements for
+                                      memory configuration or compatibility        memory module or connector placement
+                                      error has occurred.                          exist. Ensure that the memory you are
+                                                                                   using is supported by your computer.
+
+3,6                                   A possible system board resource and/or Clear CMOS (re-seat the coin-cell
+                                      hardware failure has occurred.          battery. See removing and Installing
+                                                                              Coin-Cell battery).
+
+3,7                                   Some other failure has occurred.             Ensure that the display or monitor is
+                                                                                   plugged into a discrete graphics card.
+                                                                                   Ensure that all hard drives and optical-
+                                                                                   drive cables are properly connected to
+                                                                                   the system board. If there is an error
+                                                                                   message on the screen identifying a
+                                                                                   problem with a device (such as the
+
+
+
+
+50    Troubleshooting your computer
+Table 19. POST Diagnostic LED Patterns (continued)
+
+                                                                                       floppy drive or hard drive), check the
+                                                                                       device to make sure it is functioning
+                                                                                       properly. If the operating system is
+                                                                                       attempting to boot from a device (such
+                                                                                       as the floppy drive or optical drive),
+                                                                                       check system setup to ensure the boot
+                                                                                       sequence is correct for the devices
+                                                                                       installed on your computer.
+
+
+
+Error Messages
+There are three types of BIOS error messages that are displayed depending on the severity of the issue. They are:
+
+
+Errors That Halt Your Computer Completely
+These error messages will halt the computer requiring you to cycle the system's power. The following table lists the error
+messages.
+
+Table 20. Errors that halt your computer completely
+Error Message
+Error! Non-ECC DIMMs are not supported on this system.
+Alert! Processor cache size is mismatched.
+Install like processor or one processor.
+
+Alert! Processor type mismatch.
+Install like processor or one processor.
+
+Alert! Processor speed mismatch
+Install like processor or one processor.
+
+Alert! Incompatible Processor detected.
+Install like processor or one processor.
+
+
+
+Errors That Do Not Halt Your Computer
+These error messages will not halt your computer, but will display a warning message, pause for a few seconds, and then
+continue to boot. The following table lists the error messages.
+
+Table 21. Errors that do not halt your computer
+Error Message
+Alert! Cover was previously removed.
+
+
+
+Errors That Soft Halt Your Computer
+These error messages will cause a soft halt of your computer and you will be prompted to press <F1> to continue or <F2 > to
+enter the system setup. The following table lists the error messages.
+
+
+
+
+                                                                                      Troubleshooting your computer             51
+Table 22. — Errors that soft halt your computer
+Error Message
+Alert! Front I/O Cable failure.
+Alert! Left Memory fan failure.
+Alert! Right Memory fan failure.
+Alert! PCI fan failure.
+Alert! Chipset heat sink not detected.
+Alert! Hard Drive fan1 failure.
+Alert! Hard Drive fan2 failure.
+Alert! Hard Drive fan3 failure.
+Alert! CPU 0 fan failure.
+Alert! CPU 1 fan failure.
+Alert! Memory related failure detected.
+Alert! Correctable memory error has been detected in memory slot DIMMx.
+Warning: Non-optimal memory population detected. For increased memory bandwidth populate DIMM connectors with white
+latches before those with black latches.
+Your current power supply does not support the recent configuration changes made to your system. Please contact Dell
+Technical support team to learn about upgrading to a higher wattage power supply.
+Dell Reliable Memory Technology (RMT) has discovered and isolated errors in system memory. You may continue to work.
+Memory module replacement is recommended. Please refer to the RMT Event log screen in BIOS setup for specific DIMM
+information.
+Dell Reliable Memory Technology (RMT) has discovered and isolated errors in system memory. You may continue to work.
+Additional errors will not be isolated. Memory module replacement is recommended. Please refer to the RMT Event log screen
+in BIOS setup for specific DIMM information.
+
+
+
+
+52      Troubleshooting your computer
+                                                                                                                       7
+                                                          Technical Specifications
+   NOTE: Offerings may vary by region. The following specifications are only those required by law to ship with your
+   computer. For more information about the configuration of your computer, go to Help and Support in your Windows
+   operating system and select the option to view information about your computer.
+
+Table 23. Processor
+Feature                                          Specification
+Type                                             4, 6, 8, 10, 12, and 14 core Intel Xeon processor.
+Cache
+       Instruction Cache                         32 KB
+       Data Cache                                ● 32 KB
+                                                 ● 256 KB Mid-Level Cache per core
+                                                 ● Up to 35 MB last level cache (LLC) shared among all cores (2.5 MB per
+                                                   core)
+
+Table 24. System Information
+Feature                                          Specification
+Chipset                                          Intel(R) C610 , C612 chipset
+BIOS chip (NVRAM)                                16 MB serial flash EEPROM
+
+Table 25. Memory
+Feature                                            Specification
+Memory module connector                            8 DIMM slots
+Memory module capacity                             4 GB, 8 GB, 16 GB, and 32 GB
+Type                                               2133/ 2400/ 2666 DDR4 RDIMM with ECC
+Minimum memory                                     4 GB
+Maximum memory                                     256 GB
+
+Table 26. Video
+Feature                                          Specification
+Discrete (PCIe 3.0/2.0 x16)                      up to 2 full-height, full-length (maximum of 225 W)
+
+Table 27. Audio
+Feature                                          Specification
+Integrated                                       Realtek ALC3220 audio codec
+
+Table 28. Network
+Feature                                          Specification
+Tower 5810                                       Intel i217
+
+
+
+
+                                                                                           Technical Specifications    53
+Table 29. Expansion Interfaces
+Feature                                     Specification
+PCI:
+       SLOT1                                PCI Express 3.0 x8, 8 GB/s
+       SLOT2                                PCI Express 3.0 x16, 16 GB/s
+       SLOT3                                PCI Express 2.0 x1, 0.5 GB/s
+       SLOT4                                PCI Express 3.0 x16, 16 GB/s
+       SLOT5                                PCI Express 2.0 x4, 2 GB/s
+       SLOT6                                PCI 2.3 (32 bit, 33 MHz), 133 MB/s
+Storage (HDD/SSD):
+       SATA3-HDD0                           Intel AHCI SATA 3.0, 6 Gbps
+       SATA3-HDD1                           Intel AHCI SATA 3.0, 6 Gbps
+       SATA2-HDD2                           Intel ACHI SATA 3.0, 6 Gbps
+       SATA2-HDD3                           Intel ACHI SATA 3.0, 6 Gbps
+Storage (ODD):
+       SATA2-ODD0                           Intel AHCI SATA 3.0, 6Gbps
+       SATA2-ODD1                           Intel AHCI SATA 3.0, 6 Gbps
+USB:
+       Front ports                          USB 3.0, 5 Gbps (1 port)
+                                            USB 2.0, 480 Mbps (3 ports)
+       Rear ports                           USB 3.0, 5 Gbps (3 ports)
+       Internal ports                       USB 2.0, 480 Mbps (3 ports)
+
+Table 30. Drives
+Feature                                     Specification
+Tower 5810
+        Externally accessible:
+               Slimline SATA optical bays   one
+               5.25–inch drive bays         one:
+                                            ● supports one 5.25–inches SATA optical device or supports one 3.25–
+                                               inches SATA HDD device
+                                            ● supports one media card reader
+                                            ● supports up to two 2.5–inches SAS/SATA/HDDs/SSDs (with optional
+                                               adapters)
+        Internally accessible
+               3.5–inch hard drive bays     two:
+                                            ● supports two 3.25–inches SATA
+                                            ● supports 2.5–inches SAS/SATA/HDD/SSDs
+
+Table 31. External Connectors
+Feature                                      Specification
+Audio                                        ● front panel — mic-in, headphone-out
+                                             ● back panel — line-out, mic in/line In
+Network
+        Tower 5810                           one RJ-45
+
+
+
+
+54        Technical Specifications
+Table 31. External Connectors (continued)
+Feature                                     Specification
+Serial                                      one 9-pin connector
+USB
+         Tower 5810                         ● front panel — three USB 2.0, and one USB 3.0
+                                            ● back panel — three USB 2.0, and one USB 3.0
+                                            ● internal — three USB 2.0
+Video                                       Video card dependent
+                                            ● DVI connector
+                                            ● mini DisplayPort
+                                            ● DisplayPort
+                                            ● DMS-59
+
+Table 32. Internal Connectors
+Feature                                      Specification
+System power                                 one 28–pin connector
+System fans                                  three 4-pin connectors
+Processor fans                               one 5-pin connector
+HDD fans                                     one 5-pin connector
+Thunderbolt side band connector              one 5-pin Connector
+Memory                                       eight 288–pin connectors
+Processor                                    one LGA-2011 socket
+Back I/O:
+         PCI Express
+              PCI Express x4
+                     Tower 5810              two 164-pin connectors
+              PCI Express x16
+                     Tower 5810              two 164-pin connectors
+         PCI 2.3                             one 124-pin connector
+Front I/O:
+         Front USB                           one 14–pin connector
+         Internal USB                        one type A female, one dual-port 2x5 header
+         Front panel control                 one 2x14 pin connector
+         Front panel audio HDA header        one 2x5 pin connector
+Hard drive/ Optical drive:
+         SATA
+              Tower 5810                     ● four 7-pin SATA connectors for HDD
+                                             ● two 7-pin SATA connectors for ODD
+         Power
+              Tower 5810                     one 24-pin and one 10-pin connector
+
+Table 33. Controls and Lights
+Feature                                     Specification
+Power button light:                         off — system is off or unplugged.
+
+
+
+
+                                                                                   Technical Specifications   55
+Table 33. Controls and Lights (continued)
+Feature                                             Specification
+                                                    solid white light — computer is operating normally.
+                                                    blinking white light — computer is in stand by.
+                                                    solid amber light — the computer does not start, indicating a problem with
+                                                    the system board or power supply.
+                                                    blinking amber light — indicates a problem has occurred with the system
+                                                    board.
+Drive activity light                                white light — blinking white light indicates that the computer is reading
+                                                    data from, or writing data to the hard drive.
+Network link integrity lights (back panel)          green light — A good connection at 10 Mbs exists between the network
+                                                    and the computer
+                                                    orange light — A good connection at 100 Mbs exists between the network
+                                                    and the computer.
+                                                    yellow light — A good connection at 1000 Mbs exists between the
+                                                    network and the computer.
+Network activity lights (back panel)                yellow light — flashes when there is network activity on the connection.
+
+Table 34. Power
+Feature                                             Specification
+Voltage                                             100 VAC to 240 VAC
+Wattage
+      Tower 5810                                    685 / 425 W (input voltage of 100 VAC – 240 VAC)
+Maximum heat dissipation
+      685 W                                         2750.5 BTU/Hr
+      425 W                                         1706.5 BTU/Hr
+
+     NOTE: Heat dissipation is calculated by using the power supply wattage rating.
+
+Coin-cell battery                                   3 V CR2032 lithium coin cell
+
+Table 35. Physical
+Feature                                             Specification
+Tower 5810
+       Height (with feet)                           416.90 mm (16.41 inches)
+       Height (without feet)                        414.00 mm (16.30 inches)
+       Width                                        172.60 mm (6.79 inches)
+       Depth                                        471.00 mm (18.54 inches)
+       Weight (minimum):                            13.50 kg (29.80 lb) / 12.40 kg (27.40 lb)
+
+Table 36. Environmental
+Feature                                             Specification
+Temperature:
+      Operating                                     10 °C to 35 °C (50 °F to 95 °F)
+      Storage                                       –40 °C to 65 °C (–40 °F to 149 °F)
+Relative humidity (maximum)                         20% to 80% (noncondensing)
+Maximum vibration:
+
+
+
+
+56        Technical Specifications
+Table 36. Environmental (continued)
+Feature                               Specification
+      Operating                       5 Hz to 350 Hz at 0.0002 G²/Hz
+      Storage                         5 Hz to 500 Hz at 0.001 to 0.01 G²/Hz
+Maximum shock:
+      Operating                       40 G +/- 5% with pulse duration of 2 msec +/- 10% (equivalent to 51
+                                      cm/sec [20 in/sec])
+      Storage                         105 G +/- 5% with pulse duration of 2 msec +/- 10% (equivalent to 127
+                                      cm/sec [50 in/sec])
+Altitude:
+      Operating                       –15.2 m to 3048 m (-50 ft to 10,000 ft)
+      Storage                         –15.2 m to 10,668 m (-50 ft to 35,000 ft)
+Airborne contaminant level            G1 as defined by ISA-S71.04-1985
+
+
+
+
+                                                                                Technical Specifications      57
+                                                                                                                                8
+                                                                                     Contacting Dell
+     NOTE: If you do not have an active Internet connection, you can find contact information on your purchase invoice, packing
+     slip, bill, or Dell product catalog.
+Dell provides several online and telephone-based support and service options. Availability varies by country and product, and
+some services may not be available in your area. To contact Dell for sales, technical support, or customer service issues:
+1. Go to Dell.com/support.
+2. Select your support category.
+3. Verify your country or region in the Choose a Country/Region drop-down list at the bottom of the page.
+4. Select the appropriate service or support link based on your need.
+
+
+
+
+58       Contacting Dell
+

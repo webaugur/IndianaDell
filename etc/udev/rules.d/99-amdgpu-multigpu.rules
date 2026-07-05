@@ -1,0 +1,4 @@
+# Tag amdgpu GPUs for reference (unpinned — no forced primary).
+SUBSYSTEM=="drm", KERNEL=="card1", ATTR{device/vendor}=="0x1002", TAG+="amdgpu_gpu_w5000"
+SUBSYSTEM=="drm", KERNEL=="card2", ATTR{device/vendor}=="0x1002", TAG+="amdgpu_gpu_w5100"
+SUBSYSTEM=="drm", KERNEL=="card3", ATTR{device/vendor}=="0x1002", TAG+="amdgpu_gpu_w5000"

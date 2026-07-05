@@ -1,0 +1,5 @@
+gdm3
+libgdm1
+gnome-shell
+gnome-shell-common
+yaru-theme-gnome-shell

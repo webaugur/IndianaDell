@@ -1,0 +1,2 @@
+FactoryDocs/System-T5810/Chipset/Windows/Chipset_Driver_4HP0D_WN32_11.0.0.1163_A01.EXE filter=lfs diff=lfs merge=lfs -text
+FactoryDocs/System-T5810/Chipset/Windows/Intel-Management-Engine-Components-Installer_4J8MX_WIN_11.7.0.1035_A00_08.EXE filter=lfs diff=lfs merge=lfs -text

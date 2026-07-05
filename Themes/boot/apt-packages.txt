@@ -1,0 +1,5 @@
+plymouth
+libplymouth5
+plymouth-label
+plymouth-theme-spinner
+plymouth-theme-ubuntu-text

@@ -1,0 +1,39 @@
+# IndianaDell Themes module
+# Full docs: Themes/README.md and README.md in each subfolder.
+# Boot: Plymouth (BGRT Dell logo + Ubuntu watermark)
+# Login: GDM3 + GNOME Shell greeter
+# Desktop: Yaru dark (GTK, icons, shell, sound)
+
+## Boot splash — what you see
+
+Layer 1 (center):  UEFI BGRT → Themes/boot/extracted/bgrt-firmware-oem.bmp|.png
+                   Source: /sys/firmware/acpi/bgrt/image (Dell BIOS logo, 304×307)
+Layer 2 (spinner): plymouth-theme-spinner animation
+Layer 3 (bottom):  watermark.png → ubuntu-logo-text-dark.png (187×72)
+
+Active stock theme: bgrt (apt: plymouth + plymouth-theme-spinner)
+
+## Replace boot logos
+
+  # Bottom Ubuntu logo only (keep Dell center):
+  cp my-logo.png Themes/boot/overlay/watermark.png
+  sudo bin/themes-install-boot
+
+  # Replace Dell center with your own image:
+  cp my-splash.png Themes/boot/overlay/background.png
+  sudo bin/themes-install-boot --oem Themes/boot/overlay/background.png
+
+  # Restore factory Ubuntu setup:
+  sudo bin/themes-restore-boot
+
+## Apt packages (mirrored under Themes/*/mirror/)
+
+boot/apt-packages.txt     — plymouth, plymouth-theme-spinner, …
+login/apt-packages.txt    — gdm3, gnome-shell, yaru-theme-gnome-shell
+desktop/apt-packages.txt  — yaru-theme-gtk/icon/gnome-shell/sound
+
+## Scripts
+
+  bin/themes-extract        — extract logos + mirror apt theme files
+  bin/themes-install-boot   — install custom Plymouth theme
+  bin/themes-restore-boot   — revert to stock BGRT theme

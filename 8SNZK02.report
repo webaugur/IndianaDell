@@ -1,0 +1,274 @@
+=== Dell Workstation Inventory Script ===
+User: user | Date: Mon Jun 29 05:20:53 AM EDT 2026 | Hostname: thumper
+==================================================
+1. System Identification:
+
+2. CPU:
+CPU(s):                             8
+On-line CPU(s) list:                0-7
+Model name:                         Intel(R) Xeon(R) CPU E5-2603 v2 @ 1.80GHz
+    10|Thread(s) per core:                 1
+Core(s) per socket:                 4
+Socket(s):                          2
+NUMA node(s):                       2
+NUMA node0 CPU(s):                  0-3
+NUMA node1 CPU(s):                  4-7
+
+3. Memory/RAM:
+               total        used        free      shared  buff/cache   available
+Mem:            31Gi        20Gi       9.0Gi       8.0Mi       2.2Gi        10Gi
+    20|Swap:             0B          0B          0B
+Detailed DIMMs:
+
+4. Storage:
+NAME   SIZE MODEL                        TRAN   ROTA TYPE
+sda    1.8T WDC WD2003FYYS-02W0B0        sata      1 disk
+sdb  238.5G SK hynix SH920 2.5 7MM 256GB sata      0 disk
+sdc  238.5G TEAM T253X6256G              sata      0 disk
+sdd      0B Compact Flash                usb       1 disk
+sde      0B SM/xD-Picture                usb       1 disk
+    30|sdf      0B SD/MMC                       usb       1 disk
+sdg      0B M.S./M.S.Pro/HG              usb       1 disk
+sr0   1024M HL-DT-ST DVD+/-RW GTA0N      sata      1 rom
+zd0    500M                                        0 disk
+Filesystem                                       Type   Size  Used Avail Use% Mounted on
+tmpfs                                            tmpfs  3.2G  2.9M  3.2G   1% /run
+/dev/mapper/keystore-rpool                       ext4   437M   28K  404M   1% /run/keystore/rpool
+rpool/ROOT/ubuntu_85y2fs                         zfs     99G   31G   69G  32% /
+tmpfs                                            tmpfs   16G     0   16G   0% /dev/shm
+tmpfs                                            tmpfs  5.0M  4.0K  5.0M   1% /run/lock
+    40|rpool/USERDATA/root_o0sfnq                       zfs     69G  2.2M   69G   1% /root
+rpool/USERDATA/user_o0sfnq                       zfs    180G  112G   69G  63% /home/user
+rpool/ROOT/ubuntu_85y2fs/usr/local               zfs     70G  1.2G   69G   2% /usr/local
+rpool/ROOT/ubuntu_85y2fs/srv                     zfs     69G  256K   69G   1% /srv
+rpool/ROOT/ubuntu_85y2fs/var/log                 zfs     69G  781M   69G   2% /var/log
+rpool/ROOT/ubuntu_85y2fs/var/games               zfs     69G  256K   69G   1% /var/games
+rpool/ROOT/ubuntu_85y2fs/var/lib                 zfs     79G   11G   69G  13% /var/lib
+rpool/ROOT/ubuntu_85y2fs/var/spool               zfs     69G  768K   69G   1% /var/spool
+rpool/ROOT/ubuntu_85y2fs/var/snap                zfs     69G  2.8M   69G   1% /var/snap
+rpool/ROOT/ubuntu_85y2fs/var/www                 zfs     69G  256K   69G   1% /var/www
+    50|rpool/ROOT/ubuntu_85y2fs/var/mail                zfs     69G  256K   69G   1% /var/mail
+rpool/ROOT/ubuntu_85y2fs/var/lib/AccountsService zfs     69G  256K   69G   1% /var/lib/AccountsService
+rpool/ROOT/ubuntu_85y2fs/var/lib/NetworkManager  zfs     69G  512K   69G   1% /var/lib/NetworkManager
+rpool/var/lib/docker                             zfs     69G  768K   69G   1% /var/lib/docker
+rpool/ROOT/ubuntu_85y2fs/var/lib/apt             zfs     70G  1.7G   69G   3% /var/lib/apt
+rpool/ROOT/ubuntu_85y2fs/var/lib/dpkg            zfs     69G  192M   69G   1% /var/lib/dpkg
+tmpfs                                            tmpfs   16G     0   16G   0% /run/qemu
+bpool/BOOT/ubuntu_85y2fs                         zfs    1.8G  1.1G  722M  60% /boot
+/dev/sdb1                                        vfat   511M   16M  496M   4% /boot/efi
+user-data-pool                                   zfs    1.8T  353G  1.5T  20% /home/user/Data
+    60|tmpfs                                            tmpfs  3.2G  208K  3.2G   1% /run/user/1000
+
+5. GPUs & Graphics (Critical for your NVIDIA + AMD plan):
+00:16.0 Communication controller [0780]: Intel Corporation C600/X79 series chipset MEI Controller #1 [8086:1d3a] (rev 05)
+	Subsystem: Dell C600/X79 series chipset MEI Controller [1028:05d3]
+	Kernel driver in use: mei_me
+	Kernel modules: mei_me
+00:19.0 Ethernet controller [0200]: Intel Corporation 82579LM Gigabit Network Connection (Lewisville) [8086:1502] (rev 06)
+--
+00:1a.0 USB controller [0c03]: Intel Corporation C600/X79 series chipset USB2 Enhanced Host Controller #2 [8086:1d2d] (rev 06)
+    70|	Subsystem: Dell C600/X79 series chipset USB2 Enhanced Host Controller [1028:05d3]
+	Kernel driver in use: ehci-pci
+00:1b.0 Audio device [0403]: Intel Corporation C600/X79 series chipset High Definition Audio Controller [8086:1d20] (rev 06)
+	Subsystem: Dell C600/X79 series chipset High Definition Audio Controller [1028:05d3]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+00:1c.0 PCI bridge [0604]: Intel Corporation C600/X79 series chipset PCI Express Root Port 3 [8086:1d14] (rev b6)
+--
+00:1d.0 USB controller [0c03]: Intel Corporation C600/X79 series chipset USB2 Enhanced Host Controller #1 [8086:1d26] (rev 06)
+	Subsystem: Dell C600/X79 series chipset USB2 Enhanced Host Controller [1028:05d3]
+    80|	Kernel driver in use: ehci-pci
+00:1e.0 PCI bridge [0604]: Intel Corporation 82801 PCI Bridge [8086:244e] (rev a6)
+00:1f.0 ISA bridge [0601]: Intel Corporation C600/X79 series chipset LPC Controller [8086:1d41] (rev 06)
+	Subsystem: Dell C600/X79 series chipset LPC Controller [1028:05d3]
+	Kernel driver in use: lpc_ich
+	Kernel modules: lpc_ich
+00:1f.2 RAID bus controller [0104]: Intel Corporation C600/X79 series chipset SATA RAID Controller [8086:2826] (rev 06)
+	Subsystem: Dell C600/X79 series chipset SATA RAID Controller [1028:05d3]
+	Kernel driver in use: ahci
+	Kernel modules: ahci
+    90|00:1f.3 SMBus [0c05]: Intel Corporation C600/X79 series chipset SMBus Host Controller [8086:1d22] (rev 06)
+	Subsystem: Dell C600/X79 series chipset SMBus Host Controller [1028:05d3]
+	Kernel driver in use: i801_smbus
+	Kernel modules: i2c_i801
+01:00.0 Ethernet controller [0200]: Intel Corporation 82571EB/82571GB Gigabit Ethernet Controller D0/D1 (copper applications) [8086:105e] (rev 06)
+	Subsystem: Intel Corporation PRO/1000 PT Dual Port Server Adapter [8086:135e]
+	Kernel driver in use: e1000e
+	Kernel modules: e1000e
+01:00.1 Ethernet controller [0200]: Intel Corporation 82571EB/82571GB Gigabit Ethernet Controller D0/D1 (copper applications) [8086:105e] (rev 06)
+	Subsystem: Intel Corporation PRO/1000 PT Dual Port Server Adapter [8086:135e]
+   100|	Kernel driver in use: e1000e
+	Kernel modules: e1000e
+02:00.0 VGA compatible controller [0300]: NVIDIA Corporation GP102 [TITAN Xp] [10de:1b02] (rev a1)
+	Subsystem: NVIDIA Corporation GP102 [TITAN Xp] [10de:11df]
+	Kernel driver in use: nvidia
+	Kernel modules: nvidiafb, nouveau, nvidia_drm, nvidia
+02:00.1 Audio device [0403]: NVIDIA Corporation GP102 HDMI Audio Controller [10de:10ef] (rev a1)
+	Subsystem: NVIDIA Corporation GP102 HDMI Audio Controller [10de:11df]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+   110|05:00.0 USB controller [0c03]: Renesas Technology Corp. uPD720201 USB 3.0 Host Controller [1912:0014] (rev 03)
+	Subsystem: Dell uPD720201 USB 3.0 Host Controller [1028:05d3]
+	Kernel driver in use: xhci_hcd
+	Kernel modules: xhci_pci
+7f:08.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 0 [8086:0e80] (rev 04)
+--
+7f:0f.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Target Address/Thermal Registers [8086:0ea8] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Target Address/Thermal Registers [1028:05d3]
+7f:0f.1 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 RAS Registers [8086:0e71] (rev 04)
+	Subsystem: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 RAS Registers [8086:0000]
+   120|7f:0f.2 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+7f:0f.3 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+7f:0f.4 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+7f:0f.5 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+7f:10.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 0 [8086:0eb0] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 0 [1028:05d3]
+   130|	Kernel driver in use: ivbep_uncore
+7f:10.1 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 1 [8086:0eb1] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 1 [1028:05d3]
+	Kernel driver in use: ivbep_uncore
+7f:10.2 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 0 [8086:0eb2] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 0 [1028:05d3]
+7f:10.3 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 1 [8086:0eb3] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 1 [1028:05d3]
+7f:10.4 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 2 [8086:0eb4] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 2 [1028:05d3]
+   140|	Kernel driver in use: ivbep_uncore
+7f:10.5 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 3 [8086:0eb5] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 3 [1028:05d3]
+	Kernel driver in use: ivbep_uncore
+7f:10.6 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 2 [8086:0eb6] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 2 [1028:05d3]
+7f:10.7 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 3 [8086:0eb7] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 3 [1028:05d3]
+7f:13.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 R2PCIe [8086:0e1d] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 R2PCIe [1028:05d3]
+   150|7f:13.1 Performance counters [1101]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 R2PCIe [8086:0e34] (rev 04)
+--
+ff:0f.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Target Address/Thermal Registers [8086:0ea8] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Target Address/Thermal Registers [1028:05d3]
+ff:0f.1 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 RAS Registers [8086:0e71] (rev 04)
+	Subsystem: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 RAS Registers [8086:0000]
+ff:0f.2 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+ff:0f.3 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+   160|ff:0f.4 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+ff:0f.5 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [808... (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder Registers [1028:05d3]
+ff:10.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 0 [8086:0eb0] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 0 [1028:05d3]
+	Kernel driver in use: ivbep_uncore
+ff:10.1 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 1 [8086:0eb1] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 1 [1028:05d3]
+	Kernel driver in use: ivbep_uncore
+   170|ff:10.2 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 0 [8086:0eb2] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 0 [1028:05d3]
+ff:10.3 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 1 [8086:0eb3] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 1 [1028:05d3]
+ff:10.4 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 2 [8086:0eb4] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 2 [1028:05d3]
+	Kernel driver in use: ivbep_uncore
+ff:10.5 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 3 [8086:0eb5] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 Thermal Control 3 [1028:05d3]
+	Kernel driver in use: ivbep_uncore
+   180|ff:10.6 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 2 [8086:0eb6] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 2 [1028:05d3]
+ff:10.7 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 3 [8086:0eb7] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 Integrated Memory Controller 1 Channel 0-3 ERROR Registers 3 [1028:05d3]
+ff:13.0 System peripheral [0880]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 R2PCIe [8086:0e1d] (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 R2PCIe [1028:05d3]
+ff:13.1 Performance counters [1101]: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 R2PCIe [8086:0e34] (rev 04)
+NVIDIA status:
+Mon Jun 29 05:20:56 2026       
++---------------------------------------------------------------------------------------+
+   190|| NVIDIA-SMI 535.146.02             Driver Version: 535.146.02   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA TITAN Xp                Off | 00000000:02:00.0  On |                  N/A |
+| 23%   40C    P8              13W / 250W |    258MiB / 12288MiB |      5%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+   200|                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A   1281889      G   /usr/lib/xorg/Xorg                           61MiB |
+|    0   N/A  N/A   1282161      G   /usr/bin/gnome-shell                         63MiB |
+|    0   N/A  N/A   1284087      G   easyeffects                                   3MiB |
+|    0   N/A  N/A   1300143      G   gjs                                         109MiB |
+   210|+---------------------------------------------------------------------------------------+
+AMD status:
+No AMD GPU detected in lspci.
+
+6. PCIe/Expansion Capabilities:
+00:00.0 Host bridge: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 DMI2 (rev 04)
+00:01.0 PCI bridge: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 PCI Express Root Port 1a (rev 04)
+00:02.0 PCI bridge: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 PCI Express Root Port 2a (rev 04)
+00:03.0 PCI bridge: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 PCI Express Root Port 3a (rev 04)
+00:05.0 System peripheral: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 VTd/Memory Map/Misc (rev 04)
+   220|00:05.2 System peripheral: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 IIO RAS (rev 04)
+00:05.4 PIC: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 IOAPIC (rev 04)
+00:11.0 PCI bridge: Intel Corporation C600/X79 series chipset PCI Express Virtual Root Port (rev 06)
+00:16.0 Communication controller: Intel Corporation C600/X79 series chipset MEI Controller #1 (rev 05)
+00:19.0 Ethernet controller: Intel Corporation 82579LM Gigabit Network Connection (Lewisville) (rev 06)
+00:1a.0 USB controller: Intel Corporation C600/X79 series chipset USB2 Enhanced Host Controller #2 (rev 06)
+00:1b.0 Audio device: Intel Corporation C600/X79 series chipset High Definition Audio Controller (rev 06)
+00:1c.0 PCI bridge: Intel Corporation C600/X79 series chipset PCI Express Root Port 3 (rev b6)
+00:1d.0 USB controller: Intel Corporation C600/X79 series chipset USB2 Enhanced Host Controller #1 (rev 06)
+00:1e.0 PCI bridge: Intel Corporation 82801 PCI Bridge (rev a6)
+   230|00:1f.0 ISA bridge: Intel Corporation C600/X79 series chipset LPC Controller (rev 06)
+00:1f.2 RAID bus controller: Intel Corporation C600/X79 series chipset SATA RAID Controller (rev 06)
+00:1f.3 SMBus: Intel Corporation C600/X79 series chipset SMBus Host Controller (rev 06)
+01:00.0 Ethernet controller: Intel Corporation 82571EB/82571GB Gigabit Ethernet Controller D0/D1 (copper applications) (rev 06)
+01:00.1 Ethernet controller: Intel Corporation 82571EB/82571GB Gigabit Ethernet Controller D0/D1 (copper applications) (rev 06)
+PCIe details:
+7f:08.0 System peripheral: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 0 (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 0
+7f:09.0 System peripheral: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 1 (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 1
+   240|ff:08.0 System peripheral: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 0 (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 0
+ff:09.0 System peripheral: Intel Corporation Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 1 (rev 04)
+	Subsystem: Dell Xeon E7 v2/Xeon E5 v2/Core i7 QPI Link 1
+
+7. Motherboard & BIOS:
+
+8. Kernel & OS:
+Linux thumper 6.2.0-39-generic #40~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Nov 16 10:53:04 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 22.04.3 LTS"
+   250|NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.3 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+   260|UBUNTU_CODENAME=jammy
+
+9. Additional Hardware:
+Bus 002 Device 003: ID 0430:0005 Sun Microsystems, Inc. Type 6 Keyboard
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 005: ID 0a12:0001 Cambridge Silicon Radio, Ltd Bluetooth Dongle (HCI mode)
+Bus 001 Device 004: ID 0424:2504 Microchip Technology, Inc. (formerly SMSC) 
+   270|Bus 001 Device 003: ID 0bda:0184 Realtek Semiconductor Corp. RTS5182 Card Reader
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+==================================================
+=== End of Report - Paste this full output back ===

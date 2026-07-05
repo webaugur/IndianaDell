@@ -1,0 +1,111 @@
+# FactoryDocs pre-crash manifest
+# Recovered from Grok session history (2026-07-02 sort run)
+# Original sorted packages: 101
+# On disk now: 18
+# Matched to manifest: 10
+# Need re-download: 91
+
+## Present / matched
+OK   Dell-Management/Windows/_duplicates/Dell-Command-Update-Application_RXT5N_WIN64_5.7.0_A00.EXE  (as Dell-Management/Windows/Dell-Command-Update-Application_RXT5N_WIN64_5.7.0_A00.EXE)
+OK   Expansion-Cards/PCIe-Serial/Documentation/serial-pcie-setup_en-us.pdf
+OK   Expansion-Cards/Thunderbolt/Documentation/thunderbolt-pciecard.pdf
+OK   Network/Intel-Ethernet/Windows/_duplicates/Intel-PCIe-Ethernet-Network-Driver_VP20T_WIN_24.1.0.0_A13_04.EXE  (as Network/Intel-Ethernet/Windows/Intel-PCIe-Ethernet-Network-Driver_VP20T_WIN_24.1.0.0_A13_04.EXE)
+OK   Storage/Intel-RST/Windows/_duplicates/Intel-Rapid-Storage-Technology-Driver-and-Management_2206F_WIN_5.5.4.1037_A09_05.EXE  (as Storage/Intel-RST/Windows/Intel-Rapid-Storage-Technology-Driver-and-Management_2206F_WIN_5.5.4.1037_A09_05.EXE)
+OK   System-T5810/Chipset/Windows/_duplicates/Chipset_Driver_YV36W_WN32_10.1.2.10_A01.EXE  (as System-T5810/Chipset/Windows/Chipset_Driver_YV36W_WN32_10.1.2.10_A01.EXE)
+OK   System-T5810/Chipset/Windows/_duplicates/Intel-Management-Engine-Components-Installer_4J8MX_WIN_11.7.0.1035_A00_08.EXE  (as System-T5810/Chipset/Windows/Intel-Management-Engine-Components-Installer_4J8MX_WIN_11.7.0.1035_A00_08.EXE)
+OK   System-T5810/Documentation/dtrhost-cards-wp.pdf
+OK   System-T5810/Documentation/precision-t5810-om-pub-en-us.pdf
+OK   System-T5810/Documentation/wyseraspub_en-us.pdf
+
+## Missing
+MISS Audio/Windows/Audio_CREATIVE_W7_W8_W81_A00_Setup-241T2_ZPE.exe
+MISS Audio/Windows/Audio_Driver_DDG39_WN32_6.0.1.6111_A06_01.EXE
+MISS Dell-Management/Windows/Dell-Command-Configure_DX4T3_WIN_4.2.1.568_A00_02.EXE
+MISS Dell-Management/Windows/Dell-Command-Integration-Suite-for-System-Center_WC8FR_WIN_6.3.0_A00_02.EXE
+MISS Dell-Management/Windows/Dell-Command-Intel-vPro-Out-of-Band_MFK2N_WIN_4.3.0_A00_02.EXE
+MISS Dell-Management/Windows/Dell-Command-Monitor_70PH6_WIN_10.2.1.80_A00_03.EXE
+MISS Dell-Management/Windows/Dell-Command-Update-Application_RXT5N_WIN64_5.7.0_A00 (1).EXE
+MISS Dell-Management/Windows/Dell-Command-Update-Windows-Universal-Application_FGK9X_WIN64_5.7.0_A00 (1).EXE
+MISS Dell-Management/Windows/DellCommandPowerShellProvider2.2_328.zip
+MISS Dell-Management/Windows/Dell_Client_Management_Pack_v6.3_A00.exe
+MISS Dell-Management/Windows/Dell_Repository_Manager_2.1.0.451.exe
+MISS Dell-Management/Windows/STInstaller-1.12.0.21 (1).zip
+MISS Dell-Management/Windows/_duplicates/Dell-Command-Update-Windows-Universal-Application_FGK9X_WIN64_5.7.0_A00.EXE
+MISS Dell-Management/Windows/_duplicates/STInstaller-1.12.0.21.zip
+MISS Expansion-Cards/PCIe-Serial/Windows/Dell-PCIe-Serial-Card-Driver-for-Windows_9RC37_WIN_1.2.1213.2016_A02_02.EXE
+MISS Expansion-Cards/Thunderbolt/Firmware/MSM16020004_ZPE.exe
+MISS Expansion-Cards/Thunderbolt/Firmware/Tera1_and_Tera2_Firmware_4.1.0_14079_GA_ZPE.exe
+MISS Expansion-Cards/Thunderbolt/Firmware/Tera1_and_Tera2_Firmware_4.7.0-16934_GA_ZPE.exe
+MISS GPU/AMD-FirePro/Windows/AMD-FirePro-Driver-17-10-for-Windows7-and-Windows10_KW1W7_WIN_17.100.1730.1004_A00.EXE
+MISS GPU/AMD-FirePro/Windows/Video_Driver_C5FPW_WN32_16.400.2802_A00 (1).EXE
+MISS GPU/AMD-FirePro/Windows/_duplicates/Video_Driver_C5FPW_WN32_16.400.2802_A00.EXE
+MISS GPU/NVIDIA-GeForce/Windows/nVIDIA-GeForce-Desktop-Graphics-Driver_FHGPF_WIN_23.21.13.9125_A00.EXE
+MISS GPU/NVIDIA-Quadro/Windows/M2000-M4000-M5000-M6000-P600-P1000-P2000_XDN6P_WIN_377.11_A01.EXE
+MISS GPU/NVIDIA-Quadro/Windows/NVIDIA-Quadro-Graphics-Driver_M4WN4_WIN_23.21.13.9125_A00_02.EXE
+MISS GPU/NVIDIA-Quadro/Windows/Video_Firmware_NV_Quadro_P5000_A01_VF004.zip
+MISS GPU/NVIDIA-Quadro/Windows/Video_Firmware_NV_Quadro_P6000_A01_W67PF.zip
+MISS Input/Windows/Input_Driver_99H03_WN32_16.2.52.250_A00.EXE
+MISS Input/Windows/Input_Driver_MTM06_WN64_3.0.0_A04.EXE
+MISS Input/Windows/Input_Driver_MYDH5_WN32_15.2.32.250_A02.EXE
+MISS Network/Intel-Ethernet/Cross-platform/Intel PRO2500 WMPTV_ZPE.exe
+MISS Network/Intel-Ethernet/Windows/Intel-Ethernet-Network-Adapter-Driver_F7F9N_WIN_22.9.16.1_A02_08.EXE
+MISS Network/Intel-Ethernet/Windows/Intel-PCIe-Ethernet-Network-Driver_VP20T_WIN_24.1.0.0_A13_04 (1).EXE
+MISS Optical/BD-RE/Firmware/BD-RE_BH40N_A1B2_6WV1M_ZPE.exe
+MISS Optical/DVD/Firmware/DH-16AES-DD12_ZPE.exe
+MISS Storage/HDD-Firmware/Cross-platform/SAS-Drive_Firmware_2N3CV_WN64_A3AE_A00.EXE
+MISS Storage/HDD-Firmware/Cross-platform/SAS-Drive_Firmware_G8XK9_WN64_EJ39_A00_01.EXE
+MISS Storage/HDD-Firmware/Cross-platform/Seagate ST500DM009_ST1000DM010 CP31H_ZPE.exe
+MISS Storage/HDD-Firmware/Cross-platform/SeagateFirmwareUpdate_SeaFlash_Dell_YarraX_SDM10393_12-11-2015_11-47-28_ZPE.exe
+MISS Storage/Intel-PCIe-SSD-Driver/Windows/Intel-HHHL-PCIe-Solid-State-Drive-Driver_TKTW0_WIN_1.8.0.1011_A00.EXE
+MISS Storage/Intel-RST/Windows/Intel-Rapid-Storage-Technology-Driver-and-Management_2206F_WIN_5.5.4.1037_A09_05 (1).EXE
+MISS Storage/Intel-RST/Windows/Intel-Rapid-Storage-Technology-enterprise-Driver_MYJ0N_WIN_4.6.0.1048_A01_02.EXE
+MISS Storage/RAID-Controller-PERC/Windows/Storage-Controller_Driver_WP7HD_WN32_6.711.6.0_A03.EXE
+MISS Storage/SSD-Firmware/Cross-platform/Intel SSDPEDMD400G4D HR8RY_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Intel SSDSC2KF128256512G8 and SSDSCKKF128256512G8 3GT1X_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Intel SSDSC2KF256H6DN_SSDSC2KF512H6DN_SSDSC2KF360H6DN_SSDSCKKF256H6DN_SSDSCKKF512H6DN_SSDSCKKF180H6DN_SSDSCKKF360H6DN JKWPK_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/LiteOn CA3-8D256-Q11_CA3-8D512-Q11 W3WWY_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/LiteOn CV3 FCX34_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Micron1100 CC18P_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SK Hynix PC300 CYMW4_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SK Hynix PC401 MCXM8_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SK Hynix_SC311_J5YR3_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SK Hynix_SC313 SED_34X4J_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SKHynix_PC400_40002E00_4PFN7_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SK_hynix_SATA_FW_Updater_30001P10_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Samsung SM871 DC96V_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SanDisk A400 3954G_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/SanDisk X400 HV8F3_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Toshiba KSG60ZSE256G_KSG60ZSE512G_KSG60ZMV256G_KSG60ZMV512G N91D4_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Toshiba KXG50ZNV256G_KXG50ZNV512G_KXG50ZNV1T02 7YXTM_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Toshiba KXG5AZNV256G_KXG5AZNV512G_KXG5AZNV1T02 4JGV3_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/Toshiba XG4 non-SED 9VNJH_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/WD MZ500S TW5TH_ZPE.exe
+MISS Storage/SSD-Firmware/Cross-platform/WD XL1000C 1851N_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/15.201.2401_Desktop_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/57DA4105-64bit_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/CWX68_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/FW_Flash_9341_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/FW_Flash_9361_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/FimwareUpdateUtility_3.00.0000_ZPE.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/FlashVer3.3.28.zip
+MISS System-T5810/BIOS-Firmware/Cross-platform/GRV83_DBE_T5810_BSU_1.0.0.exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/PlatTagsSWB40460.zip
+MISS System-T5810/BIOS-Firmware/Cross-platform/T5810A34 (1).exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/_duplicates/T5810A34 (2).exe
+MISS System-T5810/BIOS-Firmware/Cross-platform/_duplicates/T5810A34 (3).exe
+MISS System-T5810/Chipset/Windows/Chipset_Driver_8W65V_1.0.0.1024_A00_ZPE.exe
+MISS System-T5810/Chipset/Windows/Chipset_Driver_YV36W_WN32_10.1.2.10_A01 (1).EXE
+MISS System-T5810/Chipset/Windows/Intel-Management-Engine-Components-Installer_4J8MX_WIN_11.7.0.1035_A00_08 (1).EXE
+MISS System-T5810/Security-TPM/Windows/DBUtil-Removal-Utility_8GG09_WIN_2.5.0_A03_02.EXE
+MISS System-T5810/Security-TPM/Windows/Dell-Encryption-11.11.0.1 (1).zip
+MISS System-T5810/Security-TPM/Windows/Dell-Encryption-11.13.0.1.zip (1).zip
+MISS System-T5810/Security-TPM/Windows/Dell-Security-Advisory-Update-DSA-2020-059_1GWG9_WIN64_1.0.0.0_A00_03.EXE
+MISS System-T5810/Security-TPM/Windows/DellTpm1.2_Fw5.81.0.0.exe
+MISS System-T5810/Security-TPM/Windows/DellTpm1.2_Fw5.81.2.1_V3_64.exe
+MISS System-T5810/Security-TPM/Windows/DellTpm1.2_Fw5.81.2.1_V5_64.exe
+MISS System-T5810/Security-TPM/Windows/DellTpm2.0_Fw1.3.2.8_V1_64.exe
+MISS System-T5810/Security-TPM/Windows/DellTpm2.0_Fw1.3.2.8_V3_64.exe
+MISS System-T5810/Security-TPM/Windows/_duplicates/Dell-Encryption-11.11.0.1.zip
+MISS System-T5810/Security-TPM/Windows/_duplicates/Dell-Encryption-11.13.0.1.zip.zip
+MISS System-T5810/WinPE/WinPE10.0-Drivers-A25-F0XPX.CAB
+MISS System-T5810/Windows-10/T5810-win10-A05-774GJ.CAB

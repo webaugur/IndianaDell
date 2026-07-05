@@ -1,0 +1,69 @@
+Dell Precision Tower
+5810/7810/7910/1700MT/1700SFF/3620MT
+and Rack 7910
+Thunderbolt Add-In-Cards Setup Guide
+
+
+
+
+June 2023
+Rev. A05
+                                                                                                                                  1
+Topics:
+•   Setting up the Thunderbolt Add-In-Card
+
+
+
+Setting up the Thunderbolt Add-In-Card
+This section describes in brief on how to install the thunderbolt add-in-cards on a Dell Precision Tower 5810, 7810, 7910, Rack
+7910, T1700 MT, T1700 SFF and 3620 MT.
+Pre-requisite actions before setting up a Thunderbolt card:
+1. To utilize a Thunderbolt Add-In-Card (AIC) make sure you have a compatible Thunderbolt system board.
+
+
+
+
+2. Install Thunderbolt software before installing the Add-In-Card (AIC).
+    NOTE: Thunderbolt card supports windows operating system only. Linux operating system is not supported.
+
+To setup a Thunderbolt Add-In-Card
+1. Connect the GPIO cable to the GPIO header on the system board.
+      NOTE: There is a 5-Pin keyed GPIO cable, one end goes to the card, and the other end goes to the GPIO header on the
+      system board.
+       ● For Precision Tower 7910: the Thunderbolt AIC is placed in CPU1 slot 3
+       ● For Precision Tower 5810/T7810: the Thunderbolt AIC is placed in CPU1 slot 5
+       ● For Precision Rack 7910: the Thunderbolt AIC NOT supported
+       ● For Precision T1700 MT: the Thunderbolt AIC is placed in slot 4
+       ● For Precision T1700 SFF: the Thunderbolt AIC is placed in slot 1
+       ● For Precision T3620 MT: the Thunderbolt add in card (AIC) is placed in slot 3
+
+
+
+
+2
+2. Connect the display port to DisplayPort cable.
+
+
+
+
+Finding More Information and Resources
+See the safety and regulatory documents that shipped with your computer and the regulatory compliance website at
+www.dell.com/regulatory_compliance for more information on:
+● Safety best practices
+● Regulatory certification
+● Ergonomics
+See Dell.com for additional information on:
+
+
+
+                                                                                                                   3
+● Warranty
+● Terms and Conditions (U.S. only)
+● End User License Agreement
+Additional information on your product is available at https://www.dell.com/support.
+
+
+
+
+4
+

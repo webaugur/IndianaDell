@@ -1,0 +1,6 @@
+yaru-theme-gtk
+yaru-theme-icon
+yaru-theme-gnome-shell
+yaru-theme-sound
+gnome-shell
+ubuntu-desktop-minimal

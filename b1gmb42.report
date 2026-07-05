@@ -1,0 +1,347 @@
+=== Dell Workstation Inventory Script ===
+User: root | Date: Fri Jul  3 03:10:01 AM EDT 2026 | Hostname: Tower5810
+==================================================
+1. System Identification:
+	Manufacturer: Dell Inc.
+	Product Name: Precision Tower 5810
+	Version: Not Specified
+	Serial Number: B1GMB42
+	UUID: 4c4c4544-0031-4710-804d-c2c04f423432
+	SKU Number: 0617
+
+2. CPU:
+CPU(s):                                  16
+On-line CPU(s) list:                     0-15
+Model name:                              Intel(R) Xeon(R) CPU E5-1660 v3 @ 3.00GHz
+Thread(s) per core:                      2
+Core(s) per socket:                      8
+Socket(s):                               1
+CPU(s) scaling MHz:                      63%
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-15
+
+3. Memory/RAM:
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       4.2Gi        10Gi       175Mi       1.2Gi        10Gi
+Swap:          4.0Gi          0B       4.0Gi
+Detailed DIMMs:
+	Size: 4 GB
+	Locator: DIMM1
+	Bank Locator: Not Specified
+	Speed: 2133 MT/s
+	Manufacturer: Hynix Semiconductor
+	Part Number: HMA451R7MFR8N-TF   
+	Configured Memory Speed: 2133 MT/s
+	Size: No Module Installed
+	Locator: DIMM5
+	Bank Locator: Not Specified
+	Size: 4 GB
+	Locator: DIMM3
+	Bank Locator: Not Specified
+	Speed: 2133 MT/s
+	Manufacturer: Hynix Semiconductor
+	Part Number: HMA451R7MFR8N-TF   
+	Configured Memory Speed: 2133 MT/s
+	Size: No Module Installed
+	Locator: DIMM7
+	Bank Locator: Not Specified
+	Size: 4 GB
+	Locator: DIMM2
+	Bank Locator: Not Specified
+	Speed: 2133 MT/s
+	Manufacturer: Hynix Semiconductor
+	Part Number: HMA451R7MFR8N-TF   
+	Configured Memory Speed: 2133 MT/s
+	Size: No Module Installed
+	Locator: DIMM6
+	Bank Locator: Not Specified
+
+4. Storage:
+NAME     SIZE MODEL                   TRAN   ROTA TYPE
+loop0      4K                                   0 loop
+loop1   66.8M                                   0 loop
+loop2   16.5M                                   0 loop
+loop3  606.1M                                   0 loop
+loop4   91.7M                                   0 loop
+loop5   49.3M                                   0 loop
+loop6    580K                                   0 loop
+loop7   18.8M                                   0 loop
+loop8   15.7M                                   0 loop
+loop9    395M                                   0 loop
+loop10  19.6M                                   0 loop
+loop11 273.7M                                   0 loop
+sda    238.5G TEAM T253X6256G         sata      0 disk
+sdb      1.4T Hitachi HDS723015BLA642 sata      1 disk
+sdc    465.8G ST500DM002-1BD142       sata      1 disk
+sdd       30G USB 2.0 FD              usb       1 disk
+sde        0B Compact Flash           usb       1 disk
+sdf        0B SM/xD-Picture           usb       1 disk
+sdg        0B SD/MMC                  usb       1 disk
+sdh        0B M.S./M.S.Pro/HG         usb       1 disk
+Filesystem                                       Type      Size  Used Avail Use% Mounted on
+tmpfs                                            tmpfs     3.1G  4.1M  3.1G   1% /run
+rpool/ROOT/ubuntu_cortt9                         zfs       1.3T  3.7G  1.3T   1% /
+tmpfs                                            tmpfs     7.6G  149M  7.4G   2% /dev/shm
+efivarfs                                         efivarfs  256K   71K  181K  29% /sys/firmware/efi/efivars
+none                                             tmpfs     1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
+none                                             tmpfs     1.0M     0  1.0M   0% /run/credentials/systemd-resolved.service
+rpool/ROOT/ubuntu_cortt9/var/lib                 zfs       1.3T  1.6G  1.3T   1% /var/lib
+rpool/USERDATA/home_ulmkkv                       zfs       1.4T   12G  1.3T   1% /home
+rpool/ROOT/ubuntu_cortt9/var/log                 zfs       1.3T  4.7M  1.3T   1% /var/log
+rpool/ROOT/ubuntu_cortt9/usr/local               zfs       1.3T  256K  1.3T   1% /usr/local
+rpool/ROOT/ubuntu_cortt9/var/games               zfs       1.3T  128K  1.3T   1% /var/games
+rpool/ROOT/ubuntu_cortt9/var/mail                zfs       1.3T  128K  1.3T   1% /var/mail
+rpool/ROOT/ubuntu_cortt9/var/www                 zfs       1.3T  128K  1.3T   1% /var/www
+rpool/ROOT/ubuntu_cortt9/srv                     zfs       1.3T  128K  1.3T   1% /srv
+rpool/USERDATA/root_ulmkkv                       zfs       1.3T  256K  1.3T   1% /root
+rpool/ROOT/ubuntu_cortt9/var/spool               zfs       1.3T  128K  1.3T   1% /var/spool
+rpool/ROOT/ubuntu_cortt9/var/snap                zfs       1.3T  2.2M  1.3T   1% /var/snap
+bpool/BOOT/ubuntu_cortt9                         zfs       1.8G  136M  1.7G   8% /boot
+rpool/ROOT/ubuntu_cortt9/var/lib/NetworkManager  zfs       1.3T  256K  1.3T   1% /var/lib/NetworkManager
+rpool/ROOT/ubuntu_cortt9/var/lib/dpkg            zfs       1.3T   36M  1.3T   1% /var/lib/dpkg
+rpool/ROOT/ubuntu_cortt9/var/lib/AccountsService zfs       1.3T  128K  1.3T   1% /var/lib/AccountsService
+rpool/ROOT/ubuntu_cortt9/var/lib/apt             zfs       1.3T   77M  1.3T   1% /var/lib/apt
+tmpfs                                            tmpfs     7.6G  5.1M  7.6G   1% /tmp
+/dev/sdb1                                        vfat      1.1G  6.4M  1.1G   1% /boot/efi
+tmpfs                                            tmpfs     1.6G  100K  1.6G   1% /run/user/1000
+/dev/sdd3                                        exfat      24G   11G   14G  44% /run/media/user/DOSBOOT
+/dev/sdd1                                        exfat     6.0G  5.5G  464M  93% /run/media/user/Ventoy
+ZFS pools:
+  pool: bpool
+ state: ONLINE
+config:
+
+	NAME                            STATE     READ WRITE CKSUM
+	bpool                           ONLINE       0     0     0
+	  wwn-0x5000cca368c13273-part2  ONLINE       0     0     0
+
+errors: No known data errors
+
+  pool: rpool
+ state: ONLINE
+config:
+
+	NAME                                        STATE     READ WRITE CKSUM
+	rpool                                       ONLINE       0     0     0
+	  wwn-0x5000cca368c13273-part4              ONLINE       0     0     0
+	special	
+	  ata-TEAM_T253X6256G_TPBF2112170051000007  ONLINE       0     0     0
+
+errors: No known data errors
+NAME                                         SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+bpool                                       1.88G   137M  1.74G        -         -     7%     7%  1.00x    ONLINE  -
+  wwn-0x5000cca368c13273-part2                 2G   137M  1.74G        -         -     7%  7.11%      -    ONLINE        -
+rpool                                       1.58T  16.4G  1.57T        -         -     0%     1%  1.00x    ONLINE  -
+  wwn-0x5000cca368c13273-part4              1.36T  16.3G  1.34T        -         -     0%  1.18%      -    ONLINE        -
+special                                         -      -      -        -         -      -      -      -         -        -
+  ata-TEAM_T253X6256G_TPBF2112170051000007   238G  29.6M   238G        -         -     0%  0.01%      -    ONLINE        -
+NAME   PROPERTY              VALUE                 SOURCE
+rpool  encryption            off                   default
+rpool  special_small_blocks  32K                   local
+rpool  compression           lz4                   local
+
+5. GPUs & Graphics:
+00:11.4 SATA controller [0106]: Intel Corporation C610/X99 series chipset sSATA Controller [AHCI mode] [8086:8d62] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: ahci
+	Kernel modules: ahci
+00:14.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB xHCI Host Controller [8086:8d31] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: xhci_hcd
+	Kernel modules: xhci_pci
+00:16.0 Communication controller [0780]: Intel Corporation C610/X99 series chipset MEI Controller #1 [8086:8d3a] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: mei_me
+	Kernel modules: mei_me
+--
+00:1a.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #2 [8086:8d2d] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: ehci-pci
+	Kernel modules: ehci_pci
+00:1b.0 Audio device [0403]: Intel Corporation C610/X99 series chipset HD Audio Controller [8086:8d20] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+--
+00:1d.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #1 [8086:8d26] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: ehci-pci
+	Kernel modules: ehci_pci
+00:1f.0 ISA bridge [0601]: Intel Corporation C610/X99 series chipset LPC Controller [8086:8d44] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: lpc_ich
+	Kernel modules: lpc_ich
+00:1f.2 SATA controller [0106]: Intel Corporation C610/X99 series chipset 6-Port SATA Controller [AHCI mode] [8086:8d02] (rev 05)
+	Subsystem: Dell Device [1028:0617]
+	Kernel driver in use: ahci
+	Kernel modules: ahci
+00:1f.3 SMBus [0c05]: Intel Corporation C610/X99 series chipset SMBus Controller [8086:8d22] (rev 05)
+	Subsystem: Dell Precision T5810 [1028:0617]
+	Kernel driver in use: i801_smbus
+	Kernel modules: i2c_i801
+01:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Pitcairn LE GL [FirePro W5000] [1002:6809]
+	Subsystem: Dell Device [1028:0b06]
+	Kernel driver in use: amdgpu
+	Kernel modules: radeon, amdgpu
+01:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Oland/Hainan/Cape Verde/Pitcairn HDMI Audio [Radeon HD 7000 Series] [1002:aab0]
+	Subsystem: Dell Device [1028:aab0]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+02:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Bonaire [FirePro W5100] [1002:6649]
+	Subsystem: Dell Device [1028:230c]
+	Kernel driver in use: amdgpu
+	Kernel modules: radeon, amdgpu
+02:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Tobago HDMI Audio [Radeon R7 360 / R9 360 OEM] [1002:aac0]
+	Subsystem: Dell Device [1028:aac0]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+03:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Pitcairn LE GL [FirePro W5000] [1002:6809]
+	Subsystem: Dell Device [1028:0b06]
+	Kernel driver in use: amdgpu
+	Kernel modules: radeon, amdgpu
+03:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Oland/Hainan/Cape Verde/Pitcairn HDMI Audio [Radeon HD 7000 Series] [1002:aab0]
+	Subsystem: Dell Device [1028:aab0]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+--
+ff:13.0 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Target Address, Thermal & RAS Registers [8086:2fa8] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Target Address, Thermal & RAS Registers [8086:2fa8]
+ff:13.1 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Target Address, Thermal & RAS Registers [8086:2f71] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Target Address, Thermal & RAS Registers [8086:2f71]
+ff:13.2 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2faa] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2faa]
+ff:13.3 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2fab] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2fab]
+ff:13.4 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2fac] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2fac]
+ff:13.5 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2fad] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel Target Address Decoder [8086:2fad]
+ff:13.6 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO Channel 0/1 Broadcast [8086:2fae] (rev 02)
+ff:13.7 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO Global Broadcast [8086:2faf] (rev 02)
+ff:14.0 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 0 Thermal Control [8086:2fb0] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 0 Thermal Control [8086:2fb0]
+	Kernel driver in use: hswep_uncore
+ff:14.1 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 1 Thermal Control [8086:2fb1] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 1 Thermal Control [8086:2fb1]
+	Kernel driver in use: hswep_uncore
+ff:14.2 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 0 ERROR Registers [8086:2fb2] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 0 ERROR Registers [8086:2fb2]
+ff:14.3 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 1 ERROR Registers [8086:2fb3] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 1 ERROR Registers [8086:2fb3]
+ff:14.4 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO (VMSE) 0 & 1 [8086:2fbc] (rev 02)
+ff:14.5 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO (VMSE) 0 & 1 [8086:2fbd] (rev 02)
+ff:14.6 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO (VMSE) 0 & 1 [8086:2fbe] (rev 02)
+--
+ff:15.0 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 2 Thermal Control [8086:2fb4] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 2 Thermal Control [8086:2fb4]
+	Kernel driver in use: hswep_uncore
+ff:15.1 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 3 Thermal Control [8086:2fb5] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 3 Thermal Control [8086:2fb5]
+	Kernel driver in use: hswep_uncore
+ff:15.2 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 2 ERROR Registers [8086:2fb6] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 2 ERROR Registers [8086:2fb6]
+ff:15.3 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 3 ERROR Registers [8086:2fb7] (rev 02)
+	Subsystem: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 0 Channel 3 ERROR Registers [8086:2fb7]
+ff:16.0 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 1 Target Address, Thermal & RAS Registers [8086:2f68] (rev 02)
+ff:16.6 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO Channel 2/3 Broadcast [8086:2f6e] (rev 02)
+ff:16.7 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO Global Broadcast [8086:2f6f] (rev 02)
+ff:17.0 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Integrated Memory Controller 1 Channel 0 Thermal Control [8086:2fd0] (rev 02)
+	Kernel driver in use: hswep_uncore
+ff:17.4 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO (VMSE) 2 & 3 [8086:2fb8] (rev 02)
+ff:17.5 System peripheral [0880]: Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DDRIO (VMSE) 2 & 3 [8086:2fb9] (rev 02)
+NVIDIA status:
+No nvidia-smi found.
+AMD DRI:
+total 0
+drwxr-xr-x  3 root root        180 Jul  3 02:50 .
+drwxr-xr-x 21 root root       5300 Jul  3 02:56 ..
+drwxr-xr-x  2 root root        180 Jul  3 02:50 by-path
+crw-rw----+ 1 root video  226,   1 Jul  3 02:50 card1
+crw-rw----+ 1 root video  226,   2 Jul  3 03:08 card2
+crw-rw----+ 1 root video  226,   3 Jul  3 02:50 card3
+crw-rw----+ 1 root render 226, 128 Jul  3 02:51 renderD128
+crw-rw----+ 1 root render 226, 129 Jul  3 02:51 renderD129
+crw-rw----+ 1 root render 226, 130 Jul  3 02:51 renderD130
+
+6. PCIe/Expansion:
+-+-[0000:00]-+-00.0  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 DMI2
+ |           +-01.0-[01]--+-00.0  Advanced Micro Devices, Inc. [AMD/ATI] Pitcairn LE GL [FirePro W5000]
+ |           |            \-00.1  Advanced Micro Devices, Inc. [AMD/ATI] Oland/Hainan/Cape Verde/Pitcairn HDMI Audio [Radeon HD 7000 Series]
+ |           +-02.0-[02]--+-00.0  Advanced Micro Devices, Inc. [AMD/ATI] Bonaire [FirePro W5100]
+ |           |            \-00.1  Advanced Micro Devices, Inc. [AMD/ATI] Tobago HDMI Audio [Radeon R7 360 / R9 360 OEM]
+ |           +-03.0-[03]--+-00.0  Advanced Micro Devices, Inc. [AMD/ATI] Pitcairn LE GL [FirePro W5000]
+ |           |            \-00.1  Advanced Micro Devices, Inc. [AMD/ATI] Oland/Hainan/Cape Verde/Pitcairn HDMI Audio [Radeon HD 7000 Series]
+ |           +-05.0  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Address Map, VTd_Misc, System Management
+ |           +-05.1  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Hot Plug
+ |           +-05.2  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 RAS, Control Status and Global Errors
+ |           +-05.4  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 I/O APIC
+ |           +-11.0  Intel Corporation C610/X99 series chipset SPSR
+ |           +-11.4  Intel Corporation C610/X99 series chipset sSATA Controller [AHCI mode]
+ |           +-14.0  Intel Corporation C610/X99 series chipset USB xHCI Host Controller
+ |           +-16.0  Intel Corporation C610/X99 series chipset MEI Controller #1
+ |           +-19.0  Intel Corporation Ethernet Connection I217-LM
+ |           +-1a.0  Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #2
+ |           +-1b.0  Intel Corporation C610/X99 series chipset HD Audio Controller
+ |           +-1c.0-[04]--
+ |           +-1c.1-[05-06]----00.0-[06]--
+ |           +-1c.4-[07]----00.0  Broadcom / LSI MegaRAID SAS 2208 [Thunderbolt]
+ |           +-1d.0  Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #1
+ |           +-1f.0  Intel Corporation C610/X99 series chipset LPC Controller
+ |           +-1f.2  Intel Corporation C610/X99 series chipset 6-Port SATA Controller [AHCI mode]
+ |           \-1f.3  Intel Corporation C610/X99 series chipset SMBus Controller
+ \-[0000:ff]-+-0b.0  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 R3 QPI Link 0 & 1 Monitoring
+             +-0b.1  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 R3 QPI Link 0 & 1 Monitoring
+             +-0b.2  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 R3 QPI Link 0 & 1 Monitoring
+             +-0c.0  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.1  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.2  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.3  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.4  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.5  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.6  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0c.7  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Unicast Registers
+             +-0f.0  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Buffered Ring Agent
+             +-0f.1  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 Buffered Ring Agent
+             +-0f.4  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 System Address Decoder & Broadcast Registers
+             +-0f.5  Intel Corporation Xeon E7 v3/Xeon E5 v3/Core i7 System Address Decoder & Broadcast Registers
+
+7. Motherboard & BIOS:
+	Manufacturer: Dell Inc.
+	Product Name: 0K240Y
+	Version: A01
+	Vendor: Dell Inc.
+	Version: A34
+	Release Date: 10/19/2020
+
+8. Kernel & OS:
+Linux Tower5810 7.0.0-27-generic #27-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 18 19:13:49 UTC 2026 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 26.04 LTS"
+NAME="Ubuntu"
+VERSION_ID="26.04"
+VERSION="26.04 (Resolute Raccoon)"
+VERSION_CODENAME=resolute
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=resolute
+LOGO=ubuntu-logo
+
+9. USB:
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 154b:007a PNY Classic Attache Flash Drive
+Bus 001 Device 003: ID 0a12:0001 Cambridge Silicon Radio, Ltd Bluetooth Dongle (HCI mode)
+Bus 001 Device 004: ID 0bda:0184 Realtek Semiconductor Corp. RTS5182 Card Reader
+Bus 001 Device 005: ID 0409:0050 NEC Corp. 7-port hub
+Bus 001 Device 006: ID 0d8c:0012 C-Media Electronics, Inc. USB Audio Device
+Bus 001 Device 007: ID 413c:2003 Dell Computer Corp. Keyboard SK-8115
+Bus 001 Device 008: ID 3938:1191  2.4G Wireless Mouse
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 002: ID 8087:800a Intel Corp. Hub
+Bus 004 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 002: ID 8087:8002 Intel Corp. 8 channel internal hub
+==================================================
+=== End of Report - Paste this full output back ===

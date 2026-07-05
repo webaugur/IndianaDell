@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/hackrf_sweep.dir/link.d CMakeFiles/hackrf_sweep.dir/hackrf_sweep.c.o -o hackrf_sweep  -Wl,-rpath,/home/user/Documents/IndianaDell/hackrf/build/libhackrf/src: ../../libhackrf/src/libhackrf.so.0.10.0 -lm /usr/lib/x86_64-linux-gnu/libfftw3f.so -lm /usr/lib/x86_64-linux-gnu/libfftw3f_threads.so

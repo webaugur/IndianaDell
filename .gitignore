@@ -1,0 +1,14 @@
+# Failed/incomplete downloads
+*.crdownload
+FactoryDocs/_incoming/
+
+# Nested git clones (re-fetch with scripts)
+hackrf/repos/
+
+# Generated / copy-to-sdcard payloads
+hackrf/sd-card/
+hackrf/releases/*.zip
+
+# Editor / session
+.grok/
+**/.DS_Store

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Yaru-wartybrown
+Type=X-GNOME-Metatheme
+Comment=Ubuntu Yaru-wartybrown theme
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=Yaru-wartybrown
+MetacityTheme=Yaru
+IconTheme=Yaru-wartybrown
+CursorTheme=Yaru
+CursorSize=24
+X-Yaru-Dark=false
+X-Yaru-Accent-Name=wartybrown
+X-Yaru-Accent-Color=#B39169
+X-Yaru-Accent-Color-Optimized=#8f6d4c

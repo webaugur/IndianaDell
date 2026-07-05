@@ -1,0 +1,20 @@
+=== IO test ===
+User: root | Date: Fri Jul  3 03:10:33 AM EDT 2026 | Host: Tower5810
+
+--- /dev/sda (238.5G, TEAM T253X6256G) ---
+256+0 records in
+256+0 records out
+268435456 bytes (268 MB, 256 MiB) copied, 0.527183 s, 509 MB/s
+
+--- /dev/sdb ( 1.4T, Hitachi HDS723015BLA642) ---
+143654912 bytes (144 MB, 137 MiB) copied, 1.03167 s, 139 MB/s
+256+0 records in
+256+0 records out
+268435456 bytes (268 MB, 256 MiB) copied, 1.85384 s, 145 MB/s
+
+--- /dev/sdc (465.8G, ST500DM002-1BD142) ---
+126877696 bytes (127 MB, 121 MiB) copied, 1.02358 s, 124 MB/s252706816 bytes (253 MB, 241 MiB) copied, 2.03746 s, 124 MB/s
+256+0 records in
+256+0 records out
+268435456 bytes (268 MB, 256 MiB) copied, 2.11917 s, 127 MB/s
+

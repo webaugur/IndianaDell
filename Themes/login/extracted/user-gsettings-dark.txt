@@ -1,0 +1,7 @@
+# User session dark-mode snapshot (2026-07-03T13:16:36-04:00)
+org.gnome.desktop.interface color-scheme 'prefer-dark'
+org.gnome.desktop.interface gtk-color-scheme ''
+org.gnome.desktop.interface gtk-theme 'Yaru-dark'
+org.gnome.desktop.interface icon-theme 'Yaru-dark'
+org.gnome.shell.ubuntu color-scheme 'prefer-dark'
+org.gnome.shell.ubuntu startup-sound ''
