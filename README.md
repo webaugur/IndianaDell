@@ -74,4 +74,4 @@ scripts/ventoy/install-ventoy-session.sh   # install ~/bin helpers + autostart +
 
 Autologin `ubuntu`, network-checked seed, Grok fullscreen autostart, and IndianaDell PATH.
 
-**Release:** `v1.0.3` — Ventoy persistence seed, network check, Grok autostart, PATH overrides, doc PDFs.
+**Release:** `v1.0.4` — runtime secret resolution (`/home/user` when rpool exists), Ventoy persistence seed, Grok autostart.
