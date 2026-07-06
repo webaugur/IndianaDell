@@ -48,6 +48,6 @@ fi
 GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new}"
 export GIT_SSH_COMMAND
 
-echo "Pushing ${BRANCH} to ${INDIANADELL_REMOTE} ..."
+echo "Pushing ${INDIANADELL_BRANCH} to ${INDIANADELL_REMOTE} ..."
 git push -u origin "${INDIANADELL_BRANCH}"
 echo "Done: ${INDIANADELL_WEB_URL}"
