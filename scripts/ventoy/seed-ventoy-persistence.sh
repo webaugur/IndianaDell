@@ -185,8 +185,9 @@ seed_external_dat() {
         sync_indianadell_to "$src" "$UPPER/home/ubuntu/Documents/IndianaDell" 1
     elif [[ ! -d "$UPPER/home/ubuntu/Documents/IndianaDell/.git" ]]; then
         sudo rm -rf "$UPPER/home/ubuntu/Documents/IndianaDell"
+        clone_url="${INDIANADELL_REMOTE:-git@github.com:webaugur/IndianaDell.git}"
         sudo -u ubuntu GIT_LFS_SKIP_SMUDGE=1 \
-            git clone https://github.com/webaugur/IndianaDell.git \
+            git clone "$clone_url" \
             "$UPPER/home/ubuntu/Documents/IndianaDell"
     fi
 

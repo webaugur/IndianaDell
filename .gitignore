@@ -9,6 +9,9 @@ hackrf/repos/
 hackrf/sd-card/
 hackrf/releases/*.zip
 
+# Rebuild log (local only)
+scripts/rebuild/last-run.log
+
 # Editor / session
 .grok/
 **/.DS_Store

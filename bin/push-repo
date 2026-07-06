@@ -3,47 +3,51 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-REMOTE="${INDIANADELL_REMOTE:-https://github.com/webaugur/IndianaDell.git}"
-BRANCH="${INDIANADELL_BRANCH:-main}"
+# shellcheck source=../scripts/github/remote.sh
+source "$REPO_DIR/scripts/github/remote.sh"
 
 cd "$REPO_DIR"
 
 if [[ -r "$HOME/bin/resolve-secrets.sh" ]]; then
-    # shellcheck source=/dev/null
-    source "$HOME/bin/resolve-secrets.sh"
-    materialize_secrets_to_runtime_home quiet
+  # shellcheck source=/dev/null
+  source "$HOME/bin/resolve-secrets.sh"
+  materialize_secrets_to_runtime_home quiet
 elif [[ -r "$REPO_DIR/scripts/ventoy/resolve-secrets.sh" ]]; then
-    # shellcheck source=/dev/null
-    source "$REPO_DIR/scripts/ventoy/resolve-secrets.sh"
-    materialize_secrets_to_runtime_home quiet
+  # shellcheck source=/dev/null
+  source "$REPO_DIR/scripts/ventoy/resolve-secrets.sh"
+  materialize_secrets_to_runtime_home quiet
 fi
 
 if ! command -v git >/dev/null; then
-    echo "error: git is required" >&2
-    exit 1
+  echo "error: git is required" >&2
+  exit 1
 fi
 
 if [[ ! -d .git ]]; then
-    echo "error: $REPO_DIR is not a git repository" >&2
+  echo "error: $REPO_DIR is not a git repository" >&2
+  exit 1
+fi
+
+indianadell_ensure_origin "$REPO_DIR"
+
+if indianadell_remote_needs_gh; then
+  if ! command -v gh >/dev/null; then
+    echo "HTTPS remote requires GitHub CLI. Install gh or set:" >&2
+    echo "  INDIANADELL_REMOTE=git@github.com:webaugur/IndianaDell.git" >&2
     exit 1
-fi
-
-if ! git remote get-url origin >/dev/null 2>&1; then
-    git remote add origin "$REMOTE"
-fi
-git remote set-url origin "$REMOTE"
-
-if command -v gh >/dev/null && ! gh auth status >/dev/null 2>&1; then
+  fi
+  if ! gh auth status >/dev/null 2>&1; then
     echo "GitHub CLI is not authenticated."
     echo "Run:  gh auth login"
-    echo "Then rerun:  bin/push-repo"
+    echo "Or use SSH:  INDIANADELL_REMOTE=git@github.com:webaugur/IndianaDell.git bin/push-repo"
     exit 1
+  fi
+  gh auth setup-git >/dev/null 2>&1 || true
 fi
 
-if command -v gh >/dev/null; then
-    gh auth setup-git >/dev/null 2>&1 || true
-fi
+GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new}"
+export GIT_SSH_COMMAND
 
-echo "Pushing ${BRANCH} to ${REMOTE} ..."
-git push -u origin "${BRANCH}"
-echo "Done: https://github.com/webaugur/IndianaDell"
+echo "Pushing ${BRANCH} to ${INDIANADELL_REMOTE} ..."
+git push -u origin "${INDIANADELL_BRANCH}"
+echo "Done: ${INDIANADELL_WEB_URL}"

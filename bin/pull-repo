@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Pull IndianaDell + nested GitHub repos (+ optional verify/docs).
+# Full sync:  bin/pull-repo --verify --build-docs
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+exec "$ROOT/scripts/github/pull-all.sh" "$@"

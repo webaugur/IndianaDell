@@ -63,11 +63,13 @@ Use `mount --overlay` only when already booted from `rpool` and a full chroot tr
 Full workspace (including FactoryDocs): https://github.com/webaugur/IndianaDell (private)
 
 ```bash
-gh auth login          # once per session
-bin/push-repo          # full git push (HTTPS via gh)
+bin/pull-repo --verify           # IndianaDell + hackrf/repos + LFS + stack verify
+bin/push-repo                    # push main (SSH default)
 ```
 
-Large FactoryDocs installers (>100 MB) use **Git LFS**. Run `git lfs install` after clone.
+HTTPS push (optional): `INDIANADELL_REMOTE=https://github.com/webaugur/IndianaDell.git` after `gh auth login`.
+
+Large FactoryDocs installers (>100 MB) use **Git LFS**. `bin/pull-repo` runs `git lfs pull`.
 
 ## How to verify
 
@@ -77,8 +79,8 @@ Boot Ventoy → Ubuntu 26.04 (persistence auto-selected). Then:
 findmnt / | grep -q cow && echo "persistence overlay active"
 grep AutomaticLogin=ubuntu /etc/gdm3/custom.conf
 echo "$INDIANADELL_ROOT"    # should be ~/Documents/IndianaDell
-which dellmerge push-repo grok
-gh auth status
+which dellmerge pull-repo push-repo grok
+bin/pull-repo --verify
 google-chrome --version
 ```
 

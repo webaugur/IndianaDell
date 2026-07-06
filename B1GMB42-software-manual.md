@@ -1251,11 +1251,13 @@ Use `mount --overlay` only when already booted from `rpool` and a full chroot tr
 Full workspace (including FactoryDocs): https://github.com/webaugur/IndianaDell (private)
 
 ``` bash
-gh auth login          # once per session
-bin/push-repo          # full git push (HTTPS via gh)
+bin/pull-repo --verify           # IndianaDell + hackrf/repos + LFS + stack verify
+bin/push-repo                    # push main (SSH default)
 ```
 
-Large FactoryDocs installers (\>100 MB) use **Git LFS**. Run `git lfs install` after clone.
+HTTPS push (optional): `INDIANADELL_REMOTE=https://github.com/webaugur/IndianaDell.git` after `gh auth login`.
+
+Large FactoryDocs installers (\>100 MB) use **Git LFS**. `bin/pull-repo` runs `git lfs pull`.
 
 ## How to verify
 
@@ -1265,8 +1267,8 @@ Boot Ventoy → Ubuntu 26.04 (persistence auto-selected). Then:
 findmnt / | grep -q cow && echo "persistence overlay active"
 grep AutomaticLogin=ubuntu /etc/gdm3/custom.conf
 echo "$INDIANADELL_ROOT"    # should be ~/Documents/IndianaDell
-which dellmerge push-repo grok
-gh auth status
+which dellmerge pull-repo push-repo grok
+bin/pull-repo --verify
 google-chrome --version
 ```
 
@@ -1300,57 +1302,59 @@ google-chrome --version
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  ---------------------------------------------------------------------------------------------------------------
-  Launcher                     Runs                                                     Chapter
-  ---------------------------- -------------------------------------------------------- -------------------------
-  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                     2
+  --------------------------------------------------------------------------------------------------------------------------
+  Launcher                     Runs                                                                Chapter
+  ---------------------------- ------------------------------------------------------------------- -------------------------
+  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                                2
 
-  `build-software-manual`      `scripts/docs/build-software-manual.sh`                  1
+  `build-software-manual`      `scripts/docs/build-software-manual.sh`                             1
 
-  `build-all-docs`             `scripts/docs/build-all-docs.sh`                         1, 3
+  `build-all-docs`             `scripts/docs/build-all-docs.sh`                                    1, 3
 
-  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell`          15
+  `pull-repo`                  `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS   15
 
-  `dellmerge`                  `scripts/dell/dellmerge.sh`                              12
+  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)       15
 
-  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                              6, 12
+  `dellmerge`                  `scripts/dell/dellmerge.sh`                                         12
 
-  `iotest`                     `scripts/storage/iotest.sh`                              12
+  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                         6, 12
 
-  `apply-amdgpu`               `etc/apply.sh`                                           6
+  `iotest`                     `scripts/storage/iotest.sh`                                         12
 
-  `amd-install`                `amd-radeon/install-all.sh`                              6
+  `apply-amdgpu`               `etc/apply.sh`                                                      6
 
-  `amd-preflight`              `amd-radeon/00-preflight.sh`                             6
+  `amd-install`                `amd-radeon/install-all.sh`                                         6
 
-  `amd-verify`                 `amd-radeon/04-verify.sh`                                6
+  `amd-preflight`              `amd-radeon/00-preflight.sh`                                        6
 
-  `amd-uninstall`              `amd-radeon/uninstall.sh`                                6
+  `amd-verify`                 `amd-radeon/04-verify.sh`                                           6
 
-  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                       5, 7
+  `amd-uninstall`              `amd-radeon/uninstall.sh`                                           6
 
-  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                 7
+  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                                  5, 7
 
-  `themes-extract`             `Themes/scripts/extract-all.sh`                          5
+  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                            7
 
-  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                   5
+  `themes-extract`             `Themes/scripts/extract-all.sh`                                     5
 
-  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`   5
+  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                              5
 
-  `hackrf-env`                 sources `hackrf/scripts/env.sh`                          10
+  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`              5
 
-  `urh`                        `hackrf/scripts/launch-urh.sh`                           10
+  `hackrf-env`                 sources `hackrf/scripts/env.sh`                                     10
 
-  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                           10
+  `urh`                        `hackrf/scripts/launch-urh.sh`                                      10
 
-  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                      10
+  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                                      10
 
-  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                       10
+  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                                 10
 
-  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                         10
+  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                                  10
 
-  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                         10
-  ---------------------------------------------------------------------------------------------------------------
+  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                                    10
+
+  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                                    10
+  --------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 

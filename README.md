@@ -44,14 +44,18 @@ echo "$INDIANADELL_ROOT"   # ~/Documents/IndianaDell
 which dellmerge gpu-stress push-repo
 ```
 
-## Push to GitHub
+## GitHub sync
 
-Repository: https://github.com/webaugur/IndianaDell (private)
+Repository: https://github.com/webaugur/IndianaDell (private). Default remote is **SSH** (`git@github.com:webaugur/IndianaDell.git`).
 
 ```bash
-gh auth login
-bin/push-repo
+bin/pull-repo                    # IndianaDell + hackrf/repos + git-lfs
+bin/pull-repo --verify           # + rebuild-machine --verify-only
+bin/pull-repo --build-docs       # + rebuild all manual PDFs
+bin/push-repo                    # push main (SSH; no gh required)
 ```
+
+HTTPS override: `INDIANADELL_REMOTE=https://github.com/webaugur/IndianaDell.git` (needs `gh auth login`).
 
 Large FactoryDocs installers use **Git LFS** (`git lfs install` after clone).
 

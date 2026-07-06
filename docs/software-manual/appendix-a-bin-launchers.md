@@ -7,7 +7,8 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `rebuild-machine` | `scripts/rebuild/rebuild-machine.sh` | 2 |
 | `build-software-manual` | `scripts/docs/build-software-manual.sh` | 1 |
 | `build-all-docs` | `scripts/docs/build-all-docs.sh` | 1, 3 |
-| `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` | 15 |
+| `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + nested repos + LFS | 15 |
+| `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default) | 15 |
 | `dellmerge` | `scripts/dell/dellmerge.sh` | 12 |
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |

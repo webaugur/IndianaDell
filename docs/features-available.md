@@ -16,7 +16,7 @@ Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell
 | **Rust 1.96** | `rustc` / `cargo` via `~/.cargo/env` — build SDR/ham projects (no starter crate workspace yet) |
 | **Build** | `cmake`, `gcc`, ARM cross-compiler (`arm-none-eabi-gcc`) for Mayhem firmware, `clang`/`llvm` for bindgen-style Rust |
 | **Docs/PDF** | `pandoc`, `xelatex` — `bin/build-all-docs` rebuilds all PDFs |
-| **GitHub CLI** | `gh` — authenticated as `webaugur`; `bin/push-repo` |
+| **GitHub sync** | `bin/pull-repo` (fetch all), `bin/push-repo` (SSH default); `gh` optional for HTTPS |
 | **Git LFS** | Large FactoryDocs installers in repo |
 | **Chrome** | `google-chrome-stable` |
 | **Grok** | `~/.grok/bin/grok` — autostart on Ventoy persistence boot |
