@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Build B1GMB42 retro trifold sales slick (HTML → PDF).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+HTML="${ROOT}/docs/sales/B1GMB42-trifold.html"
+OUT="${1:-${ROOT}/docs/sales/B1GMB42-SVAMANA-trifold.pdf}"
+
+if [[ ! -f "${HTML}" ]]; then
+  echo "Missing ${HTML}" >&2
+  exit 1
+fi
+
+if command -v google-chrome >/dev/null 2>&1; then
+  BROWSER=google-chrome
+elif command -v chromium >/dev/null 2>&1; then
+  BROWSER=chromium
+elif command -v chromium-browser >/dev/null 2>&1; then
+  BROWSER=chromium-browser
+else
+  echo "No Chrome/Chromium found. Open in browser and print:" >&2
+  echo "  file://${HTML}" >&2
+  exit 1
+fi
+
+"${BROWSER}" \
+  --headless=new \
+  --disable-gpu \
+  --force-device-scale-factor=2 \
+  --no-pdf-header-footer \
+  --print-to-pdf="${OUT}" \
+  "file://${HTML}"
+
+echo "Wrote ${OUT}"
+echo "HTML source: ${HTML}"
+echo "Print: landscape letter, 2 pages, fold into trifold (right panel = front cover)."

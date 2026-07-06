@@ -12,6 +12,15 @@ hackrf/releases/*.zip
 # Rebuild log (local only)
 scripts/rebuild/last-run.log
 
+# EFI timing reports (local baselines)
+*.timing
+B1GMB42.timing
+
+# Generated trifold PDFs — build with bin/build-trifold-slick
+B1GMB42-*-trifold.pdf
+B1GMB42-trifold-slick.pdf
+docs/sales/*.pdf
+
 # Editor / session
 .grok/
 **/.DS_Store
