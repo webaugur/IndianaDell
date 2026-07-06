@@ -165,6 +165,8 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/themes-install-boot` / `bin/themes-restore-boot` | Custom / stock Plymouth |
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
+| `bin/pull-repo` | Fetch IndianaDell + hackrf/repos + LFS (`--verify`, `--build-docs`) |
+| `bin/push-repo` | Push main to GitHub (SSH default) |
 
 PATH is automatic via `~/.config/indianadell/path.sh` (see `README.md`).
 
