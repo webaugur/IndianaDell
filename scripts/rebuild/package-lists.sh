@@ -12,7 +12,7 @@ APT_CORE=(
   libusb-1.0-0-dev libfftw3-dev libvolk-dev portaudio19-dev libsndfile1-dev
   libboost-dev libboost-program-options-dev
   pandoc texlive-latex-recommended texlive-fonts-recommended texlive-xetex
-  vulkan-tools mesa-utils mesa-utils-bin clinfo flatpak
+  vulkan-tools mesa-utils mesa-utils-bin clinfo flatpak gh
 )
 
 APT_SDR_HAM=(

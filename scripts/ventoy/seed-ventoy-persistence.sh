@@ -59,8 +59,10 @@ find_persist_dat() {
     fi
     for candidate in \
         /mnt/wiggly/persistence/ubuntu-26.04.dat \
+        /run/media/user/Wiggly/persistence/ubuntu-26.04.dat \
         /run/media/ubuntu/Wiggly/persistence/ubuntu-26.04.dat \
-        /media/ubuntu/Wiggly/persistence/ubuntu-26.04.dat; do
+        /media/ubuntu/Wiggly/persistence/ubuntu-26.04.dat \
+        /media/user/Wiggly/persistence/ubuntu-26.04.dat; do
         if [[ -f "$candidate" ]]; then
             printf '%s\n' "$candidate"
             return 0
