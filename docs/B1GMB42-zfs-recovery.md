@@ -1,0 +1,184 @@
+---
+title: "B1GMB42 ZFS Recovery"
+header-includes:
+  - \setlength{\parskip}{0.4em}
+---
+
+# B1GMB42 ZFS Recovery — rpool and bpool from live media
+
+**Machine:** Dell Precision T5810 (Tower5810)  
+**Installed pools:** `rpool` (root + `/home`) on Hitachi `sdb4` + TEAM `sda` special vdev; `bpool` (`/boot`) on Hitachi `sdb2`  
+**Boot environment:** `rpool/ROOT/ubuntu_cortt9`, `bpool/BOOT/ubuntu_cortt9`  
+**Encryption:** off (no ZFS passphrase on these pools)
+
+Use this when the installed Ubuntu system will not boot. Boot **Ventoy Ubuntu 26.04** from **Wiggly** (`sdc1`) instead — do not import `rpool` until you are ready to repair.
+
+---
+
+## 1. Choose your path
+
+| Situation | What to use |
+|-----------|-------------|
+| Ventoy live, IndianaDell or DOSBOOT scripts available | **Section 2** (recommended) |
+| Ventoy live, no scripts — only a shell | **Section 3** (manual `zpool`) |
+| Installed system still boots but you need a read-only view | `mount-rpool-recovery.sh mount --overlay` |
+
+**DOSBOOT copy:** `IndianaDell/recovery/` on partition **DOSBOOT** (`sdc3`, vfat).  
+**Repo copy:** `~/Documents/IndianaDell/mount-rpool-recovery.sh` and `scripts/recovery/`.
+
+---
+
+## 2. With IndianaDell / DOSBOOT scripts
+
+### Prerequisites (live session)
+
+```bash
+sudo apt-get update
+sudo apt-get install -y zfsutils-linux
+```
+
+### Mount rpool for chroot (default)
+
+```bash
+cd /path/to/recovery/scripts    # DOSBOOT/IndianaDell/recovery or IndianaDell repo root
+sudo bash mount-rpool-recovery.sh mount      # use bash on DOSBOOT (vfat)
+sudo bash mount-bpool-recovery.sh mount      # puts /boot at /recovery/boot
+sudo bash mount-rpool-recovery.sh status
+```
+
+You should see `/recovery/bin`, `/recovery/home`, `/recovery/etc`, and `/recovery/boot` (kernel + initrd).
+
+### Enter chroot and repair
+
+```bash
+sudo ./mount-rpool-recovery.sh chroot
+# inside chroot:
+mount | grep boot
+zpool status
+apt-get update
+apt-get install -y --reinstall zfs-initramfs grub-efi-amd64-signed shim-signed
+update-initramfs -c -k all
+update-grub
+exit
+```
+
+### Tear down
+
+```bash
+sudo ./mount-bpool-recovery.sh umount
+sudo ./mount-rpool-recovery.sh umount
+```
+
+### Overlay fallback (running system already on rpool)
+
+Only when a full live-media chroot is impossible:
+
+```bash
+sudo ./mount-rpool-recovery.sh mount --overlay
+ls /recovery/home/user
+sudo ./mount-rpool-recovery.sh umount
+```
+
+---
+
+## 3. Without scripts (manual commands)
+
+Run as **root** from Ventoy Ubuntu live. Replace dataset names if yours differ (`zpool import` / `zfs list` to discover).
+
+### 3a. Import and mount rpool
+
+```bash
+sudo mkdir -p /recovery
+sudo zpool import -N -f -R /recovery -d /dev/disk/by-id rpool
+sudo zfs mount -a -R /recovery
+sudo zfs list -r rpool | head -20
+```
+
+Boot environment should appear under `/recovery` (e.g. `/recovery/home/user`).
+
+### 3b. Import and mount bpool at /recovery/boot
+
+```bash
+sudo zpool import -N -f -d /dev/disk/by-id bpool
+BOOT_DS=$(zfs list -H -o name,mountpoint -r bpool/BOOT | awk '$2=="/boot"{print $1; exit}')
+sudo zfs set mountpoint=/recovery/boot "$BOOT_DS"
+sudo zfs mount "$BOOT_DS"
+ls /recovery/boot
+```
+
+### 3c. Chroot
+
+```bash
+for d in dev proc sys run; do sudo mount --bind /$d /recovery/$d; done
+sudo mount --bind /dev/pts /recovery/dev/pts
+sudo chroot /recovery /bin/bash
+```
+
+Inside chroot: run repairs (Section 4), then `exit`.
+
+### 3d. Unmount and export
+
+```bash
+sudo zfs umount -a -R /recovery
+sudo zpool set altroot=- rpool
+sudo zpool export rpool
+sudo zfs umount "$BOOT_DS"
+sudo zpool export bpool
+```
+
+---
+
+## 4. Common repairs (inside chroot)
+
+| Problem | Commands |
+|---------|----------|
+| Broken initramfs / boot | `update-initramfs -c -k all` && `update-grub` |
+| Pool won't import | `zpool import -f -d /dev/disk/by-id` (inspect candidates); check `dmesg` |
+| Pool degraded | `zpool status -v`; replace faulted vdev per ZFS docs |
+| PERC H710 fault | SAS bays unavailable — see hardware manual; pool on SATA only |
+| Boot menu missing | `apt-get install --reinstall grub-efi-amd64-signed shim-signed` |
+| ZFS mount fails | `zfs mount -a`; check `zfs list -o name,mountpoint,canmount` |
+
+**Do not** re-enable ZFS encryption until TPM + recovery are documented (hardware manual).
+
+---
+
+## 5. Disk map (this machine)
+
+| Device | Pool / role |
+|--------|-------------|
+| `sdb4` | `rpool` main vdev |
+| `sda` | `rpool` special vdev |
+| `sdb2` | `bpool` |
+| `sdb1` | EFI (`/boot/efi` when running) |
+| `sdc1` Wiggly | Ventoy + Ubuntu live ISO + persistence |
+| `sdc3` DOSBOOT | Recovery scripts + this manual |
+
+---
+
+## 6. Script reference
+
+| Script | Purpose |
+|--------|---------|
+| `mount-rpool-recovery.sh` | Import `rpool` at `/recovery`, chroot, overlay, umount |
+| `mount-bpool-recovery.sh` | Import `bpool`, mount boot FS at `/recovery/boot` |
+
+Environment overrides: `POOL_NAME`, `BPOOL_NAME`, `RECOVERY_ROOT`.
+
+---
+
+## 7. Verify after repair
+
+Reboot to installed disk (not Ventoy). Then:
+
+```bash
+zpool status rpool bpool
+zfs list -r rpool | head -15
+ls /boot/grub
+```
+
+If boot fails again, repeat from Section 2 or 3.
+
+---
+
+*IndianaDell ZFS recovery. Tower5810 / B1GMB42. Last updated: 2026-07-06.*

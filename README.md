@@ -59,13 +59,19 @@ HTTPS override: `INDIANADELL_REMOTE=https://github.com/webaugur/IndianaDell.git`
 
 Large FactoryDocs installers use **Git LFS** (`git lfs install` after clone).
 
-## ZFS recovery (installed rpool)
+## ZFS recovery (rpool + bpool)
+
+**Manual:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf`  
+**DOSBOOT copy:** `IndianaDell/recovery/` on partition `sdc3` — `bin/deploy-dosboot-recovery`
 
 ```bash
-sudo ./mount-rpool-recovery.sh mount      # chroot layout under /recovery
-sudo ./mount-rpool-recovery.sh chroot     # enter chroot
-sudo ./mount-rpool-recovery.sh umount
+sudo apt-get install -y zfsutils-linux
+sudo ./mount-rpool-recovery.sh mount
+sudo ./scripts/recovery/mount-bpool-recovery.sh mount
+sudo ./mount-rpool-recovery.sh chroot
 ```
+
+Manual `zpool` commands (no scripts): see recovery manual Section 3.
 
 ## Ventoy live persistence
 

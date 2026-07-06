@@ -10,6 +10,8 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + nested repos + LFS | 15 |
 | `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default) | 15 |
 | `setup-wiggly-ventoy` | `scripts/ventoy/setup-wiggly-ventoy.sh` — ISO + ventoy.json + .dat | 15 |
+| `build-zfs-recovery-doc` | `scripts/docs/build-zfs-recovery-doc.sh` | 2, 15 |
+| `deploy-dosboot-recovery` | `scripts/recovery/deploy-to-dosboot.sh` | 2, 15 |
 | `dellmerge` | `scripts/dell/dellmerge.sh` | 12 |
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |
@@ -40,6 +42,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `grok-indianadell-launch.sh` | Seed then Grok fullscreen autostart |
 | `install-ventoy-session.sh` | Install helpers, autostart, PATH |
 | `mount-rpool-recovery.sh` | ZFS rpool chroot recovery (workspace root) |
+| `mount-bpool-recovery.sh` | ZFS bpool mount at `/recovery/boot` (`scripts/recovery/`) |
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 

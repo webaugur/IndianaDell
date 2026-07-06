@@ -78,21 +78,22 @@ Exit code 0 means all checks passed.
 
 After a successful rebuild, continue with **Chapter 3 — Post-Rebuild Checklist**.
 
-## ZFS rpool recovery
+## ZFS rpool / bpool recovery
 
-When the Hitachi `rpool` install is not bootable, recover from Ventoy live (or any environment where `rpool` is not the running root):
+**Full guide:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (also on **DOSBOOT** `IndianaDell/recovery/`).
 
-```bash
-cd ~/Documents/IndianaDell
-sudo ./mount-rpool-recovery.sh mount      # altroot /recovery — full chroot tree
-sudo ./mount-rpool-recovery.sh chroot     # enter with dev/proc/sys bound
-sudo ./mount-rpool-recovery.sh umount
-```
-
-**Overlay fallback** (already booted from `rpool`):
+**Quick (with scripts, from Ventoy live):**
 
 ```bash
-sudo ./mount-rpool-recovery.sh mount --overlay
+sudo apt-get install -y zfsutils-linux
+cd ~/Documents/IndianaDell    # or DOSBOOT/IndianaDell/recovery
+sudo ./mount-rpool-recovery.sh mount
+sudo ./scripts/recovery/mount-bpool-recovery.sh mount
+sudo ./mount-rpool-recovery.sh chroot
 ```
 
-See also **Chapter 15** for Ventoy persistence and seeding a portable live session.
+**Without scripts:** manual `zpool import -R /recovery rpool` — see ZFS recovery manual Section 3.
+
+Build PDF: `bin/build-zfs-recovery-doc`. Deploy to DOSBOOT: `bin/deploy-dosboot-recovery`.
+
+See also **Chapter 15** for Ventoy live boot.

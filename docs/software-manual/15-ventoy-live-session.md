@@ -54,18 +54,24 @@ Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-
 Seed verifies **internet + DNS** first; if down, offers NetworkManager bring-up or skip.
 Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
-## ZFS recovery (installed rpool)
+## ZFS recovery (rpool + bpool)
 
-When booted from Ventoy **without** importing `rpool`, use the workspace recovery script:
+**Manual:** `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
+
+Boot Ventoy Ubuntu live — **do not** use the broken installed system as root.
 
 ```bash
-cd ~/Documents/IndianaDell
-sudo ./mount-rpool-recovery.sh mount      # chroot layout under /recovery
+sudo apt-get install -y zfsutils-linux
+cd ~/Documents/IndianaDell          # or /media/.../DOSBOOT1/IndianaDell/recovery
+sudo ./mount-rpool-recovery.sh mount
+sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
-sudo ./mount-rpool-recovery.sh umount
+# repair inside chroot; then exit and umount both scripts
 ```
 
-Use `mount --overlay` only when already booted from `rpool` and a full chroot tree is impossible.
+**No IndianaDell?** Same manual, Section 3 — raw `zpool import` commands.
+
+Deploy kit to DOSBOOT: `bin/deploy-dosboot-recovery` (from Tower5810).
 
 ## GitHub repository
 

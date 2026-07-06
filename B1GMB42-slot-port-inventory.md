@@ -400,7 +400,7 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 |------|------|-----|-------|------|
 | sdc1 | 75 GB | exfat | Wiggly | Ventoy ISO host |
 | sdc2 | 32 MB | vfat | VTOYEFI | Ventoy EFI |
-| sdc3 | 94 GB | vfat | DOSBOOT | DOS/retro (unchanged) |
+| sdc3 | 94 GB | vfat | DOSBOOT | DOS/retro + `IndianaDell/recovery/` ZFS kit |
 | sdc4 | 100 MB | vfat | — | Windows EFI |
 | sdc5 | 16 MB | — | — | Microsoft reserved |
 | sdc6 | 264 GB | ntfs | Windows10 | Windows data (shrunk from 318 GB) |
@@ -606,6 +606,8 @@ No meaningful desktop difference. W5000 slightly stronger for 3D on the display 
 IndianaDell/
 ├── B1GMB42-slot-port-inventory.md   # this file (hardware)
 ├── B1GMB42-software-manual.pdf      # software manual (bin/build-software-manual)
+├── B1GMB42-zfs-recovery.pdf         # rpool/bpool live-CD recovery
+├── docs/B1GMB42-zfs-recovery.md     # ZFS recovery (also DOSBOOT/IndianaDell/recovery/)
 ├── docs/software-manual/            # software manual chapters
 ├── B1GMB42-software-inventory.md    # stub → software manual
 ├── b1gmb42.report / B1GMB42.ioperf  # live inventory + disk benchmark

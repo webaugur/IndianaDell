@@ -204,6 +204,17 @@ bin/hackrf-prepare-sdcard
 
 ---
 
+## ZFS recovery (rpool + bpool)
+
+| Item | Detail |
+|------|--------|
+| Manual | `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` |
+| DOSBOOT kit | `IndianaDell/recovery/` on `sdc3` — `bin/deploy-dosboot-recovery` |
+| Scripts | `mount-rpool-recovery.sh`, `scripts/recovery/mount-bpool-recovery.sh` |
+| Live boot | Ventoy Ubuntu 26.04 from Wiggly — then Section 2 or 3 of recovery manual |
+
+---
+
 ## Ventoy live persistence (Wiggly stick)
 
 | Item | Detail |

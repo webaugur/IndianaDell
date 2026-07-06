@@ -227,24 +227,25 @@ Exit code 0 means all checks passed.
 
 After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist**.
 
-## ZFS rpool recovery
+## ZFS rpool / bpool recovery
 
-When the Hitachi `rpool` install is not bootable, recover from Ventoy live (or any environment where `rpool` is not the running root):
+**Full guide:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (also on **DOSBOOT** `IndianaDell/recovery/`).
 
-``` bash
-cd ~/Documents/IndianaDell
-sudo ./mount-rpool-recovery.sh mount      # altroot /recovery — full chroot tree
-sudo ./mount-rpool-recovery.sh chroot     # enter with dev/proc/sys bound
-sudo ./mount-rpool-recovery.sh umount
-```
-
-**Overlay fallback** (already booted from `rpool`):
+**Quick (with scripts, from Ventoy live):**
 
 ``` bash
-sudo ./mount-rpool-recovery.sh mount --overlay
+sudo apt-get install -y zfsutils-linux
+cd ~/Documents/IndianaDell    # or DOSBOOT/IndianaDell/recovery
+sudo ./mount-rpool-recovery.sh mount
+sudo ./scripts/recovery/mount-bpool-recovery.sh mount
+sudo ./mount-rpool-recovery.sh chroot
 ```
 
-See also **Chapter 15** for Ventoy persistence and seeding a portable live session.
+**Without scripts:** manual `zpool import -R /recovery rpool` --- see ZFS recovery manual Section 3.
+
+Build PDF: `bin/build-zfs-recovery-doc`. Deploy to DOSBOOT: `bin/deploy-dosboot-recovery`.
+
+See also **Chapter 15** for Ventoy live boot.
 
 # Chapter 3 --- Post-Rebuild Checklist
 
@@ -1244,18 +1245,24 @@ Launcher: `~/bin/grok-indianadell-launch.sh`\
 Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-ventoy.log`).\
 Seed verifies **internet + DNS** first; if down, offers NetworkManager bring-up or skip. Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
-## ZFS recovery (installed rpool)
+## ZFS recovery (rpool + bpool)
 
-When booted from Ventoy **without** importing `rpool`, use the workspace recovery script:
+**Manual:** `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
+
+Boot Ventoy Ubuntu live --- **do not** use the broken installed system as root.
 
 ``` bash
-cd ~/Documents/IndianaDell
-sudo ./mount-rpool-recovery.sh mount      # chroot layout under /recovery
+sudo apt-get install -y zfsutils-linux
+cd ~/Documents/IndianaDell          # or /media/.../DOSBOOT1/IndianaDell/recovery
+sudo ./mount-rpool-recovery.sh mount
+sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
-sudo ./mount-rpool-recovery.sh umount
+# repair inside chroot; then exit and umount both scripts
 ```
 
-Use `mount --overlay` only when already booted from `rpool` and a full chroot tree is impossible.
+**No IndianaDell?** Same manual, Section 3 --- raw `zpool import` commands.
+
+Deploy kit to DOSBOOT: `bin/deploy-dosboot-recovery` (from Tower5810).
 
 ## GitHub repository
 
@@ -1330,6 +1337,10 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
   `setup-wiggly-ventoy`        `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat   15
 
+  `build-zfs-recovery-doc`     `scripts/docs/build-zfs-recovery-doc.sh`                               2, 15
+
+  `deploy-dosboot-recovery`    `scripts/recovery/deploy-to-dosboot.sh`                                2, 15
+
   `dellmerge`                  `scripts/dell/dellmerge.sh`                                            12
 
   `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                            6, 12
@@ -1373,9 +1384,9 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
-  ------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------------
   Script                            Purpose
-  --------------------------------- --------------------------------------------
+  --------------------------------- -----------------------------------------------------------
   `seed-ventoy-persistence.sh`      Snapshot session into Ventoy casper image
 
   `seed-network-check.sh`           Internet/DNS check before seed
@@ -1385,7 +1396,9 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
   `install-ventoy-session.sh`       Install helpers, autostart, PATH
 
   `mount-rpool-recovery.sh`         ZFS rpool chroot recovery (workspace root)
-  ------------------------------------------------------------------------------
+
+  `mount-bpool-recovery.sh`         ZFS bpool mount at `/recovery/boot` (`scripts/recovery/`)
+  ---------------------------------------------------------------------------------------------
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 

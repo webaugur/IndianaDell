@@ -27,5 +27,9 @@ log "Building B1GMB42-software-inventory.pdf"
 pandoc B1GMB42-software-inventory.md -o B1GMB42-software-inventory.pdf \
     "${PDF_ARGS[@]}" 2>&1 | grep -v 'Missing character' || true
 
+log "Building B1GMB42-zfs-recovery.pdf"
+"$ROOT/scripts/docs/build-zfs-recovery-doc.sh"
+
 log "Done. PDF outputs:"
-ls -lh B1GMB42-software-manual.pdf B1GMB42-slot-port-inventory.pdf B1GMB42-software-inventory.pdf
+ls -lh B1GMB42-software-manual.pdf B1GMB42-slot-port-inventory.pdf \
+    B1GMB42-software-inventory.pdf B1GMB42-zfs-recovery.pdf
