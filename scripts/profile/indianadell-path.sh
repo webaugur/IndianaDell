@@ -34,6 +34,7 @@ indianadell_path_prepend() {
         "$root/scripts/gnome" \
         "$root/scripts/rebuild" \
         "$root/scripts/storage" \
+        "$root/scripts/efi" \
         "$root/scripts/docs"; do
         [[ -d "$entry" ]] && paths+=("$entry")
     done

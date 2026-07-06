@@ -127,6 +127,7 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | Feature | Status |
 |---------|--------|
 | **3× AMD FirePro** (W5000/W5100) | `bin/gpu-stress`, Vulkan (`vkcube`), OpenCL (`clinfo`) |
+| **EFI timing baseline** | `sudo bin/efi-timing-suite` → `B1GMB42.timing` (before/after BIOS changes) |
 | **AMD driver install** | `bin/amd-install`, `bin/amd-verify` → `amd-radeon/` |
 | **Storage tests** | `bin/iotest` → `scripts/storage/` |
 | **Dell docs** | `FactoryDocs/` (19/101 packages), `B1GMB42-slot-port-inventory.md` + PDF |
