@@ -1227,7 +1227,8 @@ The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including 
 3.  **Grok autostart** --- Ptyxis fullscreen, resumes IndianaDell session (`~/.config/autostart/grok-indianadell.desktop`)
 
 Launcher: `~/bin/grok-indianadell-launch.sh`\
-Default session: `~/Documents/IndianaDell` (session ID in script env vars).
+Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok starts (logs to `~/.cache/seed-ventoy.log`).\
+Seed verifies **internet + DNS** first; if down, offers to bring up network (NetworkManager) or skip seed. Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
 ## ZFS recovery (installed rpool)
 
@@ -1348,17 +1349,21 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
   `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                         10
   ---------------------------------------------------------------------------------------------------------------
 
-**Home scripts (not in `bin/`):**
+**Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
-  ---------------------------------------------------------------------------------
-  Script                               Purpose
-  ------------------------------------ --------------------------------------------
-  `~/bin/seed-ventoy-persistence.sh`   Snapshot session into Ventoy casper image
+  ------------------------------------------------------------------------------
+  Script                            Purpose
+  --------------------------------- --------------------------------------------
+  `seed-ventoy-persistence.sh`      Snapshot session into Ventoy casper image
 
-  `~/bin/grok-indianadell-launch.sh`   Grok fullscreen autostart launcher
+  `seed-network-check.sh`           Internet/DNS check before seed
 
-  `mount-rpool-recovery.sh`            ZFS rpool chroot recovery (workspace root)
-  ---------------------------------------------------------------------------------
+  `grok-indianadell-launch.sh`      Seed then Grok fullscreen autostart
+
+  `install-ventoy-session.sh`       Install helpers, autostart, PATH
+
+  `mount-rpool-recovery.sh`         ZFS rpool chroot recovery (workspace root)
+  ------------------------------------------------------------------------------
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Grok IndianaDell
+Comment=Resume Grok fullscreen in IndianaDell workspace
+Exec=/home/ubuntu/bin/grok-indianadell-launch.sh
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=3
+StartupNotify=false

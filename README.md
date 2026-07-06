@@ -68,7 +68,10 @@ sudo ./mount-rpool-recovery.sh umount
 Ubuntu 26.04 on the Wiggly Ventoy stick with 14 GB `ubuntu-26.04.dat` overlay. See **Software Manual Ch. 15**.
 
 ```bash
-~/bin/seed-ventoy-persistence.sh   # snapshot current session into casper image
+scripts/ventoy/install-ventoy-session.sh   # install ~/bin helpers + autostart + PATH
+~/bin/seed-ventoy-persistence.sh             # snapshot session into casper image
 ```
 
-Autologin `ubuntu`, Grok fullscreen autostart, and IndianaDell PATH are preconfigured in the seeded image.
+Autologin `ubuntu`, network-checked seed, Grok fullscreen autostart, and IndianaDell PATH.
+
+**Release:** `v1.0.3` — Ventoy persistence seed, network check, Grok autostart, PATH overrides, doc PDFs.

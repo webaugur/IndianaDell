@@ -29,12 +29,14 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `hackrf-flash-mayhem` | `hackrf/scripts/flash-mayhem.sh` | 10 |
 | `hackrf-build-mayhem` | `hackrf/scripts/build-mayhem.sh` | 10 |
 
-**Home scripts (not in `bin/`):**
+**Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
 | Script | Purpose |
 |--------|---------|
-| `~/bin/seed-ventoy-persistence.sh` | Snapshot session into Ventoy casper image |
-| `~/bin/grok-indianadell-launch.sh` | Grok fullscreen autostart launcher |
+| `seed-ventoy-persistence.sh` | Snapshot session into Ventoy casper image |
+| `seed-network-check.sh` | Internet/DNS check before seed |
+| `grok-indianadell-launch.sh` | Seed then Grok fullscreen autostart |
+| `install-ventoy-session.sh` | Install helpers, autostart, PATH |
 | `mount-rpool-recovery.sh` | ZFS rpool chroot recovery (workspace root) |
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`

@@ -39,6 +39,8 @@ The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including 
 3. **Grok autostart** — Ptyxis fullscreen, resumes IndianaDell session (`~/.config/autostart/grok-indianadell.desktop`)
 
 Launcher: `~/bin/grok-indianadell-launch.sh`  
+Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok starts (logs to `~/.cache/seed-ventoy.log`).  
+Seed verifies **internet + DNS** first; if down, offers to bring up network (NetworkManager) or skip seed.
 Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
 ## ZFS recovery (installed rpool)
