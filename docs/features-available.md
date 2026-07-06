@@ -1,6 +1,6 @@
 # Features Available — Tower5810 (B1GMB42)
 
-Snapshot of what is installed and ready on this system as of 2026-07-05.
+Snapshot of what is installed and ready on this system as of 2026-07-06.
 
 Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell`)
 
@@ -16,7 +16,7 @@ Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell
 | **Rust 1.96** | `rustc` / `cargo` via `~/.cargo/env` — build SDR/ham projects (no starter crate workspace yet) |
 | **Build** | `cmake`, `gcc`, ARM cross-compiler (`arm-none-eabi-gcc`) for Mayhem firmware, `clang`/`llvm` for bindgen-style Rust |
 | **Docs/PDF** | `pandoc`, `xelatex` — `bin/build-all-docs` rebuilds all PDFs |
-| **GitHub sync** | `bin/pull-repo`, `bin/push-repo` (SSH); `gh` 2.46 (`apt`) — run `gh auth login` once for HTTPS/token fallback |
+| **GitHub sync** | `bin/pull-repo`, `bin/push-repo` (SSH); `gh` 2.46 authenticated as **webaugur** |
 | **Git LFS** | Large FactoryDocs installers in repo |
 | **Chrome** | `google-chrome-stable` |
 | **Grok** | `~/.grok/bin/grok` — autostart on Ventoy persistence boot |
@@ -166,6 +166,7 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
 | `bin/pull-repo` | Fetch IndianaDell + hackrf/repos + LFS (`--verify`, `--build-docs`) |
+| `bin/setup-wiggly-ventoy` | Verify Wiggly ISO + ventoy.json + persistence .dat |
 | `bin/push-repo` | Push main to GitHub (SSH default) |
 
 PATH is automatic via `~/.config/indianadell/path.sh` (see `README.md`).
@@ -208,7 +209,8 @@ bin/hackrf-prepare-sdcard
 | Item | Detail |
 |------|--------|
 | ISO | `ubuntu-26.04-desktop-amd64.iso` |
-| Overlay | `persistence/ubuntu-26.04.dat` (14 GB) |
+| Overlay | `persistence/ubuntu-26.04.dat` (24 GB on Wiggly / `sdc1`) |
+| Setup | `bin/setup-wiggly-ventoy` from Tower5810 |
 | Autologin | GDM user `ubuntu` |
 | Autostart | Grok fullscreen → IndianaDell session |
 | Seed script | `~/bin/seed-ventoy-persistence.sh` |

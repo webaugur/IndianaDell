@@ -16,13 +16,22 @@ Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so
 | IndianaDell workspace | `~/Documents/IndianaDell` | same (git clone or rsync) |
 | PATH overrides | `~/.config/indianadell/path.sh` | same |
 
-**Persistence image:** `/persistence/ubuntu-26.04.dat` (14 GB ext4, label `casper-rw`) on the Ventoy exFAT volume (**Wiggly**).
+**Persistence image:** `/persistence/ubuntu-26.04.dat` (24 GB ext4, label `casper-rw`) on the internal Ventoy exFAT volume (**Wiggly**, `sdc1`).
 
-**Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`.
+**Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`. Canonical copy in `scripts/ventoy/ventoy.json`.
 
 ## How it is installed
 
-From a running session with the stick mounted (e.g. `/mnt/wiggly`):
+**One-time setup from Tower5810** (Wiggly mounted at `/mnt/wiggly`):
+
+```bash
+sudo mount -o uid=$(id -u),gid=$(id -g) /dev/disk/by-label/Wiggly /mnt/wiggly
+bin/setup-wiggly-ventoy    # verify ISO, ventoy.json, .dat filesystem
+```
+
+Extend an undersized image: `sudo scripts/ventoy/ExtendPersistentImg.sh /mnt/wiggly/persistence/ubuntu-26.04.dat <MB>` then `resize2fs` on the loop device if needed.
+
+**Seed session state** from a running session with Wiggly mounted (e.g. `/mnt/wiggly`):
 
 ```bash
 # One-time or after changes — seeds current ubuntu session into the .dat image
@@ -91,7 +100,8 @@ google-chrome --version
 | Re-seed after changes | `~/bin/seed-ventoy-persistence.sh` |
 | Change Grok session | Edit `GROK_SESSION_ID` in `grok-indianadell-launch.sh` |
 | Disable autostart | Remove `~/.config/autostart/grok-indianadell.desktop`, re-seed |
-| Enlarge persistence | Recreate `.dat` (Ventoy plugin or `dd` + `mkfs.ext4`) |
+| Enlarge persistence | `scripts/ventoy/ExtendPersistentImg.sh` (+ `resize2fs` if needed) |
+| Verify/fix Ventoy layout | `bin/setup-wiggly-ventoy` from Tower5810 |
 
 ## What rebuild does / does not do
 

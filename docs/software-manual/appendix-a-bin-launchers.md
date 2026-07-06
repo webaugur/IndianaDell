@@ -9,6 +9,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `build-all-docs` | `scripts/docs/build-all-docs.sh` | 1, 3 |
 | `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + nested repos + LFS | 15 |
 | `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default) | 15 |
+| `setup-wiggly-ventoy` | `scripts/ventoy/setup-wiggly-ventoy.sh` — ISO + ventoy.json + .dat | 15 |
 | `dellmerge` | `scripts/dell/dellmerge.sh` | 12 |
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |

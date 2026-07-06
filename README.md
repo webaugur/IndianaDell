@@ -69,9 +69,10 @@ sudo ./mount-rpool-recovery.sh umount
 
 ## Ventoy live persistence
 
-Ubuntu 26.04 on the Wiggly Ventoy stick with 14 GB `ubuntu-26.04.dat` overlay. See **Software Manual Ch. 15**.
+Ubuntu 26.04 on the internal Wiggly partition (`sdc1`) with 24 GB `persistence/ubuntu-26.04.dat` overlay. See **Software Manual Ch. 15**.
 
 ```bash
+bin/setup-wiggly-ventoy                    # verify ISO + ventoy.json + .dat (Tower5810)
 scripts/ventoy/install-ventoy-session.sh   # install ~/bin helpers + autostart + PATH
 ~/bin/seed-ventoy-persistence.sh             # snapshot session into casper image
 ```

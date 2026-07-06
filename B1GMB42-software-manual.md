@@ -131,7 +131,7 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 
 ## What gets installed
 
-`bin/rebuild-machine` restores the full automated software stack in one run (\~15--30 minutes, network dependent). It installs **90 apt packages** from `scripts/rebuild/package-lists.sh` (`APT_CORE` 37 + `APT_SDR_HAM` 53), plus rustup, HackRF repos/build, Mayhem v2.4.0 assets, URH venv, udev rules, and Flatpak Telegram.
+`bin/rebuild-machine` restores the full automated software stack in one run (\~15--30 minutes, network dependent). It installs **91 apt packages** from `scripts/rebuild/package-lists.sh` (`APT_CORE` 38 + `APT_SDR_HAM` 53), plus rustup, HackRF repos/build, Mayhem v2.4.0 assets, URH venv, udev rules, and Flatpak Telegram.
 
 ## How it is installed
 
@@ -151,12 +151,12 @@ bin/rebuild-machine --verify-only   # check only, no installs
 
 **Phases** (from `scripts/rebuild/rebuild-machine.sh`):
 
-  ----------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------
   Phase                             Action
-  --------------------------------- ------------------------------------------------------------------------------
+  --------------------------------- ----------------------------------------------------------------------------------
   1                                 `apt-get update`
 
-  2                                 Install `APT_CORE` (37 packages) --- build, Python, docs, GPU utils, flatpak
+  2                                 Install `APT_CORE` (38 packages) --- build, Python, docs, GPU utils, flatpak, gh
 
   3                                 Install `APT_SDR_HAM` (53 packages) --- GNU Radio, ham, SDR hardware, HackRF
 
@@ -175,7 +175,7 @@ bin/rebuild-machine --verify-only   # check only, no installs
   10                                Install HackRF udev rules; chmod `bin/` and scripts
 
   11                                Regenerate apt manifests; run `verify_stack`
-  ----------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------
 
 **Debconf preseed:** `xastir/install-setuid` is set to `false` before apt to avoid interactive hangs.
 
@@ -364,9 +364,9 @@ bin/urh --version
 
 ## What gets installed
 
-  -------------------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------------
   Component                  Version / path             Install source
-  -------------------------- -------------------------- -------------------------------------------------
+  -------------------------- -------------------------- ------------------------------------------------------
   Python                     3.14 (system)              Ubuntu base + apt
 
   pip, venv                  apt                        `python3-pip`, `python3-venv`
@@ -388,7 +388,9 @@ bin/urh --version
   pandoc + XeLaTeX           apt                        Manual PDF generation
 
   Git, curl, wget            apt                        repos and downloads
-  -------------------------------------------------------------------------------------------------------
+
+  GitHub CLI (`gh`)          2.46 (apt)                 HTTPS/token fallback; `gh auth login` for API access
+  ------------------------------------------------------------------------------------------------------------
 
 **Python bindings verified on this host:** `gnuradio`, `SoapySDR`, `Hamlib` (capital H in Python).
 
@@ -1205,13 +1207,22 @@ Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so
   PATH overrides          `~/.config/indianadell/path.sh`             same
   --------------------------------------------------------------------------------------------------------------
 
-**Persistence image:** `/persistence/ubuntu-26.04.dat` (14 GB ext4, label `casper-rw`) on the Ventoy exFAT volume (**Wiggly**).
+**Persistence image:** `/persistence/ubuntu-26.04.dat` (24 GB ext4, label `casper-rw`) on the internal Ventoy exFAT volume (**Wiggly**, `sdc1`).
 
-**Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`.
+**Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`. Canonical copy in `scripts/ventoy/ventoy.json`.
 
 ## How it is installed
 
-From a running session with the stick mounted (e.g. `/mnt/wiggly`):
+**One-time setup from Tower5810** (Wiggly mounted at `/mnt/wiggly`):
+
+``` bash
+sudo mount -o uid=$(id -u),gid=$(id -g) /dev/disk/by-label/Wiggly /mnt/wiggly
+bin/setup-wiggly-ventoy    # verify ISO, ventoy.json, .dat filesystem
+```
+
+Extend an undersized image: `sudo scripts/ventoy/ExtendPersistentImg.sh /mnt/wiggly/persistence/ubuntu-26.04.dat <MB>` then `resize2fs` on the loop device if needed.
+
+**Seed session state** from a running session with Wiggly mounted (e.g. `/mnt/wiggly`):
 
 ``` bash
 # One-time or after changes — seeds current ubuntu session into the .dat image
@@ -1274,17 +1285,19 @@ google-chrome --version
 
 ## How to customize
 
-  -----------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------
   Goal                           Action
-  ------------------------------ ----------------------------------------------------------------
+  ------------------------------ -------------------------------------------------------------------
   Re-seed after changes          `~/bin/seed-ventoy-persistence.sh`
 
   Change Grok session            Edit `GROK_SESSION_ID` in `grok-indianadell-launch.sh`
 
   Disable autostart              Remove `~/.config/autostart/grok-indianadell.desktop`, re-seed
 
-  Enlarge persistence            Recreate `.dat` (Ventoy plugin or `dd` + `mkfs.ext4`)
-  -----------------------------------------------------------------------------------------------
+  Enlarge persistence            `scripts/ventoy/ExtendPersistentImg.sh` (+ `resize2fs` if needed)
+
+  Verify/fix Ventoy layout       `bin/setup-wiggly-ventoy` from Tower5810
+  --------------------------------------------------------------------------------------------------
 
 ## What rebuild does / does not do
 
@@ -1302,59 +1315,61 @@ google-chrome --version
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  --------------------------------------------------------------------------------------------------------------------------
-  Launcher                     Runs                                                                Chapter
-  ---------------------------- ------------------------------------------------------------------- -------------------------
-  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                                2
+  -----------------------------------------------------------------------------------------------------------------------------
+  Launcher                     Runs                                                                   Chapter
+  ---------------------------- ---------------------------------------------------------------------- -------------------------
+  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                                   2
 
-  `build-software-manual`      `scripts/docs/build-software-manual.sh`                             1
+  `build-software-manual`      `scripts/docs/build-software-manual.sh`                                1
 
-  `build-all-docs`             `scripts/docs/build-all-docs.sh`                                    1, 3
+  `build-all-docs`             `scripts/docs/build-all-docs.sh`                                       1, 3
 
-  `pull-repo`                  `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS   15
+  `pull-repo`                  `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS      15
 
-  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)       15
+  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)          15
 
-  `dellmerge`                  `scripts/dell/dellmerge.sh`                                         12
+  `setup-wiggly-ventoy`        `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat   15
 
-  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                         6, 12
+  `dellmerge`                  `scripts/dell/dellmerge.sh`                                            12
 
-  `iotest`                     `scripts/storage/iotest.sh`                                         12
+  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                            6, 12
 
-  `apply-amdgpu`               `etc/apply.sh`                                                      6
+  `iotest`                     `scripts/storage/iotest.sh`                                            12
 
-  `amd-install`                `amd-radeon/install-all.sh`                                         6
+  `apply-amdgpu`               `etc/apply.sh`                                                         6
 
-  `amd-preflight`              `amd-radeon/00-preflight.sh`                                        6
+  `amd-install`                `amd-radeon/install-all.sh`                                            6
 
-  `amd-verify`                 `amd-radeon/04-verify.sh`                                           6
+  `amd-preflight`              `amd-radeon/00-preflight.sh`                                           6
 
-  `amd-uninstall`              `amd-radeon/uninstall.sh`                                           6
+  `amd-verify`                 `amd-radeon/04-verify.sh`                                              6
 
-  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                                  5, 7
+  `amd-uninstall`              `amd-radeon/uninstall.sh`                                              6
 
-  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                            7
+  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                                     5, 7
 
-  `themes-extract`             `Themes/scripts/extract-all.sh`                                     5
+  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                               7
 
-  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                              5
+  `themes-extract`             `Themes/scripts/extract-all.sh`                                        5
 
-  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`              5
+  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                                 5
 
-  `hackrf-env`                 sources `hackrf/scripts/env.sh`                                     10
+  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`                 5
 
-  `urh`                        `hackrf/scripts/launch-urh.sh`                                      10
+  `hackrf-env`                 sources `hackrf/scripts/env.sh`                                        10
 
-  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                                      10
+  `urh`                        `hackrf/scripts/launch-urh.sh`                                         10
 
-  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                                 10
+  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                                         10
 
-  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                                  10
+  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                                    10
 
-  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                                    10
+  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                                     10
 
-  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                                    10
-  --------------------------------------------------------------------------------------------------------------------------
+  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                                       10
+
+  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                                       10
+  -----------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
@@ -1379,7 +1394,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 # Appendix B --- Apt Packages by Chapter
 
 **Source of truth:** `scripts/rebuild/package-lists.sh` (`APT_CORE` + `APT_SDR_HAM`).\
-**Total:** 90 packages installed by `bin/rebuild-machine` (37 core + 53 SDR/ham).\
+**Total:** 91 packages installed by `bin/rebuild-machine` (38 core + 53 SDR/ham).\
 **Full system snapshot:** `apt-full-manifest.txt` (\~2257 packages after rebuild).\
 **SDR/ham filter:** `apt-hamradio-dev-manifest.txt` (\~178 related packages).
 
@@ -1387,7 +1402,7 @@ Packages below are grouped by manual chapter. Shared dev libraries appear under 
 
 ## Chapter 4 --- Development
 
-`build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`
+`build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`, `gh`
 
 ## Chapter 6 --- GPU and Display
 

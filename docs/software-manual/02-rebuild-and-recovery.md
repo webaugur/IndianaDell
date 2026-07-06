@@ -2,7 +2,7 @@
 
 ## What gets installed
 
-`bin/rebuild-machine` restores the full automated software stack in one run (~15–30 minutes, network dependent). It installs **90 apt packages** from `scripts/rebuild/package-lists.sh` (`APT_CORE` 37 + `APT_SDR_HAM` 53), plus rustup, HackRF repos/build, Mayhem v2.4.0 assets, URH venv, udev rules, and Flatpak Telegram.
+`bin/rebuild-machine` restores the full automated software stack in one run (~15–30 minutes, network dependent). It installs **91 apt packages** from `scripts/rebuild/package-lists.sh` (`APT_CORE` 38 + `APT_SDR_HAM` 53), plus rustup, HackRF repos/build, Mayhem v2.4.0 assets, URH venv, udev rules, and Flatpak Telegram.
 
 ## How it is installed
 
@@ -25,7 +25,7 @@ bin/rebuild-machine --verify-only   # check only, no installs
 | Phase | Action |
 |-------|--------|
 | 1 | `apt-get update` |
-| 2 | Install `APT_CORE` (37 packages) — build, Python, docs, GPU utils, flatpak |
+| 2 | Install `APT_CORE` (38 packages) — build, Python, docs, GPU utils, flatpak, gh |
 | 3 | Install `APT_SDR_HAM` (53 packages) — GNU Radio, ham, SDR hardware, HackRF |
 | 4 | Flatpak remote + `org.telegram.desktop` (unless skipped) |
 | 5 | rustup stable if `rustc` missing |

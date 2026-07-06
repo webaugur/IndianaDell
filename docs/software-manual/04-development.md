@@ -15,6 +15,7 @@
 | ARM cross-compile | apt | PortaPack Mayhem firmware (`gcc-arm-none-eabi`) |
 | pandoc + XeLaTeX | apt | Manual PDF generation |
 | Git, curl, wget | apt | repos and downloads |
+| GitHub CLI (`gh`) | 2.46 (apt) | HTTPS/token fallback; `gh auth login` for API access |
 
 **Python bindings verified on this host:** `gnuradio`, `SoapySDR`, `Hamlib` (capital H in Python).
 

@@ -1,7 +1,7 @@
 # Appendix B — Apt Packages by Chapter
 
 **Source of truth:** `scripts/rebuild/package-lists.sh` (`APT_CORE` + `APT_SDR_HAM`).  
-**Total:** 90 packages installed by `bin/rebuild-machine` (37 core + 53 SDR/ham).  
+**Total:** 91 packages installed by `bin/rebuild-machine` (38 core + 53 SDR/ham).  
 **Full system snapshot:** `apt-full-manifest.txt` (~2257 packages after rebuild).  
 **SDR/ham filter:** `apt-hamradio-dev-manifest.txt` (~178 related packages).
 
