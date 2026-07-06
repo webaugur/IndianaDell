@@ -1,21 +1,29 @@
 #!/usr/bin/env bash
-# Seed Ventoy persistence (if needed), then launch Grok fullscreen in Ptyxis.
+# Materialize secrets, seed Ventoy persistence (if needed), launch Grok fullscreen.
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKDIR="${GROK_WORKDIR:-/home/ubuntu/Documents/IndianaDell}"
 SESSION_ID="${GROK_SESSION_ID:-0e3b583e-38da-4bf9-870a-0c54a421ce2b}"
 GROK_BIN="${GROK_BIN:-$HOME/.grok/bin/grok}"
 SEED_SCRIPT="${SEED_SCRIPT:-$HOME/bin/seed-ventoy-persistence.sh}"
+RESOLVE_SECRETS="${RESOLVE_SECRETS:-$HOME/bin/resolve-secrets.sh}"
 MARKER="$HOME/.cache/grok-autostart-once"
 
 mkdir -p "$(dirname "$MARKER")" "$WORKDIR"
+
+[[ -r "$RESOLVE_SECRETS" ]] || RESOLVE_SECRETS="$ROOT/scripts/ventoy/resolve-secrets.sh"
+if [[ -r "$RESOLVE_SECRETS" ]]; then
+    # shellcheck source=resolve-secrets.sh
+    source "$RESOLVE_SECRETS"
+    materialize_secrets_to_runtime_home
+fi
 
 if [[ ! -x "$GROK_BIN" ]]; then
     printf 'grok-indianadell-launch: %s not found\n' "$GROK_BIN" >&2
     exit 1
 fi
 
-# Avoid duplicate windows if the desktop file fires more than once per login.
 if [[ -f "$MARKER" ]]; then
     age=$(( $(date +%s) - $(stat -c %Y "$MARKER") ))
     if (( age < 120 )); then
@@ -24,7 +32,6 @@ if [[ -f "$MARKER" ]]; then
 fi
 touch "$MARKER"
 
-# Sync session state into persistence before resuming Grok.
 if [[ -x "$SEED_SCRIPT" ]]; then
     "$SEED_SCRIPT" || printf 'grok-indianadell-launch: seed failed (continuing)\n' >&2
 fi

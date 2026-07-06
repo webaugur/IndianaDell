@@ -9,9 +9,10 @@ Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so
 | User home | `/home/ubuntu` | `cow/upper/home/ubuntu/` |
 | Installed packages | dpkg overlay | `cow/upper/var/lib/dpkg/` |
 | GDM autologin | `/etc/gdm3/custom.conf` | `cow/upper/etc/gdm3/` |
-| Grok auth + sessions | `~/.grok/` | same |
+| Grok auth + sessions | `~/.grok/` | same (never in git) |
 | GitHub CLI auth | `~/.config/gh/` | same |
 | SSH keys | `~/.ssh/` | same |
+| **Runtime source** | `/home/user/` when ZFS rpool is available | pulled at login via `resolve-secrets.sh` |
 | IndianaDell workspace | `~/Documents/IndianaDell` | same (git clone or rsync) |
 | PATH overrides | `~/.config/indianadell/path.sh` | same |
 
@@ -39,8 +40,9 @@ The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including 
 3. **Grok autostart** — Ptyxis fullscreen, resumes IndianaDell session (`~/.config/autostart/grok-indianadell.desktop`)
 
 Launcher: `~/bin/grok-indianadell-launch.sh`  
-Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok starts (logs to `~/.cache/seed-ventoy.log`).  
-Seed verifies **internet + DNS** first; if down, offers to bring up network (NetworkManager) or skip seed.
+`resolve-secrets.sh` materializes secrets from `/home/user` when rpool exists, else uses Ventoy `$HOME`.  
+Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-ventoy.log`).  
+Seed verifies **internet + DNS** first; if down, offers NetworkManager bring-up or skip.
 Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
 ## ZFS recovery (installed rpool)

@@ -8,6 +8,16 @@ BRANCH="${INDIANADELL_BRANCH:-main}"
 
 cd "$REPO_DIR"
 
+if [[ -r "$HOME/bin/resolve-secrets.sh" ]]; then
+    # shellcheck source=/dev/null
+    source "$HOME/bin/resolve-secrets.sh"
+    materialize_secrets_to_runtime_home quiet
+elif [[ -r "$REPO_DIR/scripts/ventoy/resolve-secrets.sh" ]]; then
+    # shellcheck source=/dev/null
+    source "$REPO_DIR/scripts/ventoy/resolve-secrets.sh"
+    materialize_secrets_to_runtime_home quiet
+fi
+
 if ! command -v git >/dev/null; then
     echo "error: git is required" >&2
     exit 1

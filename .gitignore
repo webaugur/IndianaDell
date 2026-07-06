@@ -12,3 +12,11 @@ hackrf/releases/*.zip
 # Editor / session
 .grok/
 **/.DS_Store
+
+# Secrets — live on Ventoy persistence / home only, never in repo
+**/.ssh/id_rsa
+**/.ssh/id_ed25519
+**/.ssh/*.pem
+**/auth.json
+**/.config/gh/hosts.yml
+**/.config/gh/config.yml

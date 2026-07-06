@@ -2,6 +2,7 @@
 # Seed the Ventoy Ubuntu casper-rw persistence image from the current session.
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PERSIST_DAT="${PERSIST_DAT:-}"
 MOUNT="${PERSIST_MOUNT:-/mnt/persist-seed}"
 UPPER=""
@@ -25,9 +26,15 @@ trap cleanup EXIT
 
 mkdir -p "$(dirname "$LOG")"
 
+RESOLVE_SECRETS="${RESOLVE_SECRETS:-$HOME/bin/resolve-secrets.sh}"
+[[ -r "$RESOLVE_SECRETS" ]] || RESOLVE_SECRETS="$ROOT/scripts/ventoy/resolve-secrets.sh"
+# shellcheck source=resolve-secrets.sh
+source "$RESOLVE_SECRETS"
+
 NETWORK_CHECK="${NETWORK_CHECK:-$HOME/bin/seed-network-check.sh}"
+[[ -r "$NETWORK_CHECK" ]] || NETWORK_CHECK="$ROOT/scripts/ventoy/seed-network-check.sh"
 if [[ -r "$NETWORK_CHECK" ]]; then
-    # shellcheck source=/home/ubuntu/bin/seed-network-check.sh
+    # shellcheck source=seed-network-check.sh
     source "$NETWORK_CHECK"
     if ! ensure_network_before_seed; then
         log "seed skipped (network down or user declined)"
@@ -36,6 +43,8 @@ if [[ -r "$NETWORK_CHECK" ]]; then
 elif [[ "${SEED_SKIP_NETWORK_CHECK:-0}" != 1 ]]; then
     log "warning: $NETWORK_CHECK missing — proceeding without network check"
 fi
+
+materialize_secrets_to_runtime_home quiet
 
 running_on_casper_persistence() {
     findmnt -rn -o FSTYPE / 2>/dev/null | grep -qx overlay \
@@ -102,19 +111,22 @@ sync_indianadell_to() {
 
 sync_home_overlay() {
     local dest_root="$1"
-    local use_sudo="${2:-1}"
-    local rel
+    local secret_src session_src
 
-    log "home/ubuntu (.grok, .config, .ssh, .local, bin, autostart)"
-    if [[ "$use_sudo" == 1 ]]; then
-        sudo rsync -a --delete /home/ubuntu/.grok/ "$dest_root/home/ubuntu/.grok/"
-        for rel in .config/indianadell .config/gh .config/autostart .config/dconf .ssh .local bin .cache; do
-            [[ -e "/home/ubuntu/$rel" ]] || continue
-            sudo mkdir -p "$dest_root/home/ubuntu/$(dirname "$rel")"
-            sudo rsync -a "/home/ubuntu/$rel/" "$dest_root/home/ubuntu/$rel/"
-        done
-    else
-        : # on live persistence, home is already in /cow/upper
+    secret_src="$(resolve_secret_source_home)"
+    session_src="${HOME}"
+
+    log "secrets: $secret_src -> persistence (store on casper disk)"
+    sync_secrets_to_persistence "$dest_root"
+
+    log "session config: $session_src -> persistence"
+    sync_session_tree "$session_src" "$dest_root/home/ubuntu" 1
+
+    # Non-secret grok state beyond auth may live in session home
+    if [[ "$session_src" != "$secret_src" && -d "$session_src/.grok" ]]; then
+        log "grok sessions: merge from $session_src"
+        sudo mkdir -p "$dest_root/home/ubuntu/.grok"
+        sudo rsync -a "$session_src/.grok/" "$dest_root/home/ubuntu/.grok/"
     fi
 }
 
@@ -132,22 +144,11 @@ sync_system_overlay() {
     sudo rsync -a /etc/apt/ "$dest_root/etc/apt/"
 }
 
-sync_ssh_from_user() {
-    local dest_root="$1"
-    [[ -f /home/user/.ssh/id_rsa ]] || return 0
-    log "SSH deploy key from /home/user/.ssh"
-    sudo mkdir -p "$dest_root/home/ubuntu/.ssh"
-    sudo rsync -a /home/user/.ssh/id_rsa /home/user/.ssh/id_rsa.pub \
-        /home/user/.ssh/config "$dest_root/home/ubuntu/.ssh/" 2>/dev/null || true
-    sudo chown -R 1000:1000 "$dest_root/home/ubuntu/.ssh"
-    sudo chmod 700 "$dest_root/home/ubuntu/.ssh"
-    sudo chmod 600 "$dest_root/home/ubuntu/.ssh/id_rsa" 2>/dev/null || true
-}
-
 seed_live_persistence() {
     local src dest="$HOME/Documents/IndianaDell"
 
     log "mode: live casper persistence (overlay active — skip .dat mount)"
+    materialize_secrets_to_runtime_home
     if src="$(resolve_indianadell_src)"; then
         if [[ "$src" != "$(readlink -f "$dest" 2>/dev/null || echo "$dest")" ]]; then
             log "IndianaDell: $src -> $dest"
@@ -175,8 +176,7 @@ seed_external_dat() {
     sudo mkdir -p "$UPPER/home/ubuntu" "$UPPER/etc/gdm3" "$UPPER/var/lib/dpkg"
 
     log "mode: external seed -> $PERSIST_DAT"
-    sync_home_overlay "$UPPER" 1
-    sync_ssh_from_user "$UPPER"
+    sync_home_overlay "$UPPER"
     sync_system_overlay "$UPPER"
 
     log "IndianaDell workspace"
