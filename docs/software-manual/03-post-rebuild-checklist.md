@@ -24,6 +24,7 @@ Run as the **desktop user** (not root):
 bin/apply-dark-mode                  # Yaru-dark GTK, shell, icons, GDM greeter
 bin/apply-max-performance            # no suspend, dimming, or night light
 bin/fix-nautilus-desktop-launch     # Nautilus 50+: double-click .desktop launches app
+bin/sync-desktop-icons               # Nautilus 50+: show Icon= as file icon
 ```
 
 **Verify:**
@@ -32,9 +33,10 @@ bin/fix-nautilus-desktop-launch     # Nautilus 50+: double-click .desktop launch
 gsettings get org.gnome.desktop.interface color-scheme
 powerprofilesctl get
 bin/fix-nautilus-desktop-launch --status   # expect application/x-desktop → xdg-desktop-launch
+bin/sync-desktop-icons -v                   # sets metadata::custom-icon* from Icon=
 ```
 
-See Chapter 7 for every gsettings key touched and the Nautilus 50 “Allow Launching” note.
+See Chapter 7 for every gsettings key touched, the Nautilus 50 “Allow Launching” note, and custom-icon metadata.
 
 ## 3. Boot splash (optional)
 
@@ -121,6 +123,7 @@ bin/urh --version
 | Dark mode | `bin/apply-dark-mode` | No |
 | Max performance | `bin/apply-max-performance` | No |
 | Nautilus 50 .desktop launch | `bin/fix-nautilus-desktop-launch` | No |
+| Nautilus 50 .desktop icons | `bin/sync-desktop-icons` | No |
 | Custom boot | `sudo bin/themes-install-boot` | Yes |
 | HackRF flash | `bin/hackrf-flash-mayhem` + DFU | Maybe |
 | ROCm (optional) | `bin/amd-install` | Yes |

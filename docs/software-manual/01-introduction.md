@@ -32,6 +32,7 @@ Fresh Ubuntu 26.04
 | apply-dark-mode            |
 | apply-max-performance      |
 | fix-nautilus-desktop-launch|
+| sync-desktop-icons         |
 | themes-extract / install   |
 | amd-install (optional)     |
 | HackRF hardware flash      |

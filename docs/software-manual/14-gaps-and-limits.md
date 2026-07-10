@@ -37,7 +37,7 @@ Use `bin/amd-preflight` before `bin/amd-install`; expect warnings for these GPUs
 These remain **manual** by design (see Chapter 3):
 
 - `sudo bin/apply-amdgpu`
-- `bin/apply-dark-mode`, `bin/apply-max-performance`, `bin/fix-nautilus-desktop-launch`
+- `bin/apply-dark-mode`, `bin/apply-max-performance`, `bin/fix-nautilus-desktop-launch`, `bin/sync-desktop-icons`
 - `bin/themes-extract`, `sudo bin/themes-install-boot`
 - `bin/hackrf-flash-mayhem` (DFU with hardware)
 - `bin/amd-install` (optional ROCm)

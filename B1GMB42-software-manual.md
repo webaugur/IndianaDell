@@ -55,6 +55,8 @@ Software arrives in three layers. Understanding the order prevents skipped steps
     | apply-amdgpu (GPU configs) |
     | apply-dark-mode            |
     | apply-max-performance      |
+    | fix-nautilus-desktop-launch|
+    | sync-desktop-icons         |
     | themes-extract / install   |
     | amd-install (optional)     |
     | HackRF hardware flash      |
@@ -227,14 +229,14 @@ Exit code 0 means all checks passed.
 
 ## What rebuild does / does not do
 
-  -----------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------------------------------------------------
   Rebuild **does**                        Rebuild **does not**
-  --------------------------------------- -------------------------------------------------
+  --------------------------------------- --------------------------------------------------------------------------------------------------------
   apt install all listed packages         Partition disks or ZFS
 
   rustup, HackRF build, Mayhem download   `sudo bin/apply-amdgpu`
 
-  URH venv, udev rules                    `bin/apply-dark-mode` / `apply-max-performance`
+  URH venv, udev rules                    `bin/apply-dark-mode` / `apply-max-performance` / `fix-nautilus-desktop-launch` / `sync-desktop-icons`
 
   Regenerate `apt-full-manifest.txt`      Plymouth theme install
 
@@ -243,7 +245,7 @@ Exit code 0 means all checks passed.
                                           `bin/amd-install` (ROCm)
 
                                           Install FactoryDocs CABs to Windows
-  -----------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------------------------------------------------
 
 After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist**.
 
@@ -300,8 +302,10 @@ See Chapter 6 for ROCm (`bin/amd-install`) --- optional and not supported for ML
 Run as the **desktop user** (not root):
 
 ``` bash
-bin/apply-dark-mode          # Yaru-dark GTK, shell, icons, GDM greeter
-bin/apply-max-performance    # no suspend, dimming, or night light
+bin/apply-dark-mode                  # Yaru-dark GTK, shell, icons, GDM greeter
+bin/apply-max-performance            # no suspend, dimming, or night light
+bin/fix-nautilus-desktop-launch     # Nautilus 50+: double-click .desktop launches app
+bin/sync-desktop-icons               # Nautilus 50+: show Icon= as file icon
 ```
 
 **Verify:**
@@ -309,9 +313,11 @@ bin/apply-max-performance    # no suspend, dimming, or night light
 ``` bash
 gsettings get org.gnome.desktop.interface color-scheme
 powerprofilesctl get
+bin/fix-nautilus-desktop-launch --status   # expect application/x-desktop → xdg-desktop-launch
+bin/sync-desktop-icons -v                   # sets metadata::custom-icon* from Icon=
 ```
 
-See Chapter 7 for every gsettings key touched.
+See Chapter 7 for every gsettings key touched, the Nautilus 50 "Allow Launching" note, and custom-icon metadata.
 
 ## 3. Boot splash (optional)
 
@@ -392,27 +398,31 @@ bin/urh --version
 
 ## Summary table
 
-  ----------------------------------------------------------------------------------------------------------
-  Step                      Command                                               Reboot?
-  ------------------------- ----------------------------------------------------- --------------------------
-  GPU configs               `sudo bin/apply-amdgpu`                               Yes
+  --------------------------------------------------------------------------------------------------------------
+  Step                          Command                                               Reboot?
+  ----------------------------- ----------------------------------------------------- --------------------------
+  GPU configs                   `sudo bin/apply-amdgpu`                               Yes
 
-  Dark mode                 `bin/apply-dark-mode`                                 No
+  Dark mode                     `bin/apply-dark-mode`                                 No
 
-  Max performance           `bin/apply-max-performance`                           No
+  Max performance               `bin/apply-max-performance`                           No
 
-  Custom boot               `sudo bin/themes-install-boot`                        Yes
+  Nautilus 50 .desktop launch   `bin/fix-nautilus-desktop-launch`                     No
 
-  HackRF flash              `bin/hackrf-flash-mayhem` + DFU                       Maybe
+  Nautilus 50 .desktop icons    `bin/sync-desktop-icons`                              No
 
-  ROCm (optional)           `bin/amd-install`                                     Yes
+  Custom boot                   `sudo bin/themes-install-boot`                        Yes
 
-  All doc PDFs              `bin/build-all-docs`                                  No
+  HackRF flash                  `bin/hackrf-flash-mayhem` + DFU                       Maybe
 
-  ZFS force import          check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"`   If initramfs updated
+  ROCm (optional)               `bin/amd-install`                                     Yes
 
-  Ventoy persistence seed   `~/bin/seed-ventoy-persistence.sh`                    No
-  ----------------------------------------------------------------------------------------------------------
+  All doc PDFs                  `bin/build-all-docs`                                  No
+
+  ZFS force import              check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"`   If initramfs updated
+
+  Ventoy persistence seed       `~/bin/seed-ventoy-persistence.sh`                    No
+  --------------------------------------------------------------------------------------------------------------
 
 # Chapter 4 --- Development Toolchain
 
@@ -662,6 +672,8 @@ GNOME desktop preferences applied via gsettings (user session) and optionally GD
 
 - `scripts/gnome/apply-dark-mode.sh` via `bin/apply-dark-mode`
 - `scripts/gnome/apply-max-performance.sh` via `bin/apply-max-performance`
+- `scripts/gnome/fix-nautilus-desktop-launch.sh` via `bin/fix-nautilus-desktop-launch`
+- `scripts/gnome/sync-desktop-icons.sh` via `bin/sync-desktop-icons`
 
 ## How it is installed
 
@@ -670,6 +682,8 @@ Run as the **logged-in desktop user**, not root:
 ``` bash
 bin/apply-dark-mode
 bin/apply-max-performance
+bin/fix-nautilus-desktop-launch   # Nautilus 50+ .desktop double-click launch
+bin/sync-desktop-icons             # Nautilus 50+ show Icon= as file icon
 ```
 
 ### apply-dark-mode
@@ -704,6 +718,116 @@ Sets:
 - Night light: off
 - `powerprofilesctl set performance` when available
 
+## Nautilus 50 --- "Allow Launching" removed
+
+**Change (GNOME Files / Nautilus 50, Ubuntu 26.04):** Nautilus no longer runs FreeDesktop `.desktop` files itself. The old "Allow Launching" / trusted-launcher path is gone (security). Double-click falls through to the default handler for MIME type `application/x-desktop`, which is often a text editor (`gedit` / `gnome-text-editor`). So double-clicking `SDRPlusPlus.desktop` (or any app launcher on disk) **edits** the file instead of **starting** the app.
+
+**Fix:** register a small MIME handler that launches the entry via `gio launch`:
+
+  -------------------------------------------------------------------------------------------------
+  Piece                                  Path
+  -------------------------------------- ----------------------------------------------------------
+  Handler app                            `~/.local/share/applications/xdg-desktop-launch.desktop`
+
+  Wrapper script                         `~/.local/bin/xdg-desktop-launch`
+
+  MIME default                           `application/x-desktop` → `xdg-desktop-launch.desktop`
+  -------------------------------------------------------------------------------------------------
+
+Double-click path after install: **Files → xdg-open → wrapper → `gio launch` → your app**.
+
+``` bash
+bin/fix-nautilus-desktop-launch              # install / reinstall
+bin/fix-nautilus-desktop-launch --status     # check MIME + files
+bin/fix-nautilus-desktop-launch --uninstall  # remove handler
+```
+
+**Portable:** the script is self-contained. Copy `scripts/gnome/fix-nautilus-desktop-launch.sh` to any Ubuntu/GNOME box and run as the desktop user (no root, no IndianaDell tree required).
+
+**CLI verify:**
+
+``` bash
+xdg-mime query default application/x-desktop   # expect xdg-desktop-launch.desktop
+xdg-open /path/to/App.desktop                  # should start the app
+~/.local/bin/xdg-desktop-launch /path/to/App.desktop
+```
+
+## Nautilus 50 --- generic `.desktop` icons
+
+**Change:** even after launch works, Nautilus 50+ still shows the generic `application-x-desktop` MIME icon in the file view. It **ignores** the FreeDesktop `Icon=` field on the `.desktop` file for the list/icon view. Icons in the GNOME Shell app grid (from XDG application menus) are a different path and usually look correct; this problem is about **Files** showing launcher files as plain documents.
+
+**Fix:** set GIO metadata that Nautilus still honors:
+
+  --------------------------------------------------------------------------------------------------------------------------
+  Attribute                      When used                                      Example
+  ------------------------------ ---------------------------------------------- --------------------------------------------
+  `metadata::custom-icon`        `Icon=` is an absolute or relative file path   `file:///home/user/Applications/sdrpp.png`
+
+  `metadata::custom-icon-name`   `Icon=` is a theme icon name                   `utilities-terminal`
+  --------------------------------------------------------------------------------------------------------------------------
+
+The script reads the first `Icon=` under `[Desktop Entry]` only (not `Icon[lang]=`, not other groups), then:
+
+1.  Absolute path (`/…`) → `metadata::custom-icon` with a `file://` URI; clear `custom-icon-name`
+2.  Relative path (`foo/bar.png`) → resolve relative to the `.desktop` file's directory; same as absolute
+3.  Theme name (no `/`) → `metadata::custom-icon-name`; clear `custom-icon`
+4.  Missing icon file → warning and skip (does not fail the whole run)
+
+### Usage
+
+``` bash
+bin/sync-desktop-icons                 # scan default directories
+bin/sync-desktop-icons -v              # log each set / skip
+bin/sync-desktop-icons --dry-run       # print actions, no gio set
+bin/sync-desktop-icons --file PATH     # one .desktop (inotify-friendly)
+bin/sync-desktop-icons --dir DIR       # add/replace scan dir (repeatable)
+bin/sync-desktop-icons --watch         # inotify loop (needs inotify-tools)
+bin/sync-desktop-icons --clear-missing # unset custom-icon* if Icon= absent
+```
+
+**Default scan directories** (when `--dir` is not used and `SYNC_DESKTOP_ICON_DIRS` is unset):
+
+- `$HOME/.local/share/applications`
+- `$HOME/Applications`
+
+Only **top-level** `*.desktop` files in each directory are processed (flat XDG apps layout and a personal `Applications` folder). Nested trees are not walked.
+
+**Environment:**
+
+  ------------------------------------------------------------------------------------------------------
+  Variable                                Effect
+  --------------------------------------- --------------------------------------------------------------
+  `SYNC_DESKTOP_ICON_DIRS`                Colon-separated directory list (overrides defaults when set)
+
+  ------------------------------------------------------------------------------------------------------
+
+**Dependencies:** `gio` (`libglib2.0-bin`, already on Ubuntu desktop). `--watch` also needs `inotifywait` (`inotify-tools`).
+
+**Portable / PATH install:** `bin/sync-desktop-icons` resolves its own path with `readlink -f`, so a symlink from `~/.local/bin/sync-desktop-icons` into the repo still finds `scripts/gnome/`. The script itself needs only `gio`; copy `scripts/gnome/sync-desktop-icons.sh` alone if you want it off-tree.
+
+**Companion:** run **after** `bin/fix-nautilus-desktop-launch` so double-click starts the app **and** the file view shows the right icon. Neither script replaces the other.
+
+**CLI verify:**
+
+``` bash
+bin/sync-desktop-icons -v
+# pick a launcher you care about:
+gio info -a metadata::custom-icon -a metadata::custom-icon-name \
+  "$HOME/Applications/SomeApp.desktop"
+# open Files on that folder — icon should match Icon=
+```
+
+**Watch mode example** (re-apply when a launcher is saved or dropped into a scan dir):
+
+``` bash
+bin/sync-desktop-icons --watch -v
+# or a single-file handler:
+inotifywait -m -e close_write,moved_to,create --include '\.desktop$' \
+  "$HOME/Applications" | while read -r dir _ file; do
+    bin/sync-desktop-icons --file "$dir$file"
+  done
+```
+
 ## How to verify
 
 ``` bash
@@ -711,9 +835,11 @@ gsettings get org.gnome.desktop.interface color-scheme
 gsettings get org.gnome.desktop.interface gtk-theme
 gsettings get org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type
 powerprofilesctl get
+bin/fix-nautilus-desktop-launch --status
+bin/sync-desktop-icons -v
 ```
 
-Log out and back in to confirm GDM greeter if dark mode was applied.
+Log out and back in to confirm GDM greeter if dark mode was applied. Refresh or reopen the Files window after `sync-desktop-icons` if icons do not update immediately.
 
 ## How to customize
 
@@ -721,15 +847,23 @@ Log out and back in to confirm GDM greeter if dark mode was applied.
 - Skip GDM: `APPLY_GDM=0 bin/apply-dark-mode`
 - Revert individual keys with `gsettings reset …` or GNOME Settings app
 - Login/desktop asset mirrors: `Themes/login/`, `Themes/desktop/`
+- Remove .desktop launch fix: `bin/fix-nautilus-desktop-launch --uninstall`
+- Extra icon scan dirs: `SYNC_DESKTOP_ICON_DIRS="$HOME/Apps:$HOME/Desktop" bin/sync-desktop-icons`
+- Clear stale custom icons when `Icon=` is gone: `bin/sync-desktop-icons --clear-missing`
+- Unset metadata on one file:\
+  `gio set -t unset PATH metadata::custom-icon`\
+  `gio set -t unset PATH metadata::custom-icon-name`
 
 ## What rebuild does / does not do
 
   Does                                      Does not
-  ----------------------------------------- -------------------------------
+  ----------------------------------------- ------------------------------------------------------
   Install gdm3, gnome-shell, Yaru via apt   Change any gsettings
                                             Set performance power profile
+                                            Install the Nautilus 50 .desktop MIME handler
+                                            Run `sync-desktop-icons` or set custom-icon metadata
 
-Run both launchers after every fresh install (Chapter 3).
+Run dark mode, max performance, `fix-nautilus-desktop-launch`, and `sync-desktop-icons` after every fresh install (Chapter 3).
 
 # Chapter 8 --- GNU Radio and Desktop SDR
 
@@ -1212,7 +1346,7 @@ Use `bin/amd-preflight` before `bin/amd-install`; expect warnings for these GPUs
 These remain **manual** by design (see Chapter 3):
 
 - `sudo bin/apply-amdgpu`
-- `bin/apply-dark-mode`, `bin/apply-max-performance`
+- `bin/apply-dark-mode`, `bin/apply-max-performance`, `bin/fix-nautilus-desktop-launch`, `bin/sync-desktop-icons`
 - `bin/themes-extract`, `sudo bin/themes-install-boot`
 - `bin/hackrf-flash-mayhem` (DFU with hardware)
 - `bin/amd-install` (optional ROCm)
@@ -1395,71 +1529,75 @@ google-chrome --version
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  ------------------------------------------------------------------------------------------------------------------------------
-  Launcher                     Runs                                                                    Chapter
-  ---------------------------- ----------------------------------------------------------------------- -------------------------
-  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                                    2
+  ---------------------------------------------------------------------------------------------------------------------------------
+  Launcher                        Runs                                                                    Chapter
+  ------------------------------- ----------------------------------------------------------------------- -------------------------
+  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                    2
 
-  `build-software-manual`      `scripts/docs/build-software-manual.sh`                                 1
+  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                 1
 
-  `build-all-docs`             `scripts/docs/build-all-docs.sh`                                        1, 3
+  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                        1, 3
 
-  `pull-repo`                  `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS       15
+  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS       15
 
-  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)           15
+  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)           15
 
-  `setup-wiggly-ventoy`        `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat    15
+  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat    15
 
-  `setup-perc-ventoy`          `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Wiggly   hardware / PERC doc
+  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Wiggly   hardware / PERC doc
 
-  `build-zfs-recovery-doc`     `scripts/docs/build-zfs-recovery-doc.sh`                                2, 15
+  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                2, 15
 
-  `build-trifold-slick`        `docs/sales/B1GMB42-trifold.html` → sales PDFs                          ---
+  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                          ---
 
-  `deploy-dosboot-recovery`    `scripts/recovery/deploy-to-dosboot.sh`                                 2, 15
+  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                 2, 15
 
-  `efi-timing-suite`           `scripts/efi/efi-timing-suite.sh`                                       6, 12
+  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                       6, 12
 
-  `dellmerge`                  `scripts/dell/dellmerge.sh`                                             12
+  `dellmerge`                     `scripts/dell/dellmerge.sh`                                             12
 
-  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                             6, 12
+  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                             6, 12
 
-  `iotest`                     `scripts/storage/iotest.sh`                                             12
+  `iotest`                        `scripts/storage/iotest.sh`                                             12
 
-  `apply-amdgpu`               `etc/apply.sh`                                                          6
+  `apply-amdgpu`                  `etc/apply.sh`                                                          6
 
-  `amd-install`                `amd-radeon/install-all.sh`                                             6
+  `amd-install`                   `amd-radeon/install-all.sh`                                             6
 
-  `amd-preflight`              `amd-radeon/00-preflight.sh`                                            6
+  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                            6
 
-  `amd-verify`                 `amd-radeon/04-verify.sh`                                               6
+  `amd-verify`                    `amd-radeon/04-verify.sh`                                               6
 
-  `amd-uninstall`              `amd-radeon/uninstall.sh`                                               6
+  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                               6
 
-  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                                      5, 7
+  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                      5, 7
 
-  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                                7
+  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                7
 
-  `themes-extract`             `Themes/scripts/extract-all.sh`                                         5
+  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                          3, 7
 
-  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                                  5
+  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                   3, 7
 
-  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`                  5
+  `themes-extract`                `Themes/scripts/extract-all.sh`                                         5
 
-  `hackrf-env`                 sources `hackrf/scripts/env.sh`                                         10
+  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                  5
 
-  `urh`                        `hackrf/scripts/launch-urh.sh`                                          10
+  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                  5
 
-  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                                          10
+  `hackrf-env`                    sources `hackrf/scripts/env.sh`                                         10
 
-  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                                     10
+  `urh`                           `hackrf/scripts/launch-urh.sh`                                          10
 
-  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                                      10
+  `hackrf-setup-udev`             `hackrf/scripts/setup-udev.sh`                                          10
 
-  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                                        10
+  `hackrf-download-mayhem`        `hackrf/scripts/download-mayhem.sh`                                     10
 
-  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                                        10
-  ------------------------------------------------------------------------------------------------------------------------------
+  `hackrf-prepare-sdcard`         `hackrf/scripts/prepare-sdcard.sh`                                      10
+
+  `hackrf-flash-mayhem`           `hackrf/scripts/flash-mayhem.sh`                                        10
+
+  `hackrf-build-mayhem`           `hackrf/scripts/build-mayhem.sh`                                        10
+  ---------------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 

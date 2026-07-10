@@ -70,7 +70,7 @@ Exit code 0 means all checks passed.
 |------------------|----------------------|
 | apt install all listed packages | Partition disks or ZFS |
 | rustup, HackRF build, Mayhem download | `sudo bin/apply-amdgpu` |
-| URH venv, udev rules | `bin/apply-dark-mode` / `apply-max-performance` / `fix-nautilus-desktop-launch` |
+| URH venv, udev rules | `bin/apply-dark-mode` / `apply-max-performance` / `fix-nautilus-desktop-launch` / `sync-desktop-icons` |
 | Regenerate `apt-full-manifest.txt` | Plymouth theme install |
 | chmod workspace scripts | Flash HackRF / PortaPack firmware |
 | | `bin/amd-install` (ROCm) |

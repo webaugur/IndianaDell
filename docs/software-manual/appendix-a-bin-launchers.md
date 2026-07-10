@@ -26,6 +26,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `apply-dark-mode` | `scripts/gnome/apply-dark-mode.sh` | 5, 7 |
 | `apply-max-performance` | `scripts/gnome/apply-max-performance.sh` | 7 |
 | `fix-nautilus-desktop-launch` | `scripts/gnome/fix-nautilus-desktop-launch.sh` | 3, 7 |
+| `sync-desktop-icons` | `scripts/gnome/sync-desktop-icons.sh` | 3, 7 |
 | `themes-extract` | `Themes/scripts/extract-all.sh` | 5 |
 | `themes-install-boot` | `Themes/scripts/install-boot-theme.sh` | 5 |
 | `themes-restore-boot` | `Themes/scripts/install-boot-theme.sh --restore-stock` | 5 |
