@@ -26,10 +26,24 @@ sudo reboot
 
 - `etc/environment.d/99-amdgpu-wayland.conf`
 - `etc/X11/xorg.conf.d/20-amdgpu-multi-gpu.conf`
-- `etc/modprobe.d/amdgpu-multigpu.conf`
-- `etc/udev/rules.d/99-amdgpu-multigpu.rules`
+- `etc/modprobe.d/amdgpu-multigpu.conf` (`runpm=0`)
+- `etc/udev/rules.d/99-amdgpu-multigpu.rules` (tags + DPM performance hook)
+- `etc/amdgpu-set-dpm-performance.sh` → `/usr/local/sbin/indiana-amdgpu-dpm-performance`
 - `etc/profile.d/amdgpu-multigpu.sh`
 - `etc/gdm3/custom.conf` (if present)
+
+**DPM performance (all cards):** on a desktop workstation every amdgpu is pinned to max clocks — not only the display GPU. `apply-amdgpu` runs the helper immediately; udev re-applies when cards appear at boot.
+
+```bash
+# verify
+for c in /sys/class/drm/card[0-9]/device; do
+  [[ -f $c/power_dpm_force_performance_level ]] || continue
+  echo "$(basename $(dirname $c)): level=$(cat $c/power_dpm_force_performance_level) state=$(cat $c/power_dpm_state)"
+done
+# expect: level=high  state=performance  on card1..card3
+```
+
+Tradeoff: slightly higher idle power/heat/fan noise vs `auto`/`balanced`. Revert by editing the udev rule / helper and re-running `sudo bin/apply-amdgpu`, or manually `echo auto | sudo tee …/power_dpm_force_performance_level`.
 
 **Optional ROCm:**
 

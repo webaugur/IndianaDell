@@ -102,4 +102,4 @@ Autologin `ubuntu`, network-checked seed, Grok fullscreen autostart, and Indiana
 
 **Related tools:** `bin/efi-timing-suite` (BIOS A/B baselines → `B1GMB42.timing`), `bin/setup-perc-ventoy` (PERC H710 FreeDOS/IT flash on Wiggly).
 
-**Release:** `v1.0.4` — runtime secret resolution (`/home/user` when rpool exists), Ventoy persistence seed, Grok autostart.
+**Release:** `v1.0.5` — Nautilus 50 desktop launch/icons, amdgpu DPM performance on all GPUs, ZFS recovery kit, pull/push-repo.
