@@ -3,4 +3,4 @@ set -euo pipefail
 # Resolve symlinks so PATH install (~/.local/bin/foo → repo/bin/foo) still finds scripts/
 SELF="$(readlink -f "$0")"
 ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
-exec "$ROOT/scripts/gnome/fix-nautilus-desktop-launch.sh" "$@"
+exec "$ROOT/scripts/gnome/sync-desktop-icons.sh" "$@"
