@@ -167,7 +167,7 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
 | `bin/fix-nautilus-desktop-launch` | Nautilus 50+: launch `.desktop` on double-click |
-| `bin/sync-desktop-icons` | Nautilus 50+: set custom-icon metadata from `Icon=` |
+| `bin/sync-desktop-icons` | Nautilus 50+: custom-icon from `Icon=`; rename chrome-*.desktop → `Name=` |
 | `bin/pull-repo` | Fetch IndianaDell + hackrf/repos + LFS (`--verify`, `--build-docs`) |
 | `bin/push-repo` | Push main to GitHub (SSH default) |
 | `bin/setup-wiggly-ventoy` | Verify Wiggly ISO + ventoy.json + persistence .dat |

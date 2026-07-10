@@ -99,20 +99,36 @@ The script reads the first `Icon=` under `[Desktop Entry]` only (not `Icon[lang]
 
 ```bash
 bin/sync-desktop-icons                 # scan default directories
-bin/sync-desktop-icons -v              # log each set / skip
-bin/sync-desktop-icons --dry-run       # print actions, no gio set
+bin/sync-desktop-icons -v              # log each set / skip / rename
+bin/sync-desktop-icons --dry-run       # print actions, no gio set / rename
 bin/sync-desktop-icons --file PATH     # one .desktop (inotify-friendly)
 bin/sync-desktop-icons --dir DIR       # add/replace scan dir (repeatable)
 bin/sync-desktop-icons --watch         # inotify loop (needs inotify-tools)
 bin/sync-desktop-icons --clear-missing # unset custom-icon* if Icon= absent
+bin/sync-desktop-icons --no-rename     # keep chrome-*-Default.desktop names
 ```
 
 **Default scan directories** (when `--dir` is not used and `SYNC_DESKTOP_ICON_DIRS` is unset):
 
 - `$HOME/.local/share/applications`
 - `$HOME/Applications`
+- `$HOME/Desktop`
 
-Only **top-level** `*.desktop` files in each directory are processed (flat XDG apps layout and a personal `Applications` folder). Nested trees are not walked.
+Only **top-level** `*.desktop` files in each directory are processed (flat XDG apps layout and a personal `Applications` / Desktop folder). Nested trees are not walked.
+
+### Rename Chrome gibberish basenames
+
+Chrome/Chromium PWAs create launchers like `chrome-lodlkdfmihgonocnmddehnfgiljnadcf-Default.desktop` while `Name=` is a short human label (`X`, `YouTube`). **By default** (`--rename`), if the file **and** its directory are **writable**, matching basenames are renamed to `${Name}.desktop` before icon metadata is applied.
+
+| Rule | Behavior |
+|------|----------|
+| Pattern | `chrome-<id>-Default.desktop`, `chrome-<id>.desktop` (id ≥ 16 alnum); same for `chromium-` |
+| Source of new name | First `Name=` under `[Desktop Entry]` only (not action groups, not `Name[lang]=`) |
+| Not writable | Skip rename, warn, still try icon metadata |
+| Target already exists | Skip rename, warn (no overwrite) |
+| Disable | `--no-rename` |
+
+Example: `~/Desktop/chrome-lodlk…-Default.desktop` (`Name=X`) → `~/Desktop/X.desktop`.
 
 **Environment:**
 
