@@ -21,8 +21,9 @@ See Chapter 6 for ROCm (`bin/amd-install`) — optional and not supported for ML
 Run as the **desktop user** (not root):
 
 ```bash
-bin/apply-dark-mode          # Yaru-dark GTK, shell, icons, GDM greeter
-bin/apply-max-performance    # no suspend, dimming, or night light
+bin/apply-dark-mode                  # Yaru-dark GTK, shell, icons, GDM greeter
+bin/apply-max-performance            # no suspend, dimming, or night light
+bin/fix-nautilus-desktop-launch     # Nautilus 50+: double-click .desktop launches app
 ```
 
 **Verify:**
@@ -30,9 +31,10 @@ bin/apply-max-performance    # no suspend, dimming, or night light
 ```bash
 gsettings get org.gnome.desktop.interface color-scheme
 powerprofilesctl get
+bin/fix-nautilus-desktop-launch --status   # expect application/x-desktop → xdg-desktop-launch
 ```
 
-See Chapter 7 for every gsettings key touched.
+See Chapter 7 for every gsettings key touched and the Nautilus 50 “Allow Launching” note.
 
 ## 3. Boot splash (optional)
 
@@ -118,6 +120,7 @@ bin/urh --version
 | GPU configs | `sudo bin/apply-amdgpu` | Yes |
 | Dark mode | `bin/apply-dark-mode` | No |
 | Max performance | `bin/apply-max-performance` | No |
+| Nautilus 50 .desktop launch | `bin/fix-nautilus-desktop-launch` | No |
 | Custom boot | `sudo bin/themes-install-boot` | Yes |
 | HackRF flash | `bin/hackrf-flash-mayhem` + DFU | Maybe |
 | ROCm (optional) | `bin/amd-install` | Yes |

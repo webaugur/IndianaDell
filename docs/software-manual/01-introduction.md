@@ -31,6 +31,7 @@ Fresh Ubuntu 26.04
 | apply-amdgpu (GPU configs) |
 | apply-dark-mode            |
 | apply-max-performance      |
+| fix-nautilus-desktop-launch|
 | themes-extract / install   |
 | amd-install (optional)     |
 | HackRF hardware flash      |
