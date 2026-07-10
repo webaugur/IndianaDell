@@ -10,7 +10,8 @@ WIGGLY_DEV="${WIGGLY_DEV:-/dev/disk/by-label/Wiggly}"
 WIGGLY_MOUNT="${WIGGLY_MOUNT:-/mnt/wiggly}"
 ISO_NAME="${VENTOY_ISO:-ubuntu-26.04-desktop-amd64.iso}"
 DAT_REL="persistence/ubuntu-26.04.dat"
-DAT_SIZE_MB="${VENTOY_DAT_SIZE_MB:-14336}"
+# Production Wiggly image is 24 GB; override with VENTOY_DAT_SIZE_MB if needed.
+DAT_SIZE_MB="${VENTOY_DAT_SIZE_MB:-24576}"
 DAT_LABEL="${VENTOY_DAT_LABEL:-casper-rw}"
 
 log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*"; }

@@ -392,20 +392,22 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 |--------|------|-------|------|
 | **sda** | 238 GB | TEAM T253X6256G | **`rpool` special vdev** (~509 MB/s seq read) |
 | **sdb** | 1.4 TB | Hitachi HDS723015BLA642 | `rpool` + `bpool`, EFI, **plain swap** (~145 MB/s) |
-| **sdc** | 466 GB | Seagate ST500DM002 | Ventoy + DOSBOOT + Windows + **live persistence** (see below) |
+| **sdc** | 466 GB | Seagate ST500DM002 | Ventoy (Wiggly) + DOSBOOT + Windows + ISO-STASH |
 
 #### sdc partition map (Seagate)
 
 | Part | Size | FS | Label | Role |
 |------|------|-----|-------|------|
-| sdc1 | 75 GB | exfat | Wiggly | Ventoy ISO host |
+| sdc1 | 75 GB | exfat | Wiggly | Ventoy ISO host + **casper persistence file** `persistence/ubuntu-26.04.dat` |
 | sdc2 | 32 MB | vfat | VTOYEFI | Ventoy EFI |
 | sdc3 | 94 GB | vfat | DOSBOOT | DOS/retro + `IndianaDell/recovery/` ZFS kit |
 | sdc4 | 100 MB | vfat | — | Windows EFI |
 | sdc5 | 16 MB | — | — | Microsoft reserved |
 | sdc6 | 264 GB | ntfs | Windows10 | Windows data (shrunk from 318 GB) |
-| **sdc8** | **33 GB** | **ext4** | **writable** | **Ubuntu Ventoy live persistence** |
 | sdc7 | 522 MB | ntfs | — | Dell recovery |
+| sdc8 | 33 GB | ext4 | ISO-STASH | Extra ISO/image stash (not the Ventoy casper overlay) |
+
+**Ventoy live overlay:** file-based on Wiggly (`sdc1`), not a dedicated partition — see Software Manual Ch. 15 and `bin/setup-wiggly-ventoy`.
 
 ### ZFS pools (current)
 
@@ -414,6 +416,8 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 | `rpool` | Hitachi `sdb4` | ONLINE | Root + `/home`, **encryption off**, `compression=lz4` |
 | `rpool` special | TEAM `sda` | ONLINE | Metadata + blocks <=32K; `special_small_blocks=32K` |
 | `bpool` | Hitachi `sdb2` | ONLINE | `/boot` |
+
+**Boot import force (required):** `/etc/default/zfs` must set `ZPOOL_IMPORT_OPTS="-f"`. Without it, the host can hang on pool import after recovery export or unclean shutdown. See `docs/B1GMB42-zfs-recovery.md` and README.
 
 ### SAS / RAID (Slot5)
 
@@ -564,9 +568,10 @@ No meaningful desktop difference. W5000 slightly stronger for 3D on the display 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
 | Boot failure after disk swap | **TPM + ZFS encryption** on old install | This reinstall avoids that — keep encryption off unless TPM is configured first |
+| Boot hangs on ZFS import | Missing force flag after export/unclean shutdown | `/etc/default/zfs`: `ZPOOL_IMPORT_OPTS="-f"`; or kernel `zfsforce=1` |
 | UI freezes, high load | ZFS on HDD, low RAM | Add TEAM special vdev; add RAM; avoid swap thrash |
 | `Cannot find any crtc` | Headless GPU | Expected; dummy plug if needed |
-| PERC no disks | FW fault `0x40000` | PERC BIOS / battery / replace or IT-mode flash |
+| PERC no disks | FW fault `0x40000` | Clear config or IT flash — `docs/B1GMB42-perc-it-flash.md`, `bin/setup-perc-ventoy` (internal **Wiggly** Ventoy, not USB) |
 | Wrong display GPU | Cable on different card | Move cable (unpinned policy) |
 | `show_signal_msg: N callbacks suppressed` | Kernel rate-limiting duplicate logs | Not N separate errors — read the one line above |
 
@@ -645,7 +650,8 @@ See `Themes/README.md`. Boot splash: Dell logo = UEFI BGRT; Ubuntu text = Plymou
 3. **PERC H710:** Fix firmware fault or replace before using SAS bays.
 4. **PSU:** Confirm wattage on PSU label.
 5. **Do not re-enable ZFS encryption** until TPM + recovery strategy is documented.
-6. **FactoryDocs:** Re-grab any drivers that failed mid-download (GPU, audio, encryption zips).
+6. **Keep `ZPOOL_IMPORT_OPTS="-f"`** in `/etc/default/zfs` (force import at boot).
+7. **FactoryDocs:** Re-grab any drivers that failed mid-download (GPU, audio, encryption zips).
 
 ---
 
@@ -665,4 +671,4 @@ sudo dmesg | grep -iE 'megaraid|amdgpu|fault'
 
 ---
 
-*IndianaDell workstation toolkit. Last updated: 2026-07-05 (sdc8 live persistence).*
+*IndianaDell workstation toolkit. Last updated: 2026-07-09 (ZFS force import; Wiggly casper .dat; sdc8 = ISO-STASH).*

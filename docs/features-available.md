@@ -1,6 +1,6 @@
 # Features Available — Tower5810 (B1GMB42)
 
-Snapshot of what is installed and ready on this system as of 2026-07-06.
+Snapshot of what is installed and ready on this system as of 2026-07-09.
 
 Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell`)
 
@@ -167,8 +167,12 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
 | `bin/pull-repo` | Fetch IndianaDell + hackrf/repos + LFS (`--verify`, `--build-docs`) |
-| `bin/setup-wiggly-ventoy` | Verify Wiggly ISO + ventoy.json + persistence .dat |
 | `bin/push-repo` | Push main to GitHub (SSH default) |
+| `bin/setup-wiggly-ventoy` | Verify Wiggly ISO + ventoy.json + persistence .dat |
+| `bin/setup-perc-ventoy` | FreeDOS / PERC H710 IT flash kit on Wiggly |
+| `bin/deploy-dosboot-recovery` | Copy ZFS recovery kit to DOSBOOT (`sdc3`) |
+| `bin/efi-timing-suite` | BIOS A/B timing baselines → `B1GMB42.timing` |
+| `bin/build-all-docs` | Rebuild software, hardware, inventory, ZFS PDFs |
 
 PATH is automatic via `~/.config/indianadell/path.sh` (see `README.md`).
 
@@ -213,6 +217,7 @@ bin/hackrf-prepare-sdcard
 | DOSBOOT kit | `IndianaDell/recovery/` on `sdc3` — `bin/deploy-dosboot-recovery` |
 | Scripts | `mount-rpool-recovery.sh`, `scripts/recovery/mount-bpool-recovery.sh` |
 | Live boot | Ventoy Ubuntu 26.04 from Wiggly — then Section 2 or 3 of recovery manual |
+| **Force import (required)** | `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` (else boot can hang after recovery export) |
 
 ---
 

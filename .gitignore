@@ -16,6 +16,11 @@ scripts/rebuild/last-run.log
 *.timing
 B1GMB42.timing
 
+# PERC IT flash bundle (Fohdeesha) — local cache only
+.cache/perc-crossflash/
+FactoryDocs/_incoming/perc-crossflash*.zip
+# patched FreeDOS ISO is deployed to Wiggly only, not committed
+
 # Generated trifold PDFs — build with bin/build-trifold-slick
 B1GMB42-*-trifold.pdf
 B1GMB42-trifold-slick.pdf

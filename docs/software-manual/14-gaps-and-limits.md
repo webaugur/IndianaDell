@@ -48,6 +48,17 @@ Future enhancement could fold GNOME/theme steps into rebuild; current manual doc
 
 Hardware manual recommends **not** re-enabling ZFS encryption until TPM + recovery strategy is documented. IndianaDell rebuild does not touch encryption.
 
+## ZFS boot import
+
+The installed host **must** keep force import enabled:
+
+```bash
+# /etc/default/zfs
+ZPOOL_IMPORT_OPTS="-f"
+```
+
+`bin/rebuild-machine` does **not** write this file. After reinstall or recovery, verify it yourself (Chapter 3 checklist). Without `-f`, boot can hang when pools need force-import (post-export hostid mismatch, unclean shutdown).
+
 ## When something fails
 
 1. Read `scripts/rebuild/last-run.log`

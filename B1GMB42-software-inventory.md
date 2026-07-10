@@ -15,6 +15,7 @@ header-includes:
 | **Quick reference** | `docs/features-available.md` |
 | **Hardware manual** | `B1GMB42-slot-port-inventory.md` + PDF |
 | **ZFS recovery** | `docs/B1GMB42-zfs-recovery.md` + PDF; DOSBOOT `IndianaDell/recovery/` |
+| **ZFS force import** | `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` (required on this host) |
 | **Ventoy persistence** | Ch. 15; `bin/setup-wiggly-ventoy`, `~/bin/seed-ventoy-persistence.sh` |
 | **GitHub** | https://github.com/webaugur/IndianaDell |
 | **Rebuild** | `bin/rebuild-machine` |
@@ -26,4 +27,4 @@ Start with `docs/software-manual/01-introduction.md` or the built PDF.
 
 ---
 
-*Stub retained for backward links. Last updated: 2026-07-06.*
+*Stub retained for backward links. Last updated: 2026-07-09.*

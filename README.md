@@ -21,6 +21,8 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 |----------|--------|-----|
 | **Software Manual** | `docs/software-manual/` (15 chapters) | `B1GMB42-software-manual.pdf` |
 | **Hardware inventory** | `B1GMB42-slot-port-inventory.md` | `B1GMB42-slot-port-inventory.pdf` |
+| **ZFS recovery** | `docs/B1GMB42-zfs-recovery.md` | `B1GMB42-zfs-recovery.pdf` |
+| **PERC H710 IT flash** | `docs/B1GMB42-perc-it-flash.md` | — |
 | **Software inventory stub** | `B1GMB42-software-inventory.md` | `B1GMB42-software-inventory.pdf` |
 | **Quick reference** | `docs/features-available.md` | — |
 | **FactoryDocs index** | `FactoryDocs/README.md` | — |
@@ -73,6 +75,19 @@ sudo ./mount-rpool-recovery.sh chroot
 
 Manual `zpool` commands (no scripts): see recovery manual Section 3.
 
+### Required: force import in `/etc/default/zfs`
+
+On this machine, **boot will fail or hang on pool import** after a recovery export or unclean shutdown unless force-import is enabled:
+
+```bash
+# /etc/default/zfs  (installed system, not just live media)
+ZPOOL_IMPORT_OPTS="-f"
+```
+
+Verify: `grep ZPOOL_IMPORT_OPTS /etc/default/zfs` should show `"-f"`.  
+One-shot alternative at the GRUB/kernel cmdline: `zfsforce=1`.  
+Recovery scripts always pass `-f` on manual import; the installed OS still needs the default above for normal boots.
+
 ## Ventoy live persistence
 
 Ubuntu 26.04 on the internal Wiggly partition (`sdc1`) with 24 GB `persistence/ubuntu-26.04.dat` overlay. See **Software Manual Ch. 15**.
@@ -80,9 +95,11 @@ Ubuntu 26.04 on the internal Wiggly partition (`sdc1`) with 24 GB `persistence/u
 ```bash
 bin/setup-wiggly-ventoy                    # verify ISO + ventoy.json + .dat (Tower5810)
 scripts/ventoy/install-ventoy-session.sh   # install ~/bin helpers + autostart + PATH
-~/bin/seed-ventoy-persistence.sh             # snapshot session into casper image
+~/bin/seed-ventoy-persistence.sh           # snapshot session into casper image
 ```
 
 Autologin `ubuntu`, network-checked seed, Grok fullscreen autostart, and IndianaDell PATH.
+
+**Related tools:** `bin/efi-timing-suite` (BIOS A/B baselines → `B1GMB42.timing`), `bin/setup-perc-ventoy` (PERC H710 FreeDOS/IT flash on Wiggly).
 
 **Release:** `v1.0.4` — runtime secret resolution (`/home/user` when rpool exists), Ventoy persistence seed, Grok autostart.

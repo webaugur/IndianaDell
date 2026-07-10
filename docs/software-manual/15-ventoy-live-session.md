@@ -56,7 +56,7 @@ Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
 ## ZFS recovery (rpool + bpool)
 
-**Manual:** `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
+**Manual:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
 
 Boot Ventoy Ubuntu live — **do not** use the broken installed system as root.
 
@@ -68,6 +68,8 @@ sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
 # repair inside chroot; then exit and umount both scripts
 ```
+
+**Before rebooting the installed system:** ensure `/etc/default/zfs` has `ZPOOL_IMPORT_OPTS="-f"`. Recovery scripts pass `-f` on import; the host boot path needs this default or boot can hang after export/unclean shutdown. Kernel one-shot: `zfsforce=1`.
 
 **No IndianaDell?** Same manual, Section 3 — raw `zpool import` commands.
 

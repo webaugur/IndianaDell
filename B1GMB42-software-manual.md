@@ -97,23 +97,41 @@ Software arrives in three layers. Understanding the order prevents skipped steps
 
 ## Reading guide
 
-  If you need...                            Read
-  ----------------------------------------- -----------------------------------
-  Full restore after reinstall              Ch. 2 + Ch. 3
-  Python, Rust, pandoc                      Ch. 4
-  Boot/login/desktop look                   Ch. 5 + Ch. 7
-  FirePro GPUs, ROCm                        Ch. 6
-  GNU Radio, gqrx, SoapySDR                 Ch. 8
-  fldigi, WSJT-X, CHIRP                     Ch. 9
-  HackRF, Mayhem, URH                       Ch. 10
-  Telegram                                  Ch. 11
-  iotest, dellmerge                         Ch. 12
-  Dell driver CABs                          Ch. 13
-  Known gaps                                Ch. 14
-  Ventoy live persistence, Grok autostart   Ch. 15
-  ZFS `rpool` recovery                      `mount-rpool-recovery.sh`, Ch. 15
-  All `bin/` commands                       Appendix A
-  All apt package names                     Appendix B
+  ---------------------------------------------------------------------------------------------------------------
+  If you need...                                    Read
+  ------------------------------------------------- -------------------------------------------------------------
+  Full restore after reinstall                      Ch. 2 + Ch. 3
+
+  Python, Rust, pandoc                              Ch. 4
+
+  Boot/login/desktop look                           Ch. 5 + Ch. 7
+
+  FirePro GPUs, ROCm                                Ch. 6
+
+  GNU Radio, gqrx, SoapySDR                         Ch. 8
+
+  fldigi, WSJT-X, CHIRP                             Ch. 9
+
+  HackRF, Mayhem, URH                               Ch. 10
+
+  Telegram                                          Ch. 11
+
+  iotest, dellmerge                                 Ch. 12
+
+  Dell driver CABs                                  Ch. 13
+
+  Known gaps                                        Ch. 14
+
+  Ventoy live persistence, Grok autostart           Ch. 15
+
+  ZFS `rpool` / `bpool` recovery                    Ch. 2 + `docs/B1GMB42-zfs-recovery.md` (+ Ch. 15 live boot)
+
+  `/etc/default/zfs` force import                   Ch. 2 / ZFS recovery manual --- `ZPOOL_IMPORT_OPTS="-f"`
+
+  All `bin/` commands                               Appendix A
+
+  All apt package names                             Appendix B
+  ---------------------------------------------------------------------------------------------------------------
 
 ## PATH and launchers
 
@@ -122,7 +140,9 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 ## Related documents
 
 - **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF --- GPUs, PERC, bays, ports
-- **Themes deep-dive:** `Themes/README.md` and per-folder READMEs (27 files)
+- **ZFS recovery:** `docs/B1GMB42-zfs-recovery.md` + PDF --- live-media rpool/bpool chroot
+- **PERC IT flash:** `docs/B1GMB42-perc-it-flash.md` --- H710 FreeDOS/Wiggly path
+- **Themes deep-dive:** `Themes/README.md` and per-folder READMEs
 - **HackRF inventory:** `hackrf/MANIFEST.txt`
 - **Apt snapshots:** `apt-full-manifest.txt`, `apt-hamradio-dev-manifest.txt`
 - **Rebuild log:** `scripts/rebuild/last-run.log`
@@ -231,6 +251,15 @@ After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist
 
 **Full guide:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (also on **DOSBOOT** `IndianaDell/recovery/`).
 
+**Required on the installed system:** `/etc/default/zfs` must set force import so boot can recover after export or unclean shutdown:
+
+``` bash
+# /etc/default/zfs
+ZPOOL_IMPORT_OPTS="-f"
+```
+
+Verify anytime: `grep ZPOOL_IMPORT_OPTS /etc/default/zfs`. One-shot boot alternative: kernel cmdline `zfsforce=1`.
+
 **Quick (with scripts, from Ventoy live):**
 
 ``` bash
@@ -239,9 +268,10 @@ cd ~/Documents/IndianaDell    # or DOSBOOT/IndianaDell/recovery
 sudo ./mount-rpool-recovery.sh mount
 sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
+# inside chroot: confirm ZPOOL_IMPORT_OPTS="-f", repair, update-initramfs/grub
 ```
 
-**Without scripts:** manual `zpool import -R /recovery rpool` --- see ZFS recovery manual Section 3.
+**Without scripts:** manual `zpool import -N -f -R /recovery rpool` --- see ZFS recovery manual Section 3.
 
 Build PDF: `bin/build-zfs-recovery-doc`. Deploy to DOSBOOT: `bin/deploy-dosboot-recovery`.
 
@@ -337,11 +367,23 @@ Only 19 of 101 pre-crash Dell packages are on disk. Re-download per `FactoryDocs
 
 See Chapter 13.
 
+## 8. ZFS force import (required on this host)
+
+After any reinstall or recovery chroot, confirm the installed system will force-import pools at boot:
+
+``` bash
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs
+# must show: ZPOOL_IMPORT_OPTS="-f"
+```
+
+If missing, set it in `/etc/default/zfs`, then `sudo update-initramfs -c -k all`. Without this, boot can hang after a recovery export or unclean shutdown. See Chapter 2 and `docs/B1GMB42-zfs-recovery.md`.
+
 ## Quick verification block
 
 ``` bash
 cd ~/Documents/IndianaDell
 bin/rebuild-machine --verify-only
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
 gnuradio-config-info --version
@@ -350,16 +392,27 @@ bin/urh --version
 
 ## Summary table
 
-  Step                      Command                              Reboot?
-  ------------------------- ------------------------------------ ---------
-  GPU configs               `sudo bin/apply-amdgpu`              Yes
-  Dark mode                 `bin/apply-dark-mode`                No
-  Max performance           `bin/apply-max-performance`          No
-  Custom boot               `sudo bin/themes-install-boot`       Yes
-  HackRF flash              `bin/hackrf-flash-mayhem` + DFU      Maybe
-  ROCm (optional)           `bin/amd-install`                    Yes
-  All doc PDFs              `bin/build-all-docs`                 No
-  Ventoy persistence seed   `~/bin/seed-ventoy-persistence.sh`   No
+  ----------------------------------------------------------------------------------------------------------
+  Step                      Command                                               Reboot?
+  ------------------------- ----------------------------------------------------- --------------------------
+  GPU configs               `sudo bin/apply-amdgpu`                               Yes
+
+  Dark mode                 `bin/apply-dark-mode`                                 No
+
+  Max performance           `bin/apply-max-performance`                           No
+
+  Custom boot               `sudo bin/themes-install-boot`                        Yes
+
+  HackRF flash              `bin/hackrf-flash-mayhem` + DFU                       Maybe
+
+  ROCm (optional)           `bin/amd-install`                                     Yes
+
+  All doc PDFs              `bin/build-all-docs`                                  No
+
+  ZFS force import          check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"`   If initramfs updated
+
+  Ventoy persistence seed   `~/bin/seed-ventoy-persistence.sh`                    No
+  ----------------------------------------------------------------------------------------------------------
 
 # Chapter 4 --- Development Toolchain
 
@@ -983,17 +1036,19 @@ flatpak override --user org.telegram.desktop …   # permissions, env
 
 Workspace scripts for inventory, storage benchmark, and GPU stress --- no dedicated apt packages beyond shared GPU utils (`mesa-utils`, `vulkan-tools`).
 
-  -------------------------------------------------------------------------------------------------
-  Utility            Launcher             Script                        Output
-  ------------------ -------------------- ----------------------------- ---------------------------
-  Dell inventory     `bin/dellmerge`      `scripts/dell/dellmerge.sh`   stdout / `*.report` files
+  ------------------------------------------------------------------------------------------------------------
+  Utility             Launcher                 Script                              Output
+  ------------------- ------------------------ ----------------------------------- ---------------------------
+  Dell inventory      `bin/dellmerge`          `scripts/dell/dellmerge.sh`         stdout / `*.report` files
 
-  Storage survey     `bin/iotest`         `scripts/storage/iotest.sh`   IO metrics (sudo)
+  Storage survey      `bin/iotest`             `scripts/storage/iotest.sh`         IO metrics (sudo)
 
-  GPU stress         `bin/gpu-stress`     `scripts/gpu/gpu-stress.sh`   Vulkan/EGL per GPU
-  -------------------------------------------------------------------------------------------------
+  GPU stress          `bin/gpu-stress`         `scripts/gpu/gpu-stress.sh`         Vulkan/EGL per GPU
 
-**Example reports in workspace:** `b1gmb42.report`, `B1GMB42.ioperf` (from prior runs).
+  EFI / BIOS timing   `bin/efi-timing-suite`   `scripts/efi/efi-timing-suite.sh`   `B1GMB42.timing` (sudo)
+  ------------------------------------------------------------------------------------------------------------
+
+**Example reports in workspace:** `b1gmb42.report`, `B1GMB42.ioperf`, `B1GMB42.timing` (from prior runs).
 
 ## How it is installed
 
@@ -1003,12 +1058,13 @@ Scripts ship with the workspace. Rebuild Phase 10 runs `chmod +x` on `bin/*` and
 bin/dellmerge > b1gmb42.report
 sudo bin/iotest
 bin/gpu-stress 60 vkcube
+sudo bin/efi-timing-suite          # before/after BIOS A/B changes
 ```
 
 ## How to verify
 
 ``` bash
-[[ -x bin/dellmerge && -x bin/iotest && -x bin/gpu-stress ]] && echo OK
+[[ -x bin/dellmerge && -x bin/iotest && -x bin/gpu-stress && -x bin/efi-timing-suite ]] && echo OK
 bin/rebuild-machine --verify-only   # checks dellmerge, gpu-stress, iotest, apply-amdgpu
 head -20 b1gmb42.report 2>/dev/null || bin/dellmerge | head -20
 ```
@@ -1018,13 +1074,17 @@ head -20 b1gmb42.report 2>/dev/null || bin/dellmerge | head -20
 - Edit `scripts/dell/dellmerge.sh` to add inventory fields
 - `gpu-stress` accepts duration and backend (`vkcube` default)
 - `iotest` targets block devices --- read script header before running on production pools
+- `efi-timing-suite` writes a machine-local timing baseline; re-run after BIOS changes for A/B compare
 
 ## What rebuild does / does not do
 
+  ----------------------------------------------------------------------------------------
   Does                                Does not
-  ----------------------------------- ---------------------------------------
-  chmod utility launchers             Run dellmerge or iotest automatically
+  ----------------------------------- ----------------------------------------------------
+  chmod utility launchers             Run dellmerge, iotest, or efi-timing automatically
+
   Verify launcher executables exist   Archive reports to a fixed path
+  ----------------------------------------------------------------------------------------
 
 # Chapter 13 --- FactoryDocs (Workspace Archive)
 
@@ -1163,6 +1223,17 @@ Future enhancement could fold GNOME/theme steps into rebuild; current manual doc
 
 Hardware manual recommends **not** re-enabling ZFS encryption until TPM + recovery strategy is documented. IndianaDell rebuild does not touch encryption.
 
+## ZFS boot import
+
+The installed host **must** keep force import enabled:
+
+``` bash
+# /etc/default/zfs
+ZPOOL_IMPORT_OPTS="-f"
+```
+
+`bin/rebuild-machine` does **not** write this file. After reinstall or recovery, verify it yourself (Chapter 3 checklist). Without `-f`, boot can hang when pools need force-import (post-export hostid mismatch, unclean shutdown).
+
 ## When something fails
 
 1.  Read `scripts/rebuild/last-run.log`
@@ -1247,7 +1318,7 @@ Seed verifies **internet + DNS** first; if down, offers NetworkManager bring-up 
 
 ## ZFS recovery (rpool + bpool)
 
-**Manual:** `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
+**Manual:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
 
 Boot Ventoy Ubuntu live --- **do not** use the broken installed system as root.
 
@@ -1259,6 +1330,8 @@ sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
 # repair inside chroot; then exit and umount both scripts
 ```
+
+**Before rebooting the installed system:** ensure `/etc/default/zfs` has `ZPOOL_IMPORT_OPTS="-f"`. Recovery scripts pass `-f` on import; the host boot path needs this default or boot can hang after export/unclean shutdown. Kernel one-shot: `zfsforce=1`.
 
 **No IndianaDell?** Same manual, Section 3 --- raw `zpool import` commands.
 
@@ -1322,65 +1395,71 @@ google-chrome --version
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  -----------------------------------------------------------------------------------------------------------------------------
-  Launcher                     Runs                                                                   Chapter
-  ---------------------------- ---------------------------------------------------------------------- -------------------------
-  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                                   2
+  ------------------------------------------------------------------------------------------------------------------------------
+  Launcher                     Runs                                                                    Chapter
+  ---------------------------- ----------------------------------------------------------------------- -------------------------
+  `rebuild-machine`            `scripts/rebuild/rebuild-machine.sh`                                    2
 
-  `build-software-manual`      `scripts/docs/build-software-manual.sh`                                1
+  `build-software-manual`      `scripts/docs/build-software-manual.sh`                                 1
 
-  `build-all-docs`             `scripts/docs/build-all-docs.sh`                                       1, 3
+  `build-all-docs`             `scripts/docs/build-all-docs.sh`                                        1, 3
 
-  `pull-repo`                  `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS      15
+  `pull-repo`                  `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS       15
 
-  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)          15
+  `push-repo`                  `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)           15
 
-  `setup-wiggly-ventoy`        `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat   15
+  `setup-wiggly-ventoy`        `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat    15
 
-  `build-zfs-recovery-doc`     `scripts/docs/build-zfs-recovery-doc.sh`                               2, 15
+  `setup-perc-ventoy`          `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Wiggly   hardware / PERC doc
 
-  `deploy-dosboot-recovery`    `scripts/recovery/deploy-to-dosboot.sh`                                2, 15
+  `build-zfs-recovery-doc`     `scripts/docs/build-zfs-recovery-doc.sh`                                2, 15
 
-  `dellmerge`                  `scripts/dell/dellmerge.sh`                                            12
+  `build-trifold-slick`        `docs/sales/B1GMB42-trifold.html` → sales PDFs                          ---
 
-  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                            6, 12
+  `deploy-dosboot-recovery`    `scripts/recovery/deploy-to-dosboot.sh`                                 2, 15
 
-  `iotest`                     `scripts/storage/iotest.sh`                                            12
+  `efi-timing-suite`           `scripts/efi/efi-timing-suite.sh`                                       6, 12
 
-  `apply-amdgpu`               `etc/apply.sh`                                                         6
+  `dellmerge`                  `scripts/dell/dellmerge.sh`                                             12
 
-  `amd-install`                `amd-radeon/install-all.sh`                                            6
+  `gpu-stress`                 `scripts/gpu/gpu-stress.sh`                                             6, 12
 
-  `amd-preflight`              `amd-radeon/00-preflight.sh`                                           6
+  `iotest`                     `scripts/storage/iotest.sh`                                             12
 
-  `amd-verify`                 `amd-radeon/04-verify.sh`                                              6
+  `apply-amdgpu`               `etc/apply.sh`                                                          6
 
-  `amd-uninstall`              `amd-radeon/uninstall.sh`                                              6
+  `amd-install`                `amd-radeon/install-all.sh`                                             6
 
-  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                                     5, 7
+  `amd-preflight`              `amd-radeon/00-preflight.sh`                                            6
 
-  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                               7
+  `amd-verify`                 `amd-radeon/04-verify.sh`                                               6
 
-  `themes-extract`             `Themes/scripts/extract-all.sh`                                        5
+  `amd-uninstall`              `amd-radeon/uninstall.sh`                                               6
 
-  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                                 5
+  `apply-dark-mode`            `scripts/gnome/apply-dark-mode.sh`                                      5, 7
 
-  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`                 5
+  `apply-max-performance`      `scripts/gnome/apply-max-performance.sh`                                7
 
-  `hackrf-env`                 sources `hackrf/scripts/env.sh`                                        10
+  `themes-extract`             `Themes/scripts/extract-all.sh`                                         5
 
-  `urh`                        `hackrf/scripts/launch-urh.sh`                                         10
+  `themes-install-boot`        `Themes/scripts/install-boot-theme.sh`                                  5
 
-  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                                         10
+  `themes-restore-boot`        `Themes/scripts/install-boot-theme.sh --restore-stock`                  5
 
-  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                                    10
+  `hackrf-env`                 sources `hackrf/scripts/env.sh`                                         10
 
-  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                                     10
+  `urh`                        `hackrf/scripts/launch-urh.sh`                                          10
 
-  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                                       10
+  `hackrf-setup-udev`          `hackrf/scripts/setup-udev.sh`                                          10
 
-  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                                       10
-  -----------------------------------------------------------------------------------------------------------------------------
+  `hackrf-download-mayhem`     `hackrf/scripts/download-mayhem.sh`                                     10
+
+  `hackrf-prepare-sdcard`      `hackrf/scripts/prepare-sdcard.sh`                                      10
+
+  `hackrf-flash-mayhem`        `hackrf/scripts/flash-mayhem.sh`                                        10
+
+  `hackrf-build-mayhem`        `hackrf/scripts/build-mayhem.sh`                                        10
+  ------------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
@@ -1402,7 +1481,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
-**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `mount-rpool-recovery.sh`
+**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `efi-timing-suite`, `mount-rpool-recovery.sh`, `mount-bpool-recovery.sh`
 
 # Appendix B --- Apt Packages by Chapter
 

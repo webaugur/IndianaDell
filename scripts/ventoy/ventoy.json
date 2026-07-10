@@ -5,5 +5,8 @@
             "backend": "/persistence/ubuntu-26.04.dat",
             "autosel": 1
         }
+    ],
+    "auto_memdisk": [
+        "/perc/fohdeesha-freedos.iso"
     ]
 }

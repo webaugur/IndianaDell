@@ -82,6 +82,15 @@ After a successful rebuild, continue with **Chapter 3 — Post-Rebuild Checklist
 
 **Full guide:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (also on **DOSBOOT** `IndianaDell/recovery/`).
 
+**Required on the installed system:** `/etc/default/zfs` must set force import so boot can recover after export or unclean shutdown:
+
+```bash
+# /etc/default/zfs
+ZPOOL_IMPORT_OPTS="-f"
+```
+
+Verify anytime: `grep ZPOOL_IMPORT_OPTS /etc/default/zfs`. One-shot boot alternative: kernel cmdline `zfsforce=1`.
+
 **Quick (with scripts, from Ventoy live):**
 
 ```bash
@@ -90,9 +99,10 @@ cd ~/Documents/IndianaDell    # or DOSBOOT/IndianaDell/recovery
 sudo ./mount-rpool-recovery.sh mount
 sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
+# inside chroot: confirm ZPOOL_IMPORT_OPTS="-f", repair, update-initramfs/grub
 ```
 
-**Without scripts:** manual `zpool import -R /recovery rpool` — see ZFS recovery manual Section 3.
+**Without scripts:** manual `zpool import -N -f -R /recovery rpool` — see ZFS recovery manual Section 3.
 
 Build PDF: `bin/build-zfs-recovery-doc`. Deploy to DOSBOOT: `bin/deploy-dosboot-recovery`.
 

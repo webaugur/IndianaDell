@@ -13,6 +13,24 @@ header-includes:
 
 Use this when the installed Ubuntu system will not boot. Boot **Ventoy Ubuntu 26.04** from **Wiggly** (`sdc1`) instead — do not import `rpool` until you are ready to repair.
 
+### Required host setting: force import
+
+On the **installed** system, `/etc/default/zfs` must include:
+
+```bash
+ZPOOL_IMPORT_OPTS="-f"
+```
+
+Without this, boot can fail or hang after a recovery `zpool export`, hostid mismatch, or unclean shutdown — initramfs import will not force-import the pools. Recovery scripts already pass `-f` on the command line; the installed OS does **not** unless this default is set.
+
+```bash
+# verify on Tower5810 (or inside chroot after mount)
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs
+# expect: ZPOOL_IMPORT_OPTS="-f"
+```
+
+One-shot alternative: add `zfsforce=1` on the GRUB/kernel command line for a single boot.
+
 ---
 
 ## 1. Choose your path
@@ -133,11 +151,22 @@ sudo zpool export bpool
 | Problem | Commands |
 |---------|----------|
 | Broken initramfs / boot | `update-initramfs -c -k all` && `update-grub` |
-| Pool won't import | `zpool import -f -d /dev/disk/by-id` (inspect candidates); check `dmesg` |
+| Boot hangs on ZFS import after recovery | Ensure `/etc/default/zfs` has `ZPOOL_IMPORT_OPTS="-f"`; rebuild initramfs if needed |
+| Pool won't import (live) | `zpool import -f -d /dev/disk/by-id` (inspect candidates); check `dmesg` |
 | Pool degraded | `zpool status -v`; replace faulted vdev per ZFS docs |
 | PERC H710 fault | SAS bays unavailable — see hardware manual; pool on SATA only |
 | Boot menu missing | `apt-get install --reinstall grub-efi-amd64-signed shim-signed` |
 | ZFS mount fails | `zfs mount -a`; check `zfs list -o name,mountpoint,canmount` |
+
+**Before leaving chroot**, confirm force import is set:
+
+```bash
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs
+# must show: ZPOOL_IMPORT_OPTS="-f"
+# if missing or empty:
+#   printf 'ZPOOL_IMPORT_OPTS="-f"\n' | tee -a /etc/default/zfs   # or edit in place
+# then: update-initramfs -c -k all
+```
 
 **Do not** re-enable ZFS encryption until TPM + recovery are documented (hardware manual).
 
@@ -172,13 +201,14 @@ Environment overrides: `POOL_NAME`, `BPOOL_NAME`, `RECOVERY_ROOT`.
 Reboot to installed disk (not Ventoy). Then:
 
 ```bash
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # must be "-f"
 zpool status rpool bpool
 zfs list -r rpool | head -15
 ls /boot/grub
 ```
 
-If boot fails again, repeat from Section 2 or 3.
+If boot fails again, repeat from Section 2 or 3. If import stalls at boot, boot Ventoy, set `ZPOOL_IMPORT_OPTS="-f"` in the chroot (Section 4), update-initramfs, and retry.
 
 ---
 
-*IndianaDell ZFS recovery. Tower5810 / B1GMB42. Last updated: 2026-07-06.*
+*IndianaDell ZFS recovery. Tower5810 / B1GMB42. Last updated: 2026-07-09.*

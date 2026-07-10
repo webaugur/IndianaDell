@@ -88,11 +88,23 @@ Only 19 of 101 pre-crash Dell packages are on disk. Re-download per `FactoryDocs
 
 See Chapter 13.
 
+## 8. ZFS force import (required on this host)
+
+After any reinstall or recovery chroot, confirm the installed system will force-import pools at boot:
+
+```bash
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs
+# must show: ZPOOL_IMPORT_OPTS="-f"
+```
+
+If missing, set it in `/etc/default/zfs`, then `sudo update-initramfs -c -k all`. Without this, boot can hang after a recovery export or unclean shutdown. See Chapter 2 and `docs/B1GMB42-zfs-recovery.md`.
+
 ## Quick verification block
 
 ```bash
 cd ~/Documents/IndianaDell
 bin/rebuild-machine --verify-only
+grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
 gnuradio-config-info --version
@@ -110,4 +122,5 @@ bin/urh --version
 | HackRF flash | `bin/hackrf-flash-mayhem` + DFU | Maybe |
 | ROCm (optional) | `bin/amd-install` | Yes |
 | All doc PDFs | `bin/build-all-docs` | No |
+| ZFS force import | check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` | If initramfs updated |
 | Ventoy persistence seed | `~/bin/seed-ventoy-persistence.sh` | No |

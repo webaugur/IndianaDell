@@ -1,7 +1,7 @@
 ---
 title: "B1GMB42 Software Manual"
 author: "IndianaDell workspace"
-date: "2026-07-05"
+date: "2026-07-09"
 header-includes:
   - \setlength{\parskip}{0.4em}
 ---

@@ -24,6 +24,8 @@ Full pre-crash file list: **`MANIFEST-pre-crash.txt`** (91 items flagged `MISS`)
 | `System-T5810/` | BIOS, chipset, ME, TPM, manuals |
 | `GPU/` | AMD FirePro, NVIDIA Quadro/GeForce (**empty — re-download**) |
 | `Storage/` | PERC H710, Intel RST, SSD/HDD firmware |
+| `_incoming/perc-crossflash*.zip` | Optional local drop for Fohdeesha PERC IT flash (see `bin/setup-perc-ventoy`) |
+| `_incoming/*H710*.rom` or `scripts/perc/firmware/DELLH710.ROM` | Optional stock Dell H710 ROM bundled into FreeDOS image on next `bin/setup-perc-ventoy` |
 | `Network/` | Intel Ethernet |
 | `Dell-Management/` | Command Update, Configure, etc. |
 | `Expansion-Cards/` | Serial, Thunderbolt docs |

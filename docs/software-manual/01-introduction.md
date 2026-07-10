@@ -79,7 +79,8 @@ Fresh Ubuntu 26.04
 | Dell driver CABs | Ch. 13 |
 | Known gaps | Ch. 14 |
 | Ventoy live persistence, Grok autostart | Ch. 15 |
-| ZFS `rpool` recovery | `mount-rpool-recovery.sh`, Ch. 15 |
+| ZFS `rpool` / `bpool` recovery | Ch. 2 + `docs/B1GMB42-zfs-recovery.md` (+ Ch. 15 live boot) |
+| `/etc/default/zfs` force import | Ch. 2 / ZFS recovery manual — `ZPOOL_IMPORT_OPTS="-f"` |
 | All `bin/` commands | Appendix A |
 | All apt package names | Appendix B |
 
@@ -90,7 +91,9 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 ## Related documents
 
 - **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF — GPUs, PERC, bays, ports
-- **Themes deep-dive:** `Themes/README.md` and per-folder READMEs (27 files)
+- **ZFS recovery:** `docs/B1GMB42-zfs-recovery.md` + PDF — live-media rpool/bpool chroot
+- **PERC IT flash:** `docs/B1GMB42-perc-it-flash.md` — H710 FreeDOS/Wiggly path
+- **Themes deep-dive:** `Themes/README.md` and per-folder READMEs
 - **HackRF inventory:** `hackrf/MANIFEST.txt`
 - **Apt snapshots:** `apt-full-manifest.txt`, `apt-hamradio-dev-manifest.txt`
 - **Rebuild log:** `scripts/rebuild/last-run.log`

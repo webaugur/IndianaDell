@@ -10,7 +10,9 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + nested repos + LFS | 15 |
 | `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default) | 15 |
 | `setup-wiggly-ventoy` | `scripts/ventoy/setup-wiggly-ventoy.sh` — ISO + ventoy.json + .dat | 15 |
+| `setup-perc-ventoy` | `scripts/perc/setup-perc-ventoy.sh` — H710 FreeDOS/IT kit on Wiggly | hardware / PERC doc |
 | `build-zfs-recovery-doc` | `scripts/docs/build-zfs-recovery-doc.sh` | 2, 15 |
+| `build-trifold-slick` | `docs/sales/B1GMB42-trifold.html` → sales PDFs | — |
 | `deploy-dosboot-recovery` | `scripts/recovery/deploy-to-dosboot.sh` | 2, 15 |
 | `efi-timing-suite` | `scripts/efi/efi-timing-suite.sh` | 6, 12 |
 | `dellmerge` | `scripts/dell/dellmerge.sh` | 12 |
@@ -47,4 +49,4 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
-**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `mount-rpool-recovery.sh`
+**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `efi-timing-suite`, `mount-rpool-recovery.sh`, `mount-bpool-recovery.sh`
