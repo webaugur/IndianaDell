@@ -211,6 +211,22 @@ bin/hackrf-prepare-sdcard
 
 ---
 
+## Library Radio (Google Drive mirror)
+
+Selective copy of **Library / Ham_Radio** children into `~/Documents/LibraryRadio/`:
+
+`Antennas`, `mirrors`, `Projects`, `Radio`, `Scanner`, `Software`, `Sounds`
+
+```bash
+# one-time: rclone config → remote name "gdrive" (type=drive)
+bin/sync-library-radio --list          # allowlist (IDs under Ham_Radio only)
+bin/sync-library-radio --dry-run
+bin/sync-library-radio                 # copy (add/update)
+bin/sync-library-radio --prune         # sync (also delete local orphans)
+```
+
+Config: `~/Documents/LibraryRadio/folders.tsv` (from `scripts/library/library-radio-folders.example.tsv`).
+
 ## Memory / swap
 
 | Device | Size | Priority | Notes |
