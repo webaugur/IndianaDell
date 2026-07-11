@@ -177,11 +177,20 @@ grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs
 | Device | Pool / role |
 |--------|-------------|
 | `sdb4` | `rpool` main vdev |
-| `sda` | `rpool` special vdev |
+| `sda` | `rpool` special vdev (TEAM SSD) |
 | `sdb2` | `bpool` |
 | `sdb1` | EFI (`/boot/efi` when running) |
+| `sdb3` | Plain **4 GiB** swap (HDD) |
+| `rpool/swap` | **33 GiB** swap zvol (prefers special/SSD; fstab `pri=10,nofail`) |
 | `sdc1` Wiggly | Ventoy + Ubuntu live ISO + persistence |
 | `sdc3` DOSBOOT | Recovery scripts + this manual |
+
+**Before `zpool export rpool`:** disable the zvol swap so export is clean:
+
+```bash
+sudo swapoff /dev/zvol/rpool/swap 2>/dev/null || sudo swapoff -a
+# HDD swap sdb3 can stay or also swapoff -a
+```
 
 ---
 
@@ -211,4 +220,4 @@ If boot fails again, repeat from Section 2 or 3. If import stalls at boot, boot 
 
 ---
 
-*IndianaDell ZFS recovery. Tower5810 / B1GMB42. Last updated: 2026-07-09.*
+*IndianaDell ZFS recovery. Tower5810 / B1GMB42. Last updated: 2026-07-10.*

@@ -211,6 +211,17 @@ bin/hackrf-prepare-sdcard
 
 ---
 
+## Memory / swap
+
+| Device | Size | Priority | Notes |
+|--------|------|----------|--------|
+| `/dev/sdb3` | 4 GiB | −1 (default) | Plain partition on Hitachi HDD (outer tracks) |
+| `rpool/swap` → `/dev/zvol/rpool/swap` | 33 GiB | **10** (preferred) | ZFS zvol; blocks prefer **special** vdev (TEAM SSD) via `special_small_blocks=8K` |
+
+- fstab ZFS line: `UUID=… none swap sw,pri=10,nofail 0 0` (`nofail` so a missing zvol never stalls boot)
+- Zvol props: `compression=off`, `primarycache=metadata`, `sync=always`, `refreservation` ~34 G
+- Verify: `swapon --show` (expect both); `zpool list -v rpool` (special ALLOC grows as pages are written)
+
 ## ZFS recovery (rpool + bpool)
 
 | Item | Detail |
@@ -220,6 +231,7 @@ bin/hackrf-prepare-sdcard
 | Scripts | `mount-rpool-recovery.sh`, `scripts/recovery/mount-bpool-recovery.sh` |
 | Live boot | Ventoy Ubuntu 26.04 from Wiggly — then Section 2 or 3 of recovery manual |
 | **Force import (required)** | `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` (else boot can hang after recovery export) |
+| **Swap zvol** | `rpool/swap` — `swapoff` before `zpool export` in recovery |
 
 ---
 

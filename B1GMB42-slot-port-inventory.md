@@ -190,7 +190,7 @@ Previous install used **ZFS native encryption + encrypted swap (TPM)**. Disk cha
 | Item | Old install | This install |
 |------|-------------|--------------|
 | ZFS `rpool` encryption | on (TPM) | **off** |
-| Swap | `dm-crypt` on sdb3 | **plain** sdb3 |
+| Swap | `dm-crypt` on sdb3 | **plain** sdb3 (4 GiB) **+** `rpool/swap` zvol 33 GiB on special SSD |
 | Hostname | PT5810 | **Tower5810** |
 | ZFS root dataset | `ubuntu_mefuj7` | **`ubuntu_cortt9`** |
 | TEAM SSD | special vdev on `rpool` | **attached** — `special_small_blocks=32K` |
@@ -391,7 +391,7 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 | OS dev | Size | Model | Role |
 |--------|------|-------|------|
 | **sda** | 238 GB | TEAM T253X6256G | **`rpool` special vdev** (~509 MB/s seq read) |
-| **sdb** | 1.4 TB | Hitachi HDS723015BLA642 | `rpool` + `bpool`, EFI, **plain swap** (~145 MB/s) |
+| **sdb** | 1.4 TB | Hitachi HDS723015BLA642 | `rpool` + `bpool`, EFI, **plain swap 4 GiB** (~145 MB/s); extra swap is ZFS zvol on TEAM special |
 | **sdc** | 466 GB | Seagate ST500DM002 | Ventoy (Wiggly) + DOSBOOT + Windows + ISO-STASH |
 
 #### sdc partition map (Seagate)
