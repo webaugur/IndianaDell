@@ -138,6 +138,12 @@ sync_home_overlay() {
     log "secrets: $secret_src -> persistence (store on casper disk)"
     sync_secrets_to_persistence "$dest_root"
 
+    if chrome_seed_enabled; then
+        log "chrome tier $(chrome_seed_tier): $(resolve_chrome_source_home) -> persistence (no caches)"
+    else
+        log "chrome: seed disabled (SEED_CHROME=off)"
+    fi
+
     log "session config: $session_src -> persistence"
     sync_session_tree "$session_src" "$dest_root/home/ubuntu" 1
 

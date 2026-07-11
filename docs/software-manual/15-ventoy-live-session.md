@@ -12,6 +12,7 @@ Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so
 | Grok auth + sessions | `~/.grok/` | same (never in git) |
 | GitHub CLI auth | `~/.config/gh/` | same |
 | SSH keys | `~/.ssh/` | same |
+| Chrome (tier C) | `~/.config/google-chrome/` curated | bookmarks, prefs, logins, Web Data, Extensions — **no caches** |
 | **Runtime source** | `/home/user/` when ZFS rpool is available | pulled at login via `resolve-secrets.sh` |
 | IndianaDell workspace | `~/Documents/IndianaDell` | same (git clone or rsync) |
 | PATH overrides | `~/.config/indianadell/path.sh` | same |
@@ -60,6 +61,25 @@ Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-
 | External `.dat` seed | Seeding the stick from Tower5810 / mounted Wiggly | Only if IndianaDell must be **git cloned** |
 
 **Network check:** waits quietly up to `SEED_NETWORK_WAIT_SECS` (default **120s**) for DHCP/DNS — no dialogs during that wait. Zenity only if still down after the wait (disable: `SEED_NETWORK_PROMPT=0`). Skip entirely: `SEED_SKIP_NETWORK_CHECK=1`.
+
+### Chrome profile seed (`SEED_CHROME`)
+
+Default **`SEED_CHROME=c`**. Prefer `/home/user/.config/google-chrome` when the ZFS rpool home is present; never copies Cache / Code Cache / GPU* / Service Worker.
+
+| Tier | What is copied |
+|------|----------------|
+| `off` / `0` | Nothing |
+| `a` | Bookmarks + Preferences |
+| `b` | a + Local State + Secure Preferences |
+| **`c`** | b + Login Data + Web Data + Extensions + Local Extension Settings (all profiles: Default, Profile N) |
+| `d` | Reserved (same as `c` for now) |
+
+Full Chrome config here is ~1.1 GB. Tier **C** drops History bulk, IndexedDB, Service Worker, caches, and ML model downloads; **Extensions** still dominate (~0.7 GB apparent on ext4). Caches and Service Worker alone are ~75 MB+.
+
+```bash
+SEED_CHROME=c ~/bin/seed-ventoy-persistence.sh   # default
+SEED_CHROME=off ~/bin/seed-ventoy-persistence.sh  # skip Chrome
+```
 
 Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
