@@ -31,25 +31,53 @@ RESOLVE_SECRETS="${RESOLVE_SECRETS:-$HOME/bin/resolve-secrets.sh}"
 # shellcheck source=resolve-secrets.sh
 source "$RESOLVE_SECRETS"
 
-NETWORK_CHECK="${NETWORK_CHECK:-$HOME/bin/seed-network-check.sh}"
-[[ -r "$NETWORK_CHECK" ]] || NETWORK_CHECK="$ROOT/scripts/ventoy/seed-network-check.sh"
-if [[ -r "$NETWORK_CHECK" ]]; then
-    # shellcheck source=seed-network-check.sh
-    source "$NETWORK_CHECK"
-    if ! ensure_network_before_seed; then
-        log "seed skipped (network down or user declined)"
-        exit 0
-    fi
-elif [[ "${SEED_SKIP_NETWORK_CHECK:-0}" != 1 ]]; then
-    log "warning: $NETWORK_CHECK missing — proceeding without network check"
-fi
-
-materialize_secrets_to_runtime_home quiet
-
 running_on_casper_persistence() {
     findmnt -rn -o FSTYPE / 2>/dev/null | grep -qx overlay \
         && [[ -d /cow/upper ]]
 }
+
+# Forward declaration helpers used by network gate (defined fully later)
+resolve_indianadell_src() {
+    local candidate
+    for candidate in /home/user/Documents/IndianaDell "$HOME/Documents/IndianaDell"; do
+        if [[ -d "$candidate/.git" || -f "$candidate/mount-rpool-recovery.sh" ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Network is only required when we must git-clone IndianaDell into an external
+# .dat image. Live casper overlay seed is local rsync only.
+need_network_for_seed() {
+    if running_on_casper_persistence; then
+        return 1
+    fi
+    if resolve_indianadell_src >/dev/null 2>&1; then
+        return 1
+    fi
+    return 0
+}
+
+NETWORK_CHECK="${NETWORK_CHECK:-$HOME/bin/seed-network-check.sh}"
+[[ -r "$NETWORK_CHECK" ]] || NETWORK_CHECK="$ROOT/scripts/ventoy/seed-network-check.sh"
+if need_network_for_seed; then
+    if [[ -r "$NETWORK_CHECK" ]]; then
+        # shellcheck source=seed-network-check.sh
+        source "$NETWORK_CHECK"
+        if ! ensure_network_before_seed; then
+            log "seed skipped (network down after wait; needed for git clone)"
+            exit 0
+        fi
+    elif [[ "${SEED_SKIP_NETWORK_CHECK:-0}" != 1 ]]; then
+        log "warning: $NETWORK_CHECK missing — proceeding without network check"
+    fi
+else
+    log "network: not required for this seed mode (local only)"
+fi
+
+materialize_secrets_to_runtime_home quiet
 
 find_persist_dat() {
     local candidate
@@ -64,17 +92,6 @@ find_persist_dat() {
         /media/ubuntu/Wiggly/persistence/ubuntu-26.04.dat \
         /media/user/Wiggly/persistence/ubuntu-26.04.dat; do
         if [[ -f "$candidate" ]]; then
-            printf '%s\n' "$candidate"
-            return 0
-        fi
-    done
-    return 1
-}
-
-resolve_indianadell_src() {
-    local candidate
-    for candidate in /home/user/Documents/IndianaDell "$HOME/Documents/IndianaDell"; do
-        if [[ -d "$candidate/.git" || -f "$candidate/mount-rpool-recovery.sh" ]]; then
             printf '%s\n' "$candidate"
             return 0
         fi

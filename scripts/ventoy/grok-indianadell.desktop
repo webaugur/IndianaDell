@@ -5,5 +5,6 @@ Comment=Resume Grok fullscreen in IndianaDell workspace
 Exec=/home/ubuntu/bin/grok-indianadell-launch.sh
 Terminal=false
 X-GNOME-Autostart-enabled=true
-X-GNOME-Autostart-Delay=3
+# Delay past GDM/session start; seed-network-check also waits quietly for DHCP.
+X-GNOME-Autostart-Delay=15
 StartupNotify=false

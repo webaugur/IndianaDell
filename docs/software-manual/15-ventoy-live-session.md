@@ -50,8 +50,17 @@ The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including 
 
 Launcher: `~/bin/grok-indianadell-launch.sh`  
 `resolve-secrets.sh` materializes secrets from `/home/user` when rpool exists, else uses Ventoy `$HOME`.  
-Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-ventoy.log`).  
-Seed verifies **internet + DNS** first; if down, offers NetworkManager bring-up or skip.
+Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-ventoy.log`).
+
+**What seed does:** copies the current session into the Ventoy **casper-rw** persistence image (`ubuntu-26.04.dat`) so the next live boot keeps home, Grok, packages, and IndianaDell. Modes:
+
+| Mode | When | Network? |
+|------|------|----------|
+| Live casper overlay | Already booted from Ventoy persistence | **No** — local rsync only |
+| External `.dat` seed | Seeding the stick from Tower5810 / mounted Wiggly | Only if IndianaDell must be **git cloned** |
+
+**Network check:** waits quietly up to `SEED_NETWORK_WAIT_SECS` (default **120s**) for DHCP/DNS — no dialogs during that wait. Zenity only if still down after the wait (disable: `SEED_NETWORK_PROMPT=0`). Skip entirely: `SEED_SKIP_NETWORK_CHECK=1`.
+
 Default session: `~/Documents/IndianaDell` (session ID in script env vars).
 
 ## ZFS recovery (rpool + bpool)
