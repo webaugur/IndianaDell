@@ -233,6 +233,10 @@ bin/sync-library-radio --prune       # also delete local orphans
 
 Default names: Antennas, mirrors, Projects, Radio, Scanner, Software, Sounds.
 
+**Missing / quarantine ledger (local only):** `bin/library-radio-missing report`,
+`bin/library-radio-quarantine-pull`, `bin/library-radio-scan-quarantine`.
+Ledger: `~/Documents/LibraryRadio/missing.tsv`. Holding: `holding/inbox/`.
+
 ## Memory / swap
 
 | Device | Size | Priority | Notes |

@@ -43,3 +43,9 @@ docs/sales/*.pdf
 **/LibraryRadio/ham-radio-id-map.tsv
 **/library-radio-folders.tsv
 **/ham-radio-id-map.tsv
+**/LibraryRadio/quarantine/
+**/LibraryRadio/missing.tsv
+**/LibraryRadio/holding/
+**/LibraryRadio/sync-errors.log
+**/LibraryRadio/MISSING*.txt
+**/LibraryRadio/quarantine/
