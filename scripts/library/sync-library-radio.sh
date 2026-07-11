@@ -7,11 +7,14 @@
 # Requires: rclone with a Google Drive remote (default name: gdrive).
 #   rclone config   # create remote type=drive, scope=drive or drive.readonly
 #
-# Config (TSV): local_name <TAB> folder_id [<TAB> resource_key]
-#   Prefer:  ~/Documents/LibraryRadio/folders.tsv
-#   Fallback: $REPO/scripts/library/library-radio-folders.example.tsv
+# Config (private, local only — never git):
+#   ~/Documents/LibraryRadio/folders.tsv
+#   format: local_name <TAB> folder_id
+# Generate with: bin/discover-library-radio-folders
+# Names allowlist in repo: library-radio-folder-names.txt (no IDs)
 #
 # Usage:
+#   bin/discover-library-radio-folders   # recreate folders.tsv + ham-radio-id-map.tsv
 #   bin/sync-library-radio
 #   bin/sync-library-radio --dry-run
 #   bin/sync-library-radio --prune
@@ -24,7 +27,6 @@ DEST="${LIBRARY_RADIO_DEST:-$HOME/Documents/LibraryRadio}"
 REMOTE="${RCLONE_GDRIVE_REMOTE:-gdrive}"
 CONFIG="${LIBRARY_RADIO_FOLDERS:-$DEST/folders.tsv}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-EXAMPLE_CONFIG="${SCRIPT_DIR}/library-radio-folders.example.tsv"
 
 DRY_RUN=0
 PRUNE=0
@@ -92,13 +94,10 @@ done
 command -v rclone >/dev/null 2>&1 || die "rclone not found — install: sudo apt-get install -y rclone"
 
 if [[ ! -f "$CONFIG" ]]; then
-  if [[ -f "$EXAMPLE_CONFIG" ]]; then
-    CONFIG=$EXAMPLE_CONFIG
-    log "note: using example allowlist: $CONFIG"
-    log "      copy to $DEST/folders.tsv to customize without editing the repo"
-  else
-    die "no allowlist at $CONFIG (create folders.tsv: local_name\\tfolder_id[\\tresource_key])"
-  fi
+  die "no allowlist at $CONFIG
+Generate private maps (not in git):
+  bin/discover-library-radio-folders
+That writes folders.tsv and ham-radio-id-map.tsv under $DEST"
 fi
 
 # stdout lines: name|id|resource_key

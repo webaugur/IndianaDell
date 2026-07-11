@@ -1,0 +1,13 @@
+# Names of Library/Ham_Radio children to mirror into ~/Documents/LibraryRadio.
+# No Drive IDs here (private / machine-local). Generate IDs with:
+#   bin/discover-library-radio-folders
+#
+# One folder name per line. Blank lines and # comments ignored.
+
+Antennas
+mirrors
+Projects
+Radio
+Scanner
+Software
+Sounds

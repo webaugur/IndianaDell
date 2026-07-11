@@ -213,19 +213,25 @@ bin/hackrf-prepare-sdcard
 
 ## Library Radio (Google Drive mirror)
 
-Selective copy of **Library / Ham_Radio** children into `~/Documents/LibraryRadio/`:
-
-`Antennas`, `mirrors`, `Projects`, `Radio`, `Scanner`, `Software`, `Sounds`
+Selective copy of **Library / Ham_Radio** children into `~/Documents/LibraryRadio/`.  
+Folder **IDs stay machine-local** (not in git). Repo only lists **names**.
 
 ```bash
 # one-time: rclone config → remote name "gdrive" (type=drive)
-bin/sync-library-radio --list          # allowlist (IDs under Ham_Radio only)
+bin/discover-library-radio-folders   # write private folders.tsv + ham-radio-id-map.tsv
+bin/sync-library-radio --list
 bin/sync-library-radio --dry-run
-bin/sync-library-radio                 # copy (add/update)
-bin/sync-library-radio --prune         # sync (also delete local orphans)
+bin/sync-library-radio               # copy (add/update)
+bin/sync-library-radio --prune       # also delete local orphans
 ```
 
-Config: `~/Documents/LibraryRadio/folders.tsv` (from `scripts/library/library-radio-folders.example.tsv`).
+| Repo (public) | Local only (private) |
+|---------------|----------------------|
+| `scripts/library/library-radio-folder-names.txt` | `~/Documents/LibraryRadio/folders.tsv` |
+| `bin/discover-library-radio-folders` | `~/Documents/LibraryRadio/ham-radio-id-map.tsv` |
+| `bin/sync-library-radio` | rclone token in `~/.config/rclone/` |
+
+Default names: Antennas, mirrors, Projects, Radio, Scanner, Software, Sounds.
 
 ## Memory / swap
 

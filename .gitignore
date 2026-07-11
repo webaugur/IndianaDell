@@ -37,3 +37,9 @@ docs/sales/*.pdf
 **/auth.json
 **/.config/gh/hosts.yml
 **/.config/gh/config.yml
+
+# Library Radio — Drive folder IDs / maps stay local only
+**/LibraryRadio/folders.tsv
+**/LibraryRadio/ham-radio-id-map.tsv
+**/library-radio-folders.tsv
+**/ham-radio-id-map.tsv
