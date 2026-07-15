@@ -1,0 +1,10 @@
+# Keep these sockets enabled; disable the matching long-running service at boot
+# so the daemon starts on first use (docker CLI, print job, snap, virsh, …).
+docker.socket
+cups.socket
+snapd.socket
+libvirtd.socket
+libvirtd-ro.socket
+libvirtd-admin.socket
+virtlockd.socket
+virtlogd.socket

@@ -15,8 +15,10 @@ Snapshots and customization toolkit for **boot** (Plymouth), **login** (GDM/GNOM
 
 ```bash
 bin/themes-extract          # refresh extracted logos + apt mirrors
-sudo bin/themes-install-boot   # install custom Plymouth theme
-sudo bin/themes-restore-boot   # revert to stock BGRT theme
+bin/themes-preview-boot                      # SAFE windowed boot splash preview
+sudo bin/themes-install-boot                 # install custom Plymouth theme
+sudo bin/themes-install-boot --animated-dell # animated Dell BGRT + wizard scene
+sudo bin/themes-restore-boot                 # revert to stock BGRT theme
 bin/apply-dark-mode         # GNOME dark (login + desktop session)
 bin/apply-max-performance   # no suspend / dimming
 ```

@@ -49,3 +49,15 @@ docs/sales/*.pdf
 **/LibraryRadio/sync-errors.log
 **/LibraryRadio/MISSING*.txt
 **/LibraryRadio/quarantine/
+
+# Plymouth preview staging (local only; rebuild with --stage-only)
+Themes/boot/staging/**
+!Themes/boot/staging/README.md
+
+# Plymouth generated frames (rebuild: python3 Themes/scripts/generate-dell-animation.py)
+Themes/boot/generated/**
+!Themes/boot/generated/README.md
+
+# Python cache
+Themes/scripts/__pycache__/
+**/__pycache__/

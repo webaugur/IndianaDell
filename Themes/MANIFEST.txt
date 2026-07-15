@@ -9,6 +9,8 @@
 Layer 1 (center):  UEFI BGRT → Themes/boot/extracted/bgrt-firmware-oem.bmp|.png
                    Source: /sys/firmware/acpi/bgrt/image (Dell BIOS logo, 304×307)
 Layer 2 (spinner): plymouth-theme-spinner animation
+                   OR animated Dell: Themes/boot/generated/dell-animation/
+                   (sudo bin/themes-install-boot --animated-dell)
 Layer 3 (bottom):  watermark.png → ubuntu-logo-text-dark.png (187×72)
 
 Active stock theme: bgrt (apt: plymouth + plymouth-theme-spinner)
@@ -35,5 +37,6 @@ desktop/apt-packages.txt  — yaru-theme-gtk/icon/gnome-shell/sound
 ## Scripts
 
   bin/themes-extract        — extract logos + mirror apt theme files
+  bin/themes-preview-boot   — SAFE windowed Plymouth simulator (no root)
   bin/themes-install-boot   — install custom Plymouth theme
   bin/themes-restore-boot   — revert to stock BGRT theme

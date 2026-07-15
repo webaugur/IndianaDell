@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Safe windowed Plymouth boot-theme preview (no root, no initramfs, no reboot).
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+exec python3 "$ROOT/Themes/scripts/plymouth-preview.py" "$@"

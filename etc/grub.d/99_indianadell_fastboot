@@ -1,0 +1,10 @@
+#!/bin/sh
+# IndianaDell: last-word GRUB override. os-prober forces timeout=10 when
+# other OSes exist and timeout is 0; recordfail on ZFS/EFI forces 30s.
+# This fragment is emitted last so the menu never waits.
+set -e
+cat <<'EOF'
+# IndianaDell fastboot — no boot-menu delay
+set timeout=0
+set timeout_style=hidden
+EOF

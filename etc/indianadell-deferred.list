@@ -1,0 +1,55 @@
+# Services started after graphical.target by indianadell-start-deferred.
+# One unit per line. Lines starting with # are ignored.
+# Prefer socket activation when listed in indianadell-socket-lazy.list instead.
+
+# Containers / VMs
+docker.service
+containerd.service
+libvirtd.service
+libvirt-guests.service
+virtlockd.service
+virtlogd.service
+qemu-kvm.service
+
+# Printing
+cups.service
+cups-browsed.service
+
+# Snaps (seeded waits are expensive at boot)
+snapd.service
+snapd.seeded.service
+
+# Networking extras (NM itself stays early)
+ModemManager.service
+openvpn.service
+open-iscsi.service
+ubuntu-fan.service
+
+# Desktop-adjacent but not needed for first paint
+bluetooth.service
+avahi-daemon.service
+geoclue.service
+colord.service
+thermald.service
+
+# Lab / local servers
+lighttpd.service
+dump1090-mutability.service
+
+# Crash dump / housekeeping not needed for login
+kdump-tools.service
+e2scrub_reap.service
+sysstat.service
+ubuntu-advantage.service
+ua-reboot-cmds.service
+unattended-upgrades.service
+anacron.service
+ssl-cert.service
+sssd.service
+systemd-machined.service
+systemd-pstore.service
+cloud-config.service
+cloud-final.service
+cloud-init-local.service
+cloud-init-main.service
+cloud-init-network.service

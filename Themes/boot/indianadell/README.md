@@ -14,10 +14,11 @@ At install time the script also rsyncs `../stock/spinner/` assets into the syste
 
 ## `install-boot-theme.sh` patches
 
-| Mode | `UseFirmwareBackground` | `background.png` |
-|------|----------------------|------------------|
-| Default | `true` | removed |
-| `--oem FILE` | `false` | your image (clears Dell BGRT) |
+| Mode | `UseFirmwareBackground` | `background.png` | Spinner frames |
+|------|----------------------|------------------|----------------|
+| Default | `true` | removed | stock jimmac dots |
+| `--oem FILE` | `false` | your image (clears Dell BGRT) | stock jimmac dots |
+| `--animated-dell` | `false` | solid black | Dell ring-orbit (60 frames), centered |
 
 Watermark controlled by `overlay/watermark.png`, `--watermark`, or `--no-watermark`.
 

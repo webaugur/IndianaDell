@@ -1,0 +1,15 @@
+[Unit]
+Description=IndianaDell deferred post-desktop services
+# After the greeter/session path is up — do not block graphical.target
+After=graphical.target
+Wants=graphical.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Long ceiling: docker/libvirt can take a while; we run them in the background
+TimeoutStartSec=0
+ExecStart=/usr/local/sbin/indianadell-start-deferred
+
+[Install]
+WantedBy=graphical.target
