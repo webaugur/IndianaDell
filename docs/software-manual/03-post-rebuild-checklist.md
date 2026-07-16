@@ -56,17 +56,18 @@ See Chapter 5.
 ## 4. HackRF hardware (when device is available)
 
 ```bash
-source bin/hackrf-env
+bin/install-dragonsdr --verify-only   # suite present?
+source bin/hackrf-env                 # PATH → ~/Documents/DragonSDR/hackrf
 hackrf_info                           # should list board
 bin/hackrf-flash-mayhem               # extract USB flash bundle
 # follow bundle README for DFU flash
 bin/hackrf-prepare-sdcard             # ensure SD tree is extracted
-# copy hackrf/sd-card/mayhem-v2.4.0/* to FAT32 microSD root
+# copy ~/Documents/DragonSDR/hackrf/sd-card/mayhem-v2.4.0/* to FAT32 microSD root
 ```
 
 **Verify:** `hackrf_info`, on-device Mayhem version, SD apps visible on PortaPack.
 
-See Chapter 10.
+See Chapter 10 and `~/Documents/DragonSDR/README.md`.
 
 ## 5. Documentation PDFs
 

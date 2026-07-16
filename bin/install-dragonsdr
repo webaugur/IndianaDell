@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Install the full DragonSDR suite (apt SDR/ham, HackRF/Mayhem, URH).
+# Thin wrapper around ~/Documents/DragonSDR/bin/install-suite
+set -euo pipefail
+DRAGONSDR_ROOT="${DRAGONSDR_ROOT:-$HOME/Documents/DragonSDR}"
+SUITE="${DRAGONSDR_ROOT}/bin/install-suite"
+if [[ ! -x "$SUITE" ]]; then
+  SUITE="${DRAGONSDR_ROOT}/tools/install-suite.sh"
+fi
+if [[ ! -x "$SUITE" ]]; then
+  cat >&2 <<EOF
+DragonSDR not found at: ${DRAGONSDR_ROOT}
+
+Clone the suite repo first:
+  git clone https://github.com/webaugur/DragonSDR.git ${DRAGONSDR_ROOT}
+
+Then re-run: bin/install-dragonsdr
+EOF
+  exit 1
+fi
+exec "$SUITE" "$@"

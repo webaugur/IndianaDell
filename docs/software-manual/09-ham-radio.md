@@ -1,5 +1,9 @@
 # Chapter 9 — Ham Radio (Desktop)
 
+## Ownership
+
+Desktop ham applications are part of the **DragonSDR** suite (`APT_HAM` in `tools/package-lists.sh`).
+
 ## What gets installed
 
 | Application | Command | Apt package | Role |
@@ -15,9 +19,13 @@
 
 ## How it is installed
 
-Apt packages in `APT_SDR_HAM` (rebuild Phase 3).
+```bash
+bin/install-dragonsdr
+# omit ham apps:
+SKIP_HAM=1 bin/install-dragonsdr
+```
 
-**xastir debconf:** rebuild preseeds `xastir/install-setuid boolean false` to avoid interactive install hangs.
+**xastir debconf:** suite install preseeds `xastir/install-setuid boolean false` to avoid interactive hangs.
 
 ```bash
 fldigi &
@@ -34,22 +42,7 @@ xastir &
 ```bash
 command -v fldigi wsjtx chirpw direwolf gpredict grig xastir
 python3 -c "import Hamlib; print('Hamlib OK')"
-bin/rebuild-machine --verify-only   # checks fldigi, wsjtx, chirpw
+bin/install-dragonsdr --verify-only
 ```
 
 Configure rig control in each app via Hamlib model selection.
-
-## How to customize
-
-- Radio definitions: CHIRP stock configs + your radio CSV
-- WSJT-X: `~/.config/WSJT-X/`
-- xastir maps: `xastir-data` package + user map sources
-- direwolf: `~/.direwolf/direwolf.conf`
-
-## What rebuild does / does not do
-
-| Does | Does not |
-|------|----------|
-| Install all ham desktop apps + Hamlib | Configure radios or call signs |
-| Preseed xastir setuid prompt | Set up APRS IS or igates |
-| Verify fldigi, wsjtx, chirpw commands | Install fldigi/WSJT-X from source |

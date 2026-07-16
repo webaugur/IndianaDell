@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/hackrf_cpldjtag.dir/link.d CMakeFiles/hackrf_cpldjtag.dir/hackrf_cpldjtag.c.o -o hackrf_cpldjtag  -Wl,-rpath,/home/user/Documents/IndianaDell/hackrf/build/libhackrf/src: ../../libhackrf/src/libhackrf.so.0.10.0 -lm

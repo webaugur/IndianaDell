@@ -7,7 +7,8 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `rebuild-machine` | `scripts/rebuild/rebuild-machine.sh` | 2 |
 | `build-software-manual` | `scripts/docs/build-software-manual.sh` | 1 |
 | `build-all-docs` | `scripts/docs/build-all-docs.sh` | 1, 3 |
-| `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + nested repos + LFS | 15 |
+| `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + LFS (`--dragonsdr` optional) | 15 |
+| `install-dragonsdr` | `~/Documents/DragonSDR/bin/install-suite` — full SDR suite | 8–10 |
 | `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default) | 15 |
 | `setup-wiggly-ventoy` | `scripts/ventoy/setup-wiggly-ventoy.sh` — Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat | 15 |
 | `setup-perc-ventoy` | `scripts/perc/setup-perc-ventoy.sh` — H710 FreeDOS/IT kit on Uncle Wiggly | hardware / PERC doc |
@@ -35,13 +36,13 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `themes-extract` | `Themes/scripts/extract-all.sh` | 5 |
 | `themes-install-boot` | `Themes/scripts/install-boot-theme.sh` | 5 |
 | `themes-restore-boot` | `Themes/scripts/install-boot-theme.sh --restore-stock` | 5 |
-| `hackrf-env` | sources `hackrf/scripts/env.sh` | 10 |
-| `urh` | `hackrf/scripts/launch-urh.sh` | 10 |
-| `hackrf-setup-udev` | `hackrf/scripts/setup-udev.sh` | 10 |
-| `hackrf-download-mayhem` | `hackrf/scripts/download-mayhem.sh` | 10 |
-| `hackrf-prepare-sdcard` | `hackrf/scripts/prepare-sdcard.sh` | 10 |
-| `hackrf-flash-mayhem` | `hackrf/scripts/flash-mayhem.sh` | 10 |
-| `hackrf-build-mayhem` | `hackrf/scripts/build-mayhem.sh` | 10 |
+| `hackrf-env` | sources `DragonSDR/hackrf/scripts/env.sh` | 10 |
+| `urh` | `DragonSDR/bin/urh` | 10 |
+| `hackrf-setup-udev` | `DragonSDR/bin/hackrf-setup-udev` | 10 |
+| `hackrf-download-mayhem` | `DragonSDR/bin/hackrf-download-mayhem` | 10 |
+| `hackrf-prepare-sdcard` | `DragonSDR/bin/hackrf-prepare-sdcard` | 10 |
+| `hackrf-flash-mayhem` | `DragonSDR/bin/hackrf-flash-mayhem` | 10 |
+| `hackrf-build-mayhem` | `DragonSDR/bin/hackrf-build-mayhem` | 10 |
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 

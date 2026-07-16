@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Pull IndianaDell + nested GitHub clones + LFS; optional verify/docs.
+# Pull IndianaDell + LFS; optional verify/docs.
+# SDR nested clones live under DragonSDR (pull that repo separately).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -8,7 +9,7 @@ source "$ROOT/scripts/github/remote.sh"
 
 VERIFY=0
 BUILD_DOCS=0
-REBUILD_HACKRF=0
+PULL_DRAGONSDR=0
 
 log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
 
@@ -20,7 +21,13 @@ for arg in "$@"; do
   case "$arg" in
     --verify) VERIFY=1 ;;
     --build-docs) BUILD_DOCS=1 ;;
-    --rebuild-hackrf) REBUILD_HACKRF=1 ;;
+    --dragonsdr) PULL_DRAGONSDR=1 ;;
+    --rebuild-hackrf)
+      echo "NOTE: --rebuild-hackrf moved to DragonSDR. Use:" >&2
+      echo "  ${DRAGONSDR_ROOT:-$HOME/Documents/DragonSDR}/bin/install-suite" >&2
+      echo "  (or SKIP_HACKRF_BUILD=0 after pulling DragonSDR)" >&2
+      exit 1
+      ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown argument: $arg (try --help)" >&2; exit 1 ;;
   esac
@@ -59,49 +66,41 @@ pull_main_repo() {
   log "HEAD: $(git log --oneline -1)"
 }
 
-pull_nested_repo() {
-  local dir="$1"
-  local name
-  name="$(basename "$dir")"
-  [[ -d "${dir}/.git" ]] || return 0
-  log "=== hackrf/repos/${name} ==="
-  git -C "$dir" fetch --all --prune
+pull_dragonsdr() {
+  local ds="${DRAGONSDR_ROOT:-$HOME/Documents/DragonSDR}"
+  if [[ ! -d "${ds}/.git" ]]; then
+    log "WARN: DragonSDR not a git repo at $ds — skip"
+    return 0
+  fi
+  log "=== DragonSDR ==="
+  git -C "$ds" fetch --all --prune
   local branch
-  branch="$(git -C "$dir" symbolic-ref -q --short HEAD 2>/dev/null || true)"
-  if [[ -n "$branch" ]] && git -C "$dir" rev-parse --verify "origin/${branch}" >/dev/null 2>&1; then
-    git -C "$dir" pull --ff-only origin "$branch"
+  branch="$(git -C "$ds" symbolic-ref -q --short HEAD 2>/dev/null || echo main)"
+  if git -C "$ds" rev-parse --verify "origin/${branch}" >/dev/null 2>&1; then
+    git -C "$ds" pull --ff-only origin "$branch"
   else
-    git -C "$dir" pull --ff-only 2>/dev/null || log "WARN: ${name} — no upstream; left at $(git -C "$dir" log --oneline -1)"
+    git -C "$ds" pull --ff-only 2>/dev/null || log "WARN: DragonSDR pull failed"
   fi
-  if [[ "$name" == "mayhem-firmware" ]] && [[ -f "${dir}/.gitmodules" ]]; then
-    log "  mayhem-firmware: submodule update"
-    git -C "$dir" submodule update --init --recursive
-  fi
-  log "  $(git -C "$dir" log --oneline -1)"
-}
-
-pull_hackrf_repos() {
-  log "=== Nested GitHub repos ==="
+  log "  $(git -C "$ds" log --oneline -1)"
+  # Nested hackrf/repos
   local repo
-  for repo in "$ROOT"/hackrf/repos/*/; do
-    pull_nested_repo "$repo"
+  for repo in "$ds"/hackrf/repos/*/; do
+    [[ -d "${repo}/.git" ]] || continue
+    name="$(basename "$repo")"
+    log "=== DragonSDR hackrf/repos/${name} ==="
+    git -C "$repo" fetch --all --prune || true
+    git -C "$repo" pull --ff-only 2>/dev/null || log "  WARN: ${name} left as-is"
+    if [[ "$name" == "mayhem-firmware" ]] && [[ -f "${repo}/.gitmodules" ]]; then
+      git -C "$repo" submodule update --init --recursive || true
+    fi
   done
-}
-
-rebuild_hackrf_host() {
-  log "=== Rebuild HackRF host tools ==="
-  mkdir -p "$ROOT/hackrf/build"
-  cmake -S "$ROOT/hackrf/repos/hackrf/host" -B "$ROOT/hackrf/build" \
-    -DCMAKE_INSTALL_PREFIX="$ROOT/hackrf/local"
-  cmake --build "$ROOT/hackrf/build" -j"$(nproc)"
 }
 
 materialize_secrets
 pull_main_repo
-pull_hackrf_repos
 
-if [[ "$REBUILD_HACKRF" -eq 1 ]]; then
-  rebuild_hackrf_host
+if [[ "$PULL_DRAGONSDR" -eq 1 ]]; then
+  pull_dragonsdr
 fi
 
 if [[ "$VERIFY" -eq 1 ]]; then

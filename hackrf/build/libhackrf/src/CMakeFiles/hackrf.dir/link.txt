@@ -1,1 +1,0 @@
-/usr/bin/cc -fPIC -shared -Wl,--dependency-file=CMakeFiles/hackrf.dir/link.d -Wl,-soname,libhackrf.so.0 -o libhackrf.so.0.10.0 CMakeFiles/hackrf.dir/hackrf.c.o  /usr/lib/x86_64-linux-gnu/libusb-1.0.so

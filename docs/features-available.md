@@ -27,90 +27,29 @@ Rebuild: `bin/rebuild-machine`. Legacy stub: `B1GMB42-software-inventory.md`.
 
 ---
 
-## GNU Radio & desktop SDR (3.10.12)
+## GNU Radio, ham radio, HackRF (DragonSDR suite)
 
-Full toolkit with companion blocks:
-
-- **Sources:** `gr-osmosdr` (RTL-SDR, HackRF, Airspy, etc.), SoapySDR, LimeSDR, UHD
-- **Specialized:** `gr-air-modes` (ADS-B), `gr-dab`, `gr-satellites`, `gr-fosphor` (GPU waterfall), `gr-hpsdr`, `gr-limesdr`
-- **Apps:** `gqrx`, `quisk`, `grcc` (compile `.grc` flowgraphs)
-- **Analysis:** `inspectrum` (IQ file viewer), **URH 2.10.0** (decode/replay/protocol reverse-engineering)
-
-**SoapySDR drivers loaded:** HackRF, RTL-SDR (osmosdr), Airspy, bladeRF, Lime, MiriSDR, HydraSDR, PlutoSDR, Red Pitaya, remote, audio.
-
----
-
-## Ham radio (desktop)
-
-| App | Use |
-|-----|-----|
-| **fldigi** | Digital modes (PSK, RTTY, etc.) |
-| **WSJT-X** | Weak-signal (FT8, JT65, …) |
-| **chirpw / chirpc** | Program amateur radios |
-| **direwolf** | Sound-card TNC / APRS |
-| **gpredict** | Satellite tracking |
-| **grig** | Hamlib rig control GUI |
-| **xastir** | APRS map client |
-| **Hamlib** | Rig control library (C/Python) |
-
----
-
-## HackRF / PortaPack Mayhem (v2.4.0)
-
-Firmware, flash tools, and **276 MB SD card payload** live under `~/Documents/IndianaDell/hackrf/`.
-
-See also: `hackrf/MANIFEST.txt`
-
-### Host tools
-
-`hackrf_info`, `hackrf_transfer`, `hackrf_sweep`, `hackrf_spiflash`, `hacktv` (analog TV TX), `dfu-util`, `openocd`
-
-Built from source: `hackrf/build/hackrf-tools/src/`
-
-### Release assets
-
-| Asset | Path |
-|-------|------|
-| USB flash bundle | `hackrf/releases/FIRMWARE_mayhem_v2.4.0.zip` |
-| SD card data (no world map) | `hackrf/releases/COPY_TO_SDCARD_hackrf_mayhem_v2.4.0-no-world-map.zip` |
-| Web flasher image | `hackrf/releases/OCI_hackrf_mayhem_v2.4.0.ppfw.tar` |
-| Extracted SD payload | `hackrf/sd-card/mayhem-v2.4.0/` |
-
-### Mayhem onboard firmware (v2.4.0 highlights)
-
-Morse RX/TX, RTTY RX/TX, FPV detect, ADSB RX (map/trails), ACARS RX, BLE RX, TPMS RX/TX, KeeLoq TX, EPIRB TX, SAME TX, MDC-1200 TX, P25 TX, KISS TNC, Looking Glass, Mic TX, SubGHz decoder, Flipper TX (OOK + 2FSK), waterfall designer, time sink, and more.
-
-### SD card external apps (84)
-
-Located in `hackrf/sd-card/mayhem-v2.4.0/APPS/`, including:
-
-`fpv_detect`, `kiss_tnc`, `keeloqtx`, `epirb_tx`, `epirb_rx`, `flippertx`, `siggen`, `fmradio`, `sstvrx`, `sstvtx`, `wefax_rx`, `wardrivemap`, `waterfall_designer`, `time_sink`, and others.
-
-### SD data folders
-
-`SAMPLES`, `WAV`, `OOKFILES`, `SUBGHZ`, `KEELOQKEYS`, `FREQMAN`, `WATERFALLS`, `REMOTES`, `GPS`, `OSM`, `ADSB`, `AIS`, `CVSFILES`, `HOPPER`, `LOOKINGGLASS`, `SPLASH`, `SSTV`, `WHIPCALC`, …
-
-### Source repos
-
-`hackrf/repos/hackrf`, `mayhem-firmware`, `portapack-hackrf`, `urh`, `hacktv`
-
-### Helper scripts
+**Owned by** `~/Documents/DragonSDR` — install/reinstall with:
 
 ```bash
-source ~/Documents/IndianaDell/bin/hackrf-env
-bin/hackrf-setup-udev       # USB permissions (plugdev)
-bin/hackrf-download-mayhem  # Re-fetch release assets
-bin/hackrf-prepare-sdcard   # Extract SD card files
-bin/hackrf-flash-mayhem     # Extract firmware flash bundle
-bin/hackrf-build-mayhem     # Compile Mayhem from source
-bin/urh                     # Universal Radio Hacker GUI
+bin/install-dragonsdr
+# or
+~/Documents/DragonSDR/bin/install-suite
 ```
 
-**Status:** No HackRF detected yet (`hackrf_info` → “No HackRF boards found”). Flash/SD steps are prepared but untested.
+Includes GNU Radio + SoapySDR, desktop ham apps (fldigi, WSJT-X, CHIRP, …), HackRF host tools, PortaPack Mayhem assets, and URH.
 
----
+Workspace / manifest: `~/Documents/DragonSDR/hackrf/` · `hackrf/MANIFEST.txt`  
+Docs: software manual ch. 8–10; DragonSDR `README.md`
 
-## SDR hardware support (when devices are plugged in)
+```bash
+source bin/hackrf-env           # PATH → DragonSDR/hackrf/build
+bin/urh
+bin/hackrf-prepare-sdcard
+bin/install-dragonsdr --verify-only
+```
+
+### SDR hardware support (when devices are plugged in)
 
 | Device | Tools |
 |--------|--------|
@@ -118,7 +57,7 @@ bin/urh                     # Universal Radio Hacker GUI
 | **RTL-SDR** | `rtl_test`, gqrx, GNU Radio |
 | **Airspy / bladeRF / Lime / UHD** | SoapySDR + GNU Radio blocks, host utils installed |
 
-USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.d/`).
+USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.d/`).
 
 ---
 
@@ -159,9 +98,10 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/apply-amdgpu` | Install multi-GPU `etc/` configs (sudo) |
 | `bin/amd-install` | Full AMD ROCm driver install |
 | `bin/amd-preflight` / `bin/amd-verify` / `bin/amd-uninstall` | AMD driver steps |
-| `bin/hackrf-env` | Source HackRF PATH (use with `source`) |
-| `bin/urh` | Universal Radio Hacker |
-| `bin/hackrf-*` | Mayhem flash, SD prep, udev, build |
+| `bin/install-dragonsdr` | Install full DragonSDR suite |
+| `bin/hackrf-env` | Source HackRF PATH → DragonSDR (use with `source`) |
+| `bin/urh` | Universal Radio Hacker (wrapper → DragonSDR) |
+| `bin/hackrf-*` | Mayhem flash, SD prep, udev, build (wrappers) |
 | `bin/themes-extract` | Theme mirrors + boot logo extract |
 | `bin/themes-install-boot` / `bin/themes-restore-boot` | Custom / stock Plymouth |
 | `bin/themes-preview-boot` | Safe windowed Plymouth preview (no install) |
@@ -171,7 +111,7 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/apply-fast-boot` | Strip crashkernel, mask NM-wait-online, defer lab daemons |
 | `bin/fix-nautilus-desktop-launch` | Nautilus 50+: launch `.desktop` on double-click |
 | `bin/sync-desktop-icons` | Nautilus 50+: custom-icon from `Icon=`; rename chrome-*.desktop → `Name=` |
-| `bin/pull-repo` | Fetch IndianaDell + hackrf/repos + LFS (`--verify`, `--build-docs`) |
+| `bin/pull-repo` | Fetch IndianaDell + LFS (`--dragonsdr`, `--verify`, `--build-docs`) |
 | `bin/push-repo` | Push main to GitHub (SSH default) |
 | `bin/setup-wiggly-ventoy` | Verify Uncle Wiggly 🥕🐰 ISO + ventoy.json + persistence .dat |
 | `bin/setup-perc-ventoy` | FreeDOS / PERC H710 IT flash kit on Uncle Wiggly |

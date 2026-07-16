@@ -2,12 +2,10 @@
 *.crdownload
 FactoryDocs/_incoming/
 
-# Nested git clones (re-fetch with scripts)
-hackrf/repos/
+# SDR / HackRF / Mayhem / URH live in ~/Documents/DragonSDR
+# Install: bin/install-dragonsdr
 
-# Generated / copy-to-sdcard payloads
-hackrf/sd-card/
-hackrf/releases/*.zip
+
 
 # Rebuild log (local only)
 scripts/rebuild/last-run.log

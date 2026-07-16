@@ -112,7 +112,8 @@ Deploy kit to DOSBOOT: `bin/deploy-dosboot-recovery` (from Tower5810).
 Full workspace (including FactoryDocs): https://github.com/webaugur/IndianaDell (private)
 
 ```bash
-bin/pull-repo --verify           # IndianaDell + hackrf/repos + LFS + stack verify
+bin/pull-repo --verify           # IndianaDell + LFS + stack verify
+bin/pull-repo --dragonsdr        # also pull DragonSDR + hackrf/repos
 bin/push-repo                    # push main (SSH default)
 ```
 

@@ -19,7 +19,7 @@
 
 **Python bindings verified on this host:** `gnuradio`, `SoapySDR`, `Hamlib` (capital H in Python).
 
-**Project venv:** URH lives in `hackrf/venv-urh/` (Chapter 10), not system-wide.
+**Project venv:** URH lives in `~/Documents/DragonSDR/hackrf/venv-urh/` (Chapter 10), not system-wide.
 
 ## How it is installed
 

@@ -1,6 +1,8 @@
 # IndianaDell
 
-Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebuild scripts, themes, HackRF tooling, recovery utilities, and Ventoy live persistence.
+Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebuild scripts, themes, recovery utilities, and Ventoy live persistence.
+
+**SDR / ham / HackRF** live in **[DragonSDR](https://github.com/webaugur/DragonSDR)** (`~/Documents/DragonSDR`). This repo installs that suite when needed via `bin/install-dragonsdr`.
 
 ## Layout
 
@@ -9,11 +11,12 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | `bin/` | Machine launchers (`dellmerge`, `gpu-stress`, `rebuild-machine`, …) |
 | `scripts/` | Supporting scripts (rebuild, GPU, storage, docs, GitHub push) |
 | `amd-radeon/` | AMDGPU install/verify scripts |
-| `hackrf/` | HackRF / Mayhem tooling (repos excluded from git; re-download with scripts) |
 | `Themes/` | Boot/login/desktop theme mirrors and installers |
 | `FactoryDocs/` | Dell vendor CABs/PDFs (local archive; large binaries) |
 | `docs/` | Software manual chapters, feature notes, hardware figures |
 | `mount-rpool-recovery.sh` | ZFS `rpool` recovery mount (chroot default, `--overlay` optional) |
+
+**SDR suite (separate repo):** `~/Documents/DragonSDR` — apt packages, GNU Radio, ham apps, HackRF/Mayhem, URH.
 
 ## Documentation
 
@@ -51,10 +54,12 @@ which dellmerge gpu-stress push-repo
 Repository: https://github.com/webaugur/IndianaDell (private). Default remote is **SSH** (`git@github.com:webaugur/IndianaDell.git`).
 
 ```bash
-bin/pull-repo                    # IndianaDell + hackrf/repos + git-lfs
+bin/pull-repo                    # IndianaDell + git-lfs
+bin/pull-repo --dragonsdr        # + pull DragonSDR and hackrf/repos
 bin/pull-repo --verify           # + rebuild-machine --verify-only
 bin/pull-repo --build-docs       # + rebuild all manual PDFs
 bin/push-repo                    # push main (SSH; no gh required)
+bin/install-dragonsdr            # install full SDR suite from DragonSDR
 ```
 
 HTTPS override: `INDIANADELL_REMOTE=https://github.com/webaugur/IndianaDell.git` (needs `gh auth login`).

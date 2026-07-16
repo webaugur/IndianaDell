@@ -1,6 +1,10 @@
-# IndianaDell apt package lists — single source of truth.
+# IndianaDell apt package lists — single source of truth for *workstation* restore.
 # Sourced by scripts/rebuild/rebuild-machine.sh and documented in
 # docs/software-manual/appendix-b-apt-packages.md (keep in sync).
+#
+# SDR / ham / HackRF packages live in DragonSDR:
+#   ~/Documents/DragonSDR/tools/package-lists.sh
+# Install via: bin/install-dragonsdr  (or DragonSDR bin/install-suite)
 #
 # shellcheck shell=bash
 
@@ -15,14 +19,6 @@ APT_CORE=(
   vulkan-tools mesa-utils mesa-utils-bin clinfo flatpak gh
 )
 
-APT_SDR_HAM=(
-  gnuradio gnuradio-dev gnuradio-doc
-  gr-osmosdr gr-limesdr gr-fosphor gr-air-modes gr-hpsdr gr-dab gr-satellites
-  libsoapysdr-dev python3-soapysdr soapysdr-module-osmosdr soapysdr-module-mirisdr uhd-soapysdr
-  rtl-sdr librtlsdr-dev hackrf hackrf-firmware libhackrf-dev hackrf-doc
-  airspy libairspy-dev bladerf libbladerf-dev limesuite limesuite-udev uhd-host libuhd-dev
-  gqrx-sdr quisk inspectrum hacktv dfu-util openocd
-  gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi ccache lz4 bzip2
-  libhamlib-dev libhamlib-utils python3-hamlib
-  fldigi wsjtx wsjtx-data chirp direwolf gpredict grig xastir xastir-data
-)
+# Legacy name kept empty so older docs/scripts that reference APT_SDR_HAM do not expand unbound.
+# Prefer DragonSDR APT_SUITE via bin/install-dragonsdr.
+APT_SDR_HAM=()

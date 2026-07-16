@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Source HackRF PATH/aliases:  source "$(indiana-dell)/bin/hackrf-env"
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# shellcheck source=../hackrf/scripts/env.sh
-source "$ROOT/hackrf/scripts/env.sh"
+# Source HackRF PATH/aliases:  source bin/hackrf-env
+DRAGONSDR_ROOT="${DRAGONSDR_ROOT:-$HOME/Documents/DragonSDR}"
+# shellcheck source=/dev/null
+source "${DRAGONSDR_ROOT}/hackrf/scripts/env.sh"

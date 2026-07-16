@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/hackrf_spiflash.dir/link.d CMakeFiles/hackrf_spiflash.dir/hackrf_spiflash.c.o -o hackrf_spiflash  -Wl,-rpath,/home/user/Documents/IndianaDell/hackrf/build/libhackrf/src: ../../libhackrf/src/libhackrf.so.0.10.0 -lm

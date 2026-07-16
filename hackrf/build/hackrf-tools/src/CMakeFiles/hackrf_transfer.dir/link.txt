@@ -1,1 +1,0 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/hackrf_transfer.dir/link.d CMakeFiles/hackrf_transfer.dir/hackrf_transfer.c.o -o hackrf_transfer  -Wl,-rpath,/home/user/Documents/IndianaDell/hackrf/build/libhackrf/src: ../../libhackrf/src/libhackrf.so.0.10.0 -lm
