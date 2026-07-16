@@ -78,6 +78,9 @@ FactoryDocs/**/*.zip
 FactoryDocs/**/*.ZIP
 FactoryDocs/**/*.ZPE
 FactoryDocs/**/*.zpe
+FactoryDocs/**/*.gz
+FactoryDocs/**/*.tar.gz
+FactoryDocs/**/*.tgz
 # Still track small text inventories
 !FactoryDocs/**/*.md
 !FactoryDocs/**/*.txt
