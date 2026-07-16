@@ -1,0 +1,44 @@
+# FactoryDocs local inventory (installers stay local / gitignored)
+# Generated: 2026-07-15T21:42:00-04:00
+# Source: ~/Downloads ingest + prior Dell catalog download
+
+Audio/Windows/Audio_Driver_55H39_WN_6.0.1.6026_A00.EXE
+Audio/Windows/Audio_Driver_5P33P_WN32_6.0.1.6070_A00.EXE
+Dell-Management/Windows/Application_7DV89_WN32_2.6.0_A00.EXE
+Dell-Management/Windows/Backup-and-Recovery_Application_GX7TX_WN32_1.9.2.8_A00.EXE
+Dell-Management/Windows/Dell-Command-Configure_DX4T3_WIN_4.2.1.568_A00_02.EXE
+Dell-Management/Windows/Dell-Command-Integration-Suite-for-System-Center_WC8FR_WIN_6.3.0_A00_02.EXE
+Dell-Management/Windows/Dell-Command-Update-Application_RXT5N_WIN64_5.7.0_A00.EXE
+Dell-Management/Windows/Dell-Command-Update-Application_W4HP2_WIN_4.5.0_A00_04.EXE
+Dell-Management/Windows/Dell-Command-Update-Windows-Universal-Application_FGK9X_WIN64_5.7.0_A00.EXE
+Dell-Management/Windows/STInstaller-1.12.0.21.zip
+Expansion-Cards/PCIe-Serial/Documentation/serial-pcie-setup_en-us.pdf
+Expansion-Cards/PCIe-Serial/Windows/Dell-PCIe-Serial-Card-Driver-for-Windows_9RC37_WIN_1.2.1213.2016_A02_02.EXE
+Expansion-Cards/Thunderbolt/Documentation/thunderbolt-pciecard.pdf
+GPU/AMD-FirePro/Windows/AMD-FirePro-Driver-17-10-for-Windows7-and-Windows10_KW1W7_WIN_17.100.1730.1004_A00.EXE
+GPU/AMD-FirePro/Windows/Video_Driver_C5FPW_WN32_16.400.2802_A00.EXE
+GPU/AMD-RHEL/Cross-platform/dell-amd-rhel7-14.502.1032-1.tar.gz
+GPU/NVIDIA-Quadro/Windows/NVIDIA-Quadro-Graphics-Driver_M4WN4_WIN_23.21.13.9125_A00_02.EXE
+GPU/NVIDIA-Quadro/Windows/Video_ISV_Driver_J4760_WN32_15.301.2601_A01.EXE
+Input/Windows/Input_Driver_99H03_WN32_16.2.52.250_A00.EXE
+Network/Intel-Ethernet/Windows/Intel-Ethernet-Network-Adapter-Driver_F7F9N_WIN_22.9.16.1_A02_08.EXE
+Network/Intel-Ethernet/Windows/Intel-PCIe-Ethernet-Network-Driver_VP20T_WIN_24.1.0.0_A13_04.EXE
+Network/Intel-Ethernet/Windows/Network_Driver_RYMJ1_WN32_20.2.0.0_A12.EXE
+Storage/Intel-PCIe-SSD-Driver/Windows/Intel-HHHL-PCIe-Solid-State-Drive-Driver_TKTW0_WIN_1.8.0.1011_A00.EXE
+Storage/Intel-RST/Windows/Intel-Rapid-Storage-Technology-Driver-and-Management_2206F_WIN_5.5.4.1037_A09_05.EXE
+Storage/Intel-RST/Windows/Intel-Rapid-Storage-Technology-enterprise-Driver_9NYWJ_WIN_4.0.0.1040_A05_01.EXE
+Storage/Intel-RST/Windows/IRSTe_Driver_Intel_A05_WIN_G2V74_f6flpy-SETUP_ZPE.exe
+System-T5810/BIOS-Firmware/Cross-platform/15.201.2401_Desktop_ZPE.exe
+System-T5810/BIOS-Firmware/Cross-platform/T5810A34.exe
+System-T5810/Chipset/Windows/Chipset_Driver_4HP0D_WN32_11.0.0.1163_A01.EXE
+System-T5810/Chipset/Windows/Chipset_Driver_YV36W_WN32_10.1.2.10_A01.EXE
+System-T5810/Chipset/Windows/Intel-Management-Engine-Components-Installer_4J8MX_WIN_11.7.0.1035_A00_08.EXE
+System-T5810/Chipset/Windows/Intel-USB-eXtensible-Host-Controller-Driver_FW1H3_WIN_5.0.4.43_A04_02.EXE
+System-T5810/Documentation/all-products_esuprt_desktop_esuprt_dell_precision_workstation_precision-t5810-workstation_setup guide_en-us.pdf
+System-T5810/Documentation/dtrhost-cards-wp.pdf
+System-T5810/Documentation/precision-t5810-om-pub-en-us.pdf
+System-T5810/Documentation/wyseraspub_en-us.pdf
+System-T5810/Security-TPM/Windows/Dell_DDP_Protected_Workspace_A01_4.0.0-18189_W732W764-W8.132W8.164_ZPE.exe
+System-T5810/Security-TPM/Windows/Dell-Encryption-11.11.0.1.zip
+System-T5810/Security-TPM/Windows/Dell-Encryption-11.13.0.1.zip
+System-T5810/Security-TPM/Windows/Dell-Security-Advisory-Update-DSA-2020-059_1GWG9_WIN64_1.0.0.0_A00_03.EXE

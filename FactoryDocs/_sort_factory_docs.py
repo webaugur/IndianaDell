@@ -11,7 +11,25 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 INCOMING = ROOT / "_incoming"
-SKIP_NAMES = {"README.md", "_sort_factory_docs.py"}
+SKIP_NAMES = {
+    "README.md",
+    "_sort_factory_docs.py",
+    "MANIFEST-pre-crash.txt",
+    "MISSING-unresolved.txt",
+    "LOCAL-INVENTORY.txt",
+    "INDIANADELL-README.txt",
+    "LICENSE",
+    "CatalogPC.cab",
+    "CatalogPC.xml",
+}
+# Never walk these trees (nested clones, caches, extracted docs)
+SKIP_DIR_PARTS = {
+    "WinPEDriverPack",
+    "_cache",
+    "_extracted",
+    ".git",
+    "_Misc",
+}
 FAILED_PATTERNS = (".crdownload", ".part", ".tmp", ".download")
 FAILED_NAMES = ("Unconfirmed",)
 
@@ -47,14 +65,20 @@ RULES: list[tuple[str, callable]] = [
      lambda f: any(x in f.name for x in (
          "NVIDIA-Quadro", "M2000-M4000-M5000-M6000", "Video_Firmware_NV_Quadro",
          "Video_ISV_Driver", "Video_Driver_71P4M", "quadro-desktop-whql",
+         "Video_ISV_Driver_J4760",
      ))),
     ("GPU/NVIDIA-GeForce/Windows",
      lambda f: "GeForce" in f.name or "nVIDIA-GeForce" in f.name),
+    ("GPU/AMD-RHEL/Cross-platform",
+     lambda f: "dell-amd-rhel" in f.name.lower() or "amd-rhel" in f.name.lower()),
     ("Storage/RAID-Controller-PERC/Windows",
      lambda f: any(x in f.name for x in (
          "Storage-Controller_Driver", "LSI-9341", "LSI-9361",
      ))),
-    ("Storage/Intel-RST/Windows", lambda f: "Rapid-Storage-Technology" in f.name),
+    ("Storage/Intel-RST/Windows",
+     lambda f: "Rapid-Storage-Technology" in f.name
+     or f.name.startswith("IRSTe_Driver")
+     or "f6flpy" in f.name),
     ("Storage/Intel-PCIe-SSD-Driver/Windows",
      lambda f: "Intel-HHHL-PCIe-Solid-State-Drive" in f.name),
     ("Storage/HDD-Firmware/Cross-platform",
@@ -126,14 +150,29 @@ def keeper_score(path: Path) -> tuple:
     return (1 if in_incoming else 0, dup_suffix, len(parts), path.name.lower())
 
 
+def should_skip_path(path: Path) -> bool:
+    try:
+        parts = set(path.relative_to(ROOT).parts)
+    except ValueError:
+        return True
+    return bool(parts & SKIP_DIR_PARTS)
+
+
 def iter_files() -> list[Path]:
     files: list[Path] = []
     for p in ROOT.rglob("*"):
         if not p.is_file() or p.name in SKIP_NAMES:
             continue
+        if should_skip_path(p):
+            continue
         if p.parent == ROOT and p.name == "_sort_factory_docs.py":
             continue
         if is_failed(p):
+            continue
+        # Only move real packages / docs, not random loose bits
+        if p.suffix.lower() not in {
+            ".exe", ".zip", ".cab", ".pdf", ".gz", ".tar", ".msi", ".deb",
+        }:
             continue
         files.append(p)
     return files
@@ -142,7 +181,9 @@ def iter_files() -> list[Path]:
 def delete_failed() -> list[str]:
     removed: list[str] = []
     for p in list(ROOT.rglob("*")):
-        if p.is_file() and is_failed(p):
+        if not p.is_file() or should_skip_path(p):
+            continue
+        if is_failed(p):
             removed.append(str(p.relative_to(ROOT)))
             p.unlink()
     return removed

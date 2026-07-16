@@ -1,12 +1,13 @@
+# Still missing after Downloads ingest + Dell catalog pass
+# Count: 65
+
 Audio/Windows/Audio_CREATIVE_W7_W8_W81_A00_Setup-241T2_ZPE.exe
 Audio/Windows/Audio_Driver_DDG39_WN32_6.0.1.6111_A06_01.EXE
-Dell-Management/Windows/Dell_Client_Management_Pack_v6.3_A00.exe
 Dell-Management/Windows/Dell-Command-Intel-vPro-Out-of-Band_MFK2N_WIN_4.3.0_A00_02.EXE
 Dell-Management/Windows/Dell-Command-Monitor_70PH6_WIN_10.2.1.80_A00_03.EXE
 Dell-Management/Windows/DellCommandPowerShellProvider2.2_328.zip
+Dell-Management/Windows/Dell_Client_Management_Pack_v6.3_A00.exe
 Dell-Management/Windows/Dell_Repository_Manager_2.1.0.451.exe
-Dell-Management/Windows/_duplicates/STInstaller-1.12.0.21.zip
-Dell-Management/Windows/STInstaller-1.12.0.21 (1).zip
 Expansion-Cards/Thunderbolt/Firmware/MSM16020004_ZPE.exe
 Expansion-Cards/Thunderbolt/Firmware/Tera1_and_Tera2_Firmware_4.1.0_14079_GA_ZPE.exe
 Expansion-Cards/Thunderbolt/Firmware/Tera1_and_Tera2_Firmware_4.7.0-16934_GA_ZPE.exe
@@ -21,8 +22,8 @@ Optical/BD-RE/Firmware/BD-RE_BH40N_A1B2_6WV1M_ZPE.exe
 Optical/DVD/Firmware/DH-16AES-DD12_ZPE.exe
 Storage/HDD-Firmware/Cross-platform/SAS-Drive_Firmware_2N3CV_WN64_A3AE_A00.EXE
 Storage/HDD-Firmware/Cross-platform/SAS-Drive_Firmware_G8XK9_WN64_EJ39_A00_01.EXE
-Storage/HDD-Firmware/Cross-platform/SeagateFirmwareUpdate_SeaFlash_Dell_YarraX_SDM10393_12-11-2015_11-47-28_ZPE.exe
 Storage/HDD-Firmware/Cross-platform/Seagate ST500DM009_ST1000DM010 CP31H_ZPE.exe
+Storage/HDD-Firmware/Cross-platform/SeagateFirmwareUpdate_SeaFlash_Dell_YarraX_SDM10393_12-11-2015_11-47-28_ZPE.exe
 Storage/Intel-RST/Windows/Intel-Rapid-Storage-Technology-enterprise-Driver_MYJ0N_WIN_4.6.0.1048_A01_02.EXE
 Storage/RAID-Controller-PERC/Windows/Storage-Controller_Driver_WP7HD_WN32_6.711.6.0_A03.EXE
 Storage/SSD-Firmware/Cross-platform/Intel SSDPEDMD400G4D HR8RY_ZPE.exe
@@ -31,40 +32,37 @@ Storage/SSD-Firmware/Cross-platform/Intel SSDSC2KF256H6DN_SSDSC2KF512H6DN_SSDSC2
 Storage/SSD-Firmware/Cross-platform/LiteOn CA3-8D256-Q11_CA3-8D512-Q11 W3WWY_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/LiteOn CV3 FCX34_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/Micron1100 CC18P_ZPE.exe
+Storage/SSD-Firmware/Cross-platform/SK Hynix PC300 CYMW4_ZPE.exe
+Storage/SSD-Firmware/Cross-platform/SK Hynix PC401 MCXM8_ZPE.exe
+Storage/SSD-Firmware/Cross-platform/SK Hynix_SC311_J5YR3_ZPE.exe
+Storage/SSD-Firmware/Cross-platform/SK Hynix_SC313 SED_34X4J_ZPE.exe
+Storage/SSD-Firmware/Cross-platform/SKHynix_PC400_40002E00_4PFN7_ZPE.exe
+Storage/SSD-Firmware/Cross-platform/SK_hynix_SATA_FW_Updater_30001P10_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/Samsung SM871 DC96V_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/SanDisk A400 3954G_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/SanDisk X400 HV8F3_ZPE.exe
-Storage/SSD-Firmware/Cross-platform/SK Hynix PC300 CYMW4_ZPE.exe
-Storage/SSD-Firmware/Cross-platform/SKHynix_PC400_40002E00_4PFN7_ZPE.exe
-Storage/SSD-Firmware/Cross-platform/SK Hynix PC401 MCXM8_ZPE.exe
-Storage/SSD-Firmware/Cross-platform/SK_hynix_SATA_FW_Updater_30001P10_ZPE.exe
-Storage/SSD-Firmware/Cross-platform/SK Hynix_SC311_J5YR3_ZPE.exe
-Storage/SSD-Firmware/Cross-platform/SK Hynix_SC313 SED_34X4J_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/Toshiba KSG60ZSE256G_KSG60ZSE512G_KSG60ZMV256G_KSG60ZMV512G N91D4_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/Toshiba KXG50ZNV256G_KXG50ZNV512G_KXG50ZNV1T02 7YXTM_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/Toshiba KXG5AZNV256G_KXG5AZNV512G_KXG5AZNV1T02 4JGV3_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/Toshiba XG4 non-SED 9VNJH_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/WD MZ500S TW5TH_ZPE.exe
 Storage/SSD-Firmware/Cross-platform/WD XL1000C 1851N_ZPE.exe
-System-T5810/BIOS-Firmware/Cross-platform/15.201.2401_Desktop_ZPE.exe
 System-T5810/BIOS-Firmware/Cross-platform/57DA4105-64bit_ZPE.exe
 System-T5810/BIOS-Firmware/Cross-platform/CWX68_ZPE.exe
-System-T5810/BIOS-Firmware/Cross-platform/FimwareUpdateUtility_3.00.0000_ZPE.exe
-System-T5810/BIOS-Firmware/Cross-platform/FlashVer3.3.28.zip
 System-T5810/BIOS-Firmware/Cross-platform/FW_Flash_9341_ZPE.exe
 System-T5810/BIOS-Firmware/Cross-platform/FW_Flash_9361_ZPE.exe
+System-T5810/BIOS-Firmware/Cross-platform/FimwareUpdateUtility_3.00.0000_ZPE.exe
+System-T5810/BIOS-Firmware/Cross-platform/FlashVer3.3.28.zip
 System-T5810/BIOS-Firmware/Cross-platform/GRV83_DBE_T5810_BSU_1.0.0.exe
 System-T5810/BIOS-Firmware/Cross-platform/PlatTagsSWB40460.zip
 System-T5810/Chipset/Windows/Chipset_Driver_8W65V_1.0.0.1024_A00_ZPE.exe
 System-T5810/Security-TPM/Windows/DBUtil-Removal-Utility_8GG09_WIN_2.5.0_A03_02.EXE
-System-T5810/Security-TPM/Windows/Dell-Encryption-11.11.0.1 (1).zip
 System-T5810/Security-TPM/Windows/Dell-Encryption-11.13.0.1.zip (1).zip
 System-T5810/Security-TPM/Windows/DellTpm1.2_Fw5.81.0.0.exe
 System-T5810/Security-TPM/Windows/DellTpm1.2_Fw5.81.2.1_V3_64.exe
 System-T5810/Security-TPM/Windows/DellTpm1.2_Fw5.81.2.1_V5_64.exe
 System-T5810/Security-TPM/Windows/DellTpm2.0_Fw1.3.2.8_V1_64.exe
 System-T5810/Security-TPM/Windows/DellTpm2.0_Fw1.3.2.8_V3_64.exe
-System-T5810/Security-TPM/Windows/_duplicates/Dell-Encryption-11.11.0.1.zip
 System-T5810/Security-TPM/Windows/_duplicates/Dell-Encryption-11.13.0.1.zip.zip
-System-T5810/Windows-10/T5810-win10-A05-774GJ.CAB
 System-T5810/WinPE/WinPE10.0-Drivers-A25-F0XPX.CAB
+System-T5810/Windows-10/T5810-win10-A05-774GJ.CAB
