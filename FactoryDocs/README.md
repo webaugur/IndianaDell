@@ -55,3 +55,17 @@ Priority re-downloads from [Dell T5810 drivers page](https://www.dell.com/suppor
 3. `System-T5810/Windows-10/` — T5810-win10 CAB
 4. `Audio/Windows/` — Audio_Driver_5P33P
 5. `Dell-Management/Windows/` — Command Configure, Monitor, STInstaller
+
+## Re-download missing MANIFEST packages
+
+```bash
+# Slow catalog pass (downloads.dell.com CatalogPC)
+bin/factorydocs-download-miss --rate 1500k --sleep 8
+
+# WinPE drivers (expanded INF pack; replaces retired F0XPX CAB)
+bin/fetch-winpe-driverpack
+```
+
+Still-missing paths: `MISSING-unresolved.txt` (not in live catalog — try package ID / web search).
+Logs: `_incoming/download-log.tsv` (gitignored).
+

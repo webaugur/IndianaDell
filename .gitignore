@@ -61,3 +61,24 @@ Themes/boot/generated/**
 # Python cache
 Themes/scripts/__pycache__/
 **/__pycache__/
+
+# WinPE expanded driver pack (clone via bin/fetch-winpe-driverpack)
+FactoryDocs/System-T5810/WinPE/WinPEDriverPack/
+FactoryDocs/_cache/
+FactoryDocs/_incoming/download-*.log
+FactoryDocs/_incoming/download-log.tsv
+FactoryDocs/**/*.part
+
+# FactoryDocs installers stay local (re-fetch with bin/factorydocs-download-miss)
+FactoryDocs/**/*.EXE
+FactoryDocs/**/*.exe
+FactoryDocs/**/*.CAB
+FactoryDocs/**/*.cab
+FactoryDocs/**/*.zip
+FactoryDocs/**/*.ZIP
+FactoryDocs/**/*.ZPE
+FactoryDocs/**/*.zpe
+# Still track small text inventories
+!FactoryDocs/**/*.md
+!FactoryDocs/**/*.txt
+!FactoryDocs/**/*.pdf

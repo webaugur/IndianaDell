@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Slow re-download of FactoryDocs MANIFEST-pre-crash.txt MISS files from Dell.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+exec python3 "$ROOT/scripts/factory/download-manifest-from-dell.py" "$@"
