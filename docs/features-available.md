@@ -164,14 +164,19 @@ USB udev rules: `hackrf/scripts/99-hackrf.rules` (installed to `/etc/udev/rules.
 | `bin/hackrf-*` | Mayhem flash, SD prep, udev, build |
 | `bin/themes-extract` | Theme mirrors + boot logo extract |
 | `bin/themes-install-boot` / `bin/themes-restore-boot` | Custom / stock Plymouth |
+| `bin/themes-preview-boot` | Safe windowed Plymouth preview (no install) |
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
+| `bin/apply-fast-login` | GRUB menu 0s, GDM autologin, greeter face |
+| `bin/apply-fast-boot` | Strip crashkernel, mask NM-wait-online, defer lab daemons |
 | `bin/fix-nautilus-desktop-launch` | Nautilus 50+: launch `.desktop` on double-click |
 | `bin/sync-desktop-icons` | Nautilus 50+: custom-icon from `Icon=`; rename chrome-*.desktop → `Name=` |
 | `bin/pull-repo` | Fetch IndianaDell + hackrf/repos + LFS (`--verify`, `--build-docs`) |
 | `bin/push-repo` | Push main to GitHub (SSH default) |
-| `bin/setup-wiggly-ventoy` | Verify Wiggly ISO + ventoy.json + persistence .dat |
-| `bin/setup-perc-ventoy` | FreeDOS / PERC H710 IT flash kit on Wiggly |
+| `bin/setup-wiggly-ventoy` | Verify Uncle Wiggly 🥕🐰 ISO + ventoy.json + persistence .dat |
+| `bin/setup-perc-ventoy` | FreeDOS / PERC H710 IT flash kit on Uncle Wiggly |
+| `bin/boot-uncle-wiggly-vm` | QEMU: Ubuntu live + casper-rw persistence smoke test |
+| `bin/boxes-import-wiggly-isos` | Create GNOME Boxes VMs for each ISO on Uncle Wiggly |
 | `bin/deploy-dosboot-recovery` | Copy ZFS recovery kit to DOSBOOT (`sdc3`) |
 | `bin/efi-timing-suite` | BIOS A/B timing baselines → `B1GMB42.timing` |
 | `bin/build-all-docs` | Rebuild software, hardware, inventory, ZFS PDFs |
@@ -255,25 +260,27 @@ Ledger: `~/Documents/LibraryRadio/missing.tsv`. Holding: `holding/inbox/`.
 | Manual | `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` |
 | DOSBOOT kit | `IndianaDell/recovery/` on `sdc3` — `bin/deploy-dosboot-recovery` |
 | Scripts | `mount-rpool-recovery.sh`, `scripts/recovery/mount-bpool-recovery.sh` |
-| Live boot | Ventoy Ubuntu 26.04 from Wiggly — then Section 2 or 3 of recovery manual |
+| Live boot | Ventoy Ubuntu 26.04 from Uncle Wiggly 🥕🐰 — then Section 2 or 3 of recovery manual |
 | **Force import (required)** | `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` (else boot can hang after recovery export) |
 | **Swap zvol** | `rpool/swap` — `swapoff` before `zpool export` in recovery |
 
 ---
 
-## Ventoy live persistence (Wiggly stick)
+## Ventoy live persistence (Uncle Wiggly 🥕🐰)
 
 | Item | Detail |
 |------|--------|
+| Nickname | **Uncle Wiggly** — rabbit hole / boot black hole for ISOs |
+| Partition label | `Wiggly` (`sdc1`, `/mnt/wiggly`) |
 | ISO | `ubuntu-26.04-desktop-amd64.iso` |
-| Overlay | `persistence/ubuntu-26.04.dat` (24 GB on Wiggly / `sdc1`) |
+| Overlay | `persistence/ubuntu-26.04.dat` (24 GB on Uncle Wiggly) |
 | Setup | `bin/setup-wiggly-ventoy` from Tower5810 |
 | Autologin | GDM user `ubuntu` |
-| Autostart | Grok fullscreen → IndianaDell session |
+| Autostart | Grok fullscreen → IndianaDell session (currently disabled) |
 | Seed script | `~/bin/seed-ventoy-persistence.sh` |
 
-See Software Manual **Chapter 15**.
-
+See Software Manual **Chapter 15**. PERC IT flash + **reset/revert**: `docs/B1GMB42-perc-it-flash.md`.  
+Historical Augury fleet plan: `docs/augury-lab-inventory.md`. Fast boot/BIOS notes: `docs/fast-boot.md`.
 ## Gaps / not set up yet
 
 - **No HackRF hardware detected** — flash and SD card copy prepared, not tested on device

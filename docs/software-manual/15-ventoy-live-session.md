@@ -1,14 +1,16 @@
 # Chapter 15 — Ventoy Live Session & Persistence
 
-Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so login state, apps, Grok, and IndianaDell survive reboots.
+Portable Ubuntu 26.04 on **Uncle Wiggly** 🥕🐰 — the internal Ventoy **rabbit hole**. Drop ISO images in; they disappear into the boot menu black hole. Writable overlay keeps login state, apps, Grok, and IndianaDell across reboots.
+
+**Names:** friendly name **Uncle Wiggly**; partition label still `Wiggly` (`sdc1`, mount `/mnt/wiggly`).
 
 ## What gets persisted
 
 | Item | Location (live boot) | Seeded to casper image |
 |------|----------------------|-------------------------|
-| User home | `/home/ubuntu` | `cow/upper/home/ubuntu/` |
-| Installed packages | dpkg overlay | `cow/upper/var/lib/dpkg/` |
-| GDM autologin | `/etc/gdm3/custom.conf` | `cow/upper/etc/gdm3/` |
+| User home | `/home/ubuntu` | `upper/home/ubuntu/` |
+| Installed packages | dpkg overlay | `upper/var/lib/dpkg/` |
+| GDM autologin | `/etc/gdm3/custom.conf` | `upper/etc/gdm3/` |
 | Grok auth + sessions | `~/.grok/` | same (never in git) |
 | GitHub CLI auth | `~/.config/gh/` | same |
 | SSH keys | `~/.ssh/` | same |
@@ -17,13 +19,13 @@ Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so
 | IndianaDell workspace | `~/Documents/IndianaDell` | same (git clone or rsync) |
 | PATH overrides | `~/.config/indianadell/path.sh` | same |
 
-**Persistence image:** `/persistence/ubuntu-26.04.dat` (24 GB ext4, label `casper-rw`) on the internal Ventoy exFAT volume (**Wiggly**, `sdc1`).
+**Persistence image:** `/persistence/ubuntu-26.04.dat` (24 GB ext4, label `casper-rw`) on Uncle Wiggly’s Ventoy volume (**label `Wiggly`**, `sdc1`).
 
 **Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`. Canonical copy in `scripts/ventoy/ventoy.json`.
 
 ## How it is installed
 
-**One-time setup from Tower5810** (Wiggly mounted at `/mnt/wiggly`):
+**One-time setup from Tower5810** (Uncle Wiggly mounted at `/mnt/wiggly`):
 
 ```bash
 sudo mount -o uid=$(id -u),gid=$(id -g) /dev/disk/by-label/Wiggly /mnt/wiggly
@@ -32,7 +34,7 @@ bin/setup-wiggly-ventoy    # verify ISO, ventoy.json, .dat filesystem
 
 Extend an undersized image: `sudo scripts/ventoy/ExtendPersistentImg.sh /mnt/wiggly/persistence/ubuntu-26.04.dat <MB>` then `resize2fs` on the loop device if needed.
 
-**Seed session state** from a running session with Wiggly mounted (e.g. `/mnt/wiggly`):
+**Seed session state** from a running session with Uncle Wiggly mounted (e.g. `/mnt/wiggly`):
 
 ```bash
 # One-time or after changes — seeds current ubuntu session into the .dat image
@@ -47,7 +49,8 @@ The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including 
 
 1. **GDM autologin** — user `ubuntu` (`/etc/gdm3/custom.conf`)
 2. **PATH** — IndianaDell `bin/` and `scripts/` override system (`~/.config/indianadell/path.sh`)
-3. **Grok autostart** — Ptyxis fullscreen, resumes IndianaDell session (`~/.config/autostart/grok-indianadell.desktop`)
+3. **Grok autostart** — currently **disabled** (`X-GNOME-Autostart-enabled=false` on `grok-indianadell.desktop`)
+4. **Installer** — **no autostart** (normal desktop). Launch via `~/Desktop/Install Ubuntu.desktop` when needed. Re-enable autostart only if you `touch /etc/indianadell/enable-installer-autostart` and restore the stock unit.
 
 Launcher: `~/bin/grok-indianadell-launch.sh`  
 `resolve-secrets.sh` materializes secrets from `/home/user` when rpool exists, else uses Ventoy `$HOME`.  
@@ -58,7 +61,7 @@ Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-
 | Mode | When | Network? |
 |------|------|----------|
 | Live casper overlay | Already booted from Ventoy persistence | **No** — local rsync only |
-| External `.dat` seed | Seeding the stick from Tower5810 / mounted Wiggly | Only if IndianaDell must be **git cloned** |
+| External `.dat` seed | Seeding Uncle Wiggly from Tower5810 / mounted volume | Only if IndianaDell must be **git cloned** |
 
 **Network check:** waits quietly up to `SEED_NETWORK_WAIT_SECS` (default **120s**) for DHCP/DNS — no dialogs during that wait. Zenity only if still down after the wait (disable: `SEED_NETWORK_PROMPT=0`). Skip entirely: `SEED_SKIP_NETWORK_CHECK=1`.
 
@@ -138,7 +141,7 @@ google-chrome --version
 | Change Grok session | Edit `GROK_SESSION_ID` in `grok-indianadell-launch.sh` |
 | Disable autostart | Remove `~/.config/autostart/grok-indianadell.desktop`, re-seed |
 | Enlarge persistence | `scripts/ventoy/ExtendPersistentImg.sh` (+ `resize2fs` if needed) |
-| Verify/fix Ventoy layout | `bin/setup-wiggly-ventoy` from Tower5810 |
+| Verify/fix Uncle Wiggly layout | `bin/setup-wiggly-ventoy` from Tower5810 |
 
 ## What rebuild does / does not do
 

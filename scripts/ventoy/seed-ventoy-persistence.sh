@@ -169,6 +169,81 @@ sync_system_overlay() {
     sudo rsync -a /etc/apt/ "$dest_root/etc/apt/"
 }
 
+# Live Ubuntu starts ubuntu-desktop-bootstrap (try-or-install) via a user unit.
+# We want a normal desktop; keep an Install icon on ~/Desktop instead.
+disable_installer_autostart() {
+    local dest_root="$1"
+    local unit wants_dir desk
+
+    log "installer: disable autostart; keep Desktop Install icon"
+    sudo mkdir -p \
+        "$dest_root/usr/lib/systemd/user" \
+        "$dest_root/etc/systemd/user" \
+        "$dest_root/etc/indianadell" \
+        "$dest_root/home/ubuntu/.config/systemd/user" \
+        "$dest_root/home/ubuntu/.config/autostart" \
+        "$dest_root/home/ubuntu/Desktop"
+
+    unit="$dest_root/usr/lib/systemd/user/ubuntu-desktop-installer.service"
+    sudo tee "$unit" >/dev/null <<'EOF'
+# IndianaDell / Uncle Wiggly: do not auto-launch the installer.
+# Use ~/Desktop/Install Ubuntu.desktop instead.
+# Re-enable: touch /etc/indianadell/enable-installer-autostart and restore stock unit.
+[Unit]
+Description=Ubuntu Desktop Installer (autostart disabled)
+ConditionPathExists=/etc/indianadell/enable-installer-autostart
+PartOf=graphical-session.target
+After=graphical-session.target
+Conflicts=gnome-session@gnome-login.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+Restart=no
+EOF
+
+    sudo rm -f "$dest_root/etc/indianadell/enable-installer-autostart"
+    sudo ln -sfn /dev/null "$dest_root/etc/systemd/user/ubuntu-desktop-installer.service"
+    sudo ln -sfn /dev/null "$dest_root/home/ubuntu/.config/systemd/user/ubuntu-desktop-installer.service"
+
+    wants_dir="$dest_root/usr/lib/systemd/user/graphical-session.target.wants"
+    sudo mkdir -p "$wants_dir"
+    sudo rm -f "$wants_dir/ubuntu-desktop-installer.service"
+    # Overlay whiteout hides lower-layer wants symlink if present
+    sudo mknod "$wants_dir/ubuntu-desktop-installer.service" c 0 0 2>/dev/null \
+        || sudo ln -sfn /dev/null "$wants_dir/ubuntu-desktop-installer.service"
+
+    sudo tee "$dest_root/home/ubuntu/.config/autostart/ubuntu-desktop-installer.desktop" >/dev/null <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Ubuntu Desktop Installer
+Exec=/snap/bin/ubuntu-desktop-bootstrap --try-or-install
+Hidden=true
+X-GNOME-Autostart-enabled=false
+EOF
+
+    desk="$dest_root/home/ubuntu/Desktop/Install Ubuntu.desktop"
+    sudo rm -f "$dest_root/home/ubuntu/Desktop/ubuntu-desktop-bootstrap_ubuntu-desktop-bootstrap.desktop"
+    sudo tee "$desk" >/dev/null <<'EOF'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Ubuntu
+Comment=Install this system permanently to your hard disk
+Keywords=ubiquity;install;
+Exec=/snap/bin/ubuntu-desktop-bootstrap
+Icon=ubiquity
+Terminal=false
+Categories=GTK;System;Settings;
+StartupNotify=true
+EOF
+    sudo chmod 0755 "$desk"
+    sudo chown -R 1000:1000 \
+        "$dest_root/home/ubuntu/Desktop" \
+        "$dest_root/home/ubuntu/.config/systemd" \
+        "$dest_root/home/ubuntu/.config/autostart"
+}
+
 seed_live_persistence() {
     local src dest="$HOME/Documents/IndianaDell"
 
@@ -184,13 +259,26 @@ seed_live_persistence() {
     log "done (live persistence)"
 }
 
+# Resolve overlay upper dir inside the casper-rw image.
+# Live Ubuntu/Ventoy images use upper/ (+ work/); older scripts used cow/upper.
+resolve_persist_upper() {
+    local root="$1"
+    if [[ -d "$root/upper" ]]; then
+        printf '%s\n' "$root/upper"
+    elif [[ -d "$root/cow/upper" ]]; then
+        printf '%s\n' "$root/cow/upper"
+    else
+        # Prefer modern layout when creating fresh
+        printf '%s\n' "$root/upper"
+    fi
+}
+
 seed_external_dat() {
     PERSIST_DAT="$(find_persist_dat)" || {
-        log "skip: persistence image not found (Ventoy stick not mounted?)"
+        log "skip: persistence image not found (Uncle Wiggly 🥕🐰 not mounted? label=Wiggly)"
         return 0
     }
 
-    UPPER="$MOUNT/cow/upper"
     if mountpoint -q "$MOUNT" 2>/dev/null; then
         log "using already-mounted persistence at $MOUNT"
     else
@@ -198,11 +286,19 @@ seed_external_dat() {
         LOOP_DEV="$(sudo losetup --show -f "$PERSIST_DAT")"
         sudo mount "$LOOP_DEV" "$MOUNT"
     fi
+    UPPER="$(resolve_persist_upper "$MOUNT")"
+    # Drop mistaken cow/ tree from older seed runs (real overlay is upper/)
+    if [[ "$UPPER" == "$MOUNT/upper" && -d "$MOUNT/cow" ]]; then
+        log "Uncle Wiggly: removing stale cow/ (seed target is upper/)"
+        sudo rm -rf "$MOUNT/cow"
+    fi
     sudo mkdir -p "$UPPER/home/ubuntu" "$UPPER/etc/gdm3" "$UPPER/var/lib/dpkg"
 
-    log "mode: external seed -> $PERSIST_DAT"
+    log "mode: external seed -> Uncle Wiggly 🥕🐰 ($PERSIST_DAT)"
+    log "overlay upper: $UPPER"
     sync_home_overlay "$UPPER"
     sync_system_overlay "$UPPER"
+    disable_installer_autostart "$UPPER"
 
     log "IndianaDell workspace"
     sudo mkdir -p "$UPPER/home/ubuntu/Documents"

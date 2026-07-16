@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Verify/fix Ventoy persistence on the internal Wiggly partition (sdc1).
+# Verify/fix Ventoy persistence on Uncle Wiggly 🥕🐰 (internal Ventoy, sdc1).
+# Partition label stays "Wiggly". Drop ISOs into the rabbit hole to boot them.
 # Creates persistence/ubuntu-26.04.dat and ventoy/ventoy.json if missing.
 set -euo pipefail
 
@@ -10,7 +11,7 @@ WIGGLY_DEV="${WIGGLY_DEV:-/dev/disk/by-label/Wiggly}"
 WIGGLY_MOUNT="${WIGGLY_MOUNT:-/mnt/wiggly}"
 ISO_NAME="${VENTOY_ISO:-ubuntu-26.04-desktop-amd64.iso}"
 DAT_REL="persistence/ubuntu-26.04.dat"
-# Production Wiggly image is 24 GB; override with VENTOY_DAT_SIZE_MB if needed.
+# Production Uncle Wiggly image is 24 GB; override with VENTOY_DAT_SIZE_MB if needed.
 DAT_SIZE_MB="${VENTOY_DAT_SIZE_MB:-24576}"
 DAT_LABEL="${VENTOY_DAT_LABEL:-casper-rw}"
 
@@ -24,13 +25,13 @@ require_root_bits() {
 
 mount_wiggly() {
   if mountpoint -q "$WIGGLY_MOUNT"; then
-    log "Wiggly already mounted at $WIGGLY_MOUNT"
+    log "Uncle Wiggly 🥕🐰 already mounted at $WIGGLY_MOUNT"
     return 0
   fi
-  [[ -e "$WIGGLY_DEV" ]] || die "Wiggly device not found: $WIGGLY_DEV"
+  [[ -e "$WIGGLY_DEV" ]] || die "Uncle Wiggly 🥕🐰 not found (label Wiggly): $WIGGLY_DEV"
   sudo mkdir -p "$WIGGLY_MOUNT"
   sudo mount -o "uid=$(id -u),gid=$(id -g)" "$WIGGLY_DEV" "$WIGGLY_MOUNT"
-  log "Mounted $WIGGLY_DEV at $WIGGLY_MOUNT"
+  log "Mounted Uncle Wiggly 🥕🐰 ($WIGGLY_DEV) at $WIGGLY_MOUNT"
 }
 
 create_dat_if_missing() {
@@ -71,8 +72,8 @@ install_ventoy_json() {
 
 verify_iso() {
   local iso="$WIGGLY_MOUNT/$ISO_NAME"
-  [[ -f "$iso" ]] || die "ISO missing on Wiggly: $iso (copy ubuntu-26.04-desktop-amd64.iso to $WIGGLY_MOUNT)"
-  log "ISO OK: $iso ($(du -h "$iso" | awk '{print $1}'))"
+  [[ -f "$iso" ]] || die "ISO missing in Uncle Wiggly’s rabbit hole: $iso (drop ubuntu-26.04-desktop-amd64.iso into $WIGGLY_MOUNT)"
+  log "ISO OK (in the hole): $iso ($(du -h "$iso" | awk '{print $1}'))"
 }
 
 verify_dat_filesystem() {
@@ -93,12 +94,13 @@ verify_dat_filesystem() {
 print_summary() {
   cat <<EOF
 
-Wiggly Ventoy persistence ready:
-  Mount:  $WIGGLY_MOUNT
+Uncle Wiggly 🥕🐰 — Ventoy rabbit hole ready:
+  Mount:  $WIGGLY_MOUNT   (partition label: Wiggly)
   ISO:    $WIGGLY_MOUNT/$ISO_NAME
   Dat:    $WIGGLY_MOUNT/$DAT_REL
   Config: $WIGGLY_MOUNT/ventoy/ventoy.json (autosel=1)
 
+Drop more ISOs into $WIGGLY_MOUNT — they fall into the boot black hole.
 Boot Ventoy from BIOS -> Ubuntu 26.04 should use casper-rw overlay automatically.
 Seed session from Tower5810:  SEED_SKIP_NETWORK_CHECK=1 ~/bin/seed-ventoy-persistence.sh
 EOF

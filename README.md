@@ -88,9 +88,9 @@ Verify: `grep ZPOOL_IMPORT_OPTS /etc/default/zfs` should show `"-f"`.
 One-shot alternative at the GRUB/kernel cmdline: `zfsforce=1`.  
 Recovery scripts always pass `-f` on manual import; the installed OS still needs the default above for normal boots.
 
-## Ventoy live persistence
+## Ventoy live persistence — Uncle Wiggly 🥕🐰
 
-Ubuntu 26.04 on the internal Wiggly partition (`sdc1`) with 24 GB `persistence/ubuntu-26.04.dat` overlay. See **Software Manual Ch. 15**.
+Ubuntu 26.04 on **Uncle Wiggly** (internal Ventoy, partition label `Wiggly`, `sdc1`) with 24 GB `persistence/ubuntu-26.04.dat` overlay. Drop ISOs into the **rabbit hole** — they fall into the boot black hole. See **Software Manual Ch. 15**.
 
 ```bash
 bin/setup-wiggly-ventoy                    # verify ISO + ventoy.json + .dat (Tower5810)
@@ -100,6 +100,6 @@ scripts/ventoy/install-ventoy-session.sh   # install ~/bin helpers + autostart +
 
 Autologin `ubuntu`, network-checked seed, Grok fullscreen autostart, and IndianaDell PATH.
 
-**Related tools:** `bin/efi-timing-suite` (BIOS A/B baselines → `B1GMB42.timing`), `bin/setup-perc-ventoy` (PERC H710 FreeDOS/IT flash on Wiggly).
+**Related tools:** `bin/efi-timing-suite` (BIOS A/B baselines → `B1GMB42.timing`), `bin/setup-perc-ventoy` (PERC H710 FreeDOS/IT flash on Uncle Wiggly).
 
 **Release:** `v1.0.6` — dual swap (4 GiB HDD + 33 GiB ZFS special zvol), Nautilus 50 tools, amdgpu DPM performance.

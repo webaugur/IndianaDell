@@ -9,8 +9,13 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `build-all-docs` | `scripts/docs/build-all-docs.sh` | 1, 3 |
 | `pull-repo` | `scripts/github/pull-all.sh` — IndianaDell + nested repos + LFS | 15 |
 | `push-repo` | `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default) | 15 |
-| `setup-wiggly-ventoy` | `scripts/ventoy/setup-wiggly-ventoy.sh` — ISO + ventoy.json + .dat | 15 |
-| `setup-perc-ventoy` | `scripts/perc/setup-perc-ventoy.sh` — H710 FreeDOS/IT kit on Wiggly | hardware / PERC doc |
+| `setup-wiggly-ventoy` | `scripts/ventoy/setup-wiggly-ventoy.sh` — Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat | 15 |
+| `setup-perc-ventoy` | `scripts/perc/setup-perc-ventoy.sh` — H710 FreeDOS/IT kit on Uncle Wiggly | hardware / PERC doc |
+| `boot-uncle-wiggly-vm` | `scripts/ventoy/boot-uncle-wiggly-vm.sh` — QEMU live+persistence test | 15 |
+| `boxes-import-wiggly-isos` | `scripts/ventoy/boxes-import-wiggly-isos.sh` — Boxes VM per ISO on Wiggly | 15 |
+| `themes-preview-boot` | `Themes/scripts/plymouth-preview.py` — safe Plymouth window | 5 |
+| `apply-fast-login` | `scripts/gnome/apply-fast-login.sh` — GRUB 0s + GDM autologin + face | 5, 7 |
+| `apply-fast-boot` | `scripts/gnome/apply-fast-boot.sh` — strip crashkernel, defer daemons | 5, 7 / `docs/fast-boot.md` |
 | `build-zfs-recovery-doc` | `scripts/docs/build-zfs-recovery-doc.sh` | 2, 15 |
 | `build-trifold-slick` | `docs/sales/B1GMB42-trifold.html` → sales PDFs | — |
 | `deploy-dosboot-recovery` | `scripts/recovery/deploy-to-dosboot.sh` | 2, 15 |

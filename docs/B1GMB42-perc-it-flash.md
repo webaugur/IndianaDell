@@ -1,8 +1,8 @@
-# B1GMB42 — PERC H710 IT-mode flash via internal Ventoy (Wiggly)
+# B1GMB42 — PERC H710 IT-mode flash via Uncle Wiggly 🥕🐰
 
 Flash the **PERC H710** (Slot5) to **LSI IT firmware** so each drive is presented individually for **ZFS** (`mpt2sas`), not MegaRAID.
 
-**Ventoy host:** internal **Wiggly** partition on the Seagate (`sdc1`, label `Wiggly`, SATA).  
+**Ventoy host:** **Uncle Wiggly** 🥕🐰 on the Seagate (`sdc1`, partition label `Wiggly`, SATA) — the ISO rabbit hole.  
 **Not** the USB Ventoy stick (`sdd`, `USB 2.0 FD`).
 
 ## Deploy kit (from Ubuntu on Tower5810)
@@ -128,14 +128,80 @@ lsblk -o NAME,SIZE,MODEL,TRAN
 
 IT mode: **`mpt2sas`** loaded, no `FW in FAULT` from `megaraid_sas`. Individual disks appear when SAS/SATA drives are cabled later.
 
+## Reset / revert (PERC back to factory-ish Dell MegaRAID)
+
+Use this when you need to **undo IT mode**, clear a stuck card, or abandon ZFS-on-`mpt2sas` for this H710.
+
+### A. Soft reset — clear config / foreign config (no firmware rewrite)
+
+**When:** Card still runs MegaRAID (`megaraid_sas`), ghost virtual disks, “foreign config”, or post-failed flash confusion. **No data disks** should be cabled if you care about them.
+
+1. Attach keyboard, boot into **PERC BIOS** (often **Ctrl+R** at the MegaRAID banner; enable **OROM Keyboard Access** in Dell F2 if the banner never appears).
+2. In the PERC utility:
+   - Delete all virtual disks / clear configuration if any exist.
+   - **Foreign View** → Clear / Import only if you understand the risk (clear is safer when drives are empty or disconnected).
+3. Save / exit and reboot into Ubuntu; recheck `dmesg | grep -i megaraid`.
+
+This does **not** restore Dell firmware if the card is already on LSI IT.
+
+### B. Firmware revert — IT mode → Dell MegaRAID (Fohdeesha)
+
+**When:** Card is on **LSI IT** (`mpt2sas`) and you want Dell **MegaRAID** firmware back.
+
+1. **BIOS F2 (same flash window as install):** Boot Mode → **BIOS**, disable VT/SR-IOV, enable Legacy Option ROMs.
+2. Boot **Uncle Wiggly** → `perc/fohdeesha-freedos.iso` (memdisk).
+3. At `C:\>`:
+
+   ```
+   info
+   ```
+
+   Confirm revision (**B0** or **D1**) and that this is the full-size H710 Adapter.
+
+4. Run the **revert** script (not the crossflash script):
+
+   | Revision | Revert command |
+   |----------|----------------|
+   | B0 | `BIGB0RVT` |
+   | D1 | `BIGD1RVT` |
+
+5. `reboot`, then boot `perc/fohdeesha-linux.iso` only if Fohdeesha’s post-revert steps require it for your card revision (follow on-screen / `TYPE PHASE2.TXT` / site guide).
+6. **BIOS F2 after success:** Boot Mode → **UEFI** again; re-enable VT if you use KVM; leave Legacy OROM as you prefer.
+7. **Ubuntu verify:**
+
+   ```bash
+   sudo dmesg | grep -iE 'mpt|megaraid'
+   lsmod | grep -E 'mpt|megaraid'
+   ```
+
+   Expect **`megaraid_sas`** again (not IT `mpt2sas`).
+
+**Do not** run `BIGB0CRS` / `BIGD1CRS` when you mean to revert — those flash **to** IT.
+
+### C. Abort mid-flash / card in FAULT
+
+| Symptom | Action |
+|---------|--------|
+| FreeDOS flash interrupted | Power cycle; retry FreeDOS from Wiggly; if `info` still works, re-run the same CRS or RVT script carefully |
+| Linux phase failed after FreeDOS | Re-run Linux ISO steps; do not mix B0/D1 scripts |
+| No banner, no OS disk | Confirm boot device is motherboard SATA OS disk (`rpool`), not empty PERC; reseat H710; try another PCIe slot only if Slot5 is dead |
+| Wrong card type (Mini vs Adapter) | Stop; Fohdeesha scripts differ — do not force BIG* on Mini |
+
+### D. Host OS after any PERC change
+
+- ZFS **`rpool` stays on motherboard SATA** on this machine — PERC reset does not touch it if cables never moved.
+- If you had attached ZFS members to the PERC in IT mode, export pools cleanly **before** reverting firmware when possible.
+- Re-run `bin/setup-perc-ventoy` only if ISOs/`ventoy.json` are missing; reset does not require re-deploy if kits are still on Uncle Wiggly.
+
 ## Troubleshooting
 
 | Issue | Action |
 |-------|--------|
 | Ventoy menu shows USB only | BIOS: boot internal disk; unplug USB or move it below Seagate |
-| `setup-perc-ventoy` refuses deploy | Script blocks USB Ventoy; only **Wiggly** (sata + label) is allowed |
+| `setup-perc-ventoy` refuses deploy | Script blocks USB Ventoy; only **Uncle Wiggly** (sata + label Wiggly) is allowed |
 | FreeDOS won’t boot | Confirm `auto_memdisk` in `/mnt/wiggly/ventoy/ventoy.json` |
-| Still faulted before flash | Try phase 1 anyway; may clear ghost RAID; else Ctrl+R PERC BIOS clear |
+| Still faulted before flash | Try phase 1 anyway; may clear ghost RAID; else §A Ctrl+R PERC clear |
+| Need factory MegaRAID again | §B `BIGB0RVT` / `BIGD1RVT` |
 
 ## References
 

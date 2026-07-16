@@ -21,7 +21,7 @@ INDIANADELL_SESSION_REL_PATHS=(
     .config/dconf
     .local
     bin
-    .cache
+    # Intentionally no full .cache — Tower home cache can fill the casper image.
 )
 
 # Chrome profile seed tiers (SEED_CHROME=off|a|b|c|d; default c).

@@ -53,11 +53,11 @@ merge_ventoy_json() {
 write_readme() {
     local dest="$1"
     cat >"$dest" <<'EOF'
-B1GMB42 PERC H710 IT-mode flash (internal Ventoy on Wiggly)
-===========================================================
+B1GMB42 PERC H710 IT-mode flash (Uncle Wiggly 🥕🐰)
+=================================================
 
-This folder is on the INTERNAL Seagate Ventoy partition (label Wiggly, sdc1).
-Do NOT copy these ISOs to the USB Ventoy stick (sdd).
+This folder is on Uncle Wiggly — internal Seagate Ventoy (label Wiggly, sdc1).
+Drop ISOs into the rabbit hole; do NOT copy these to the USB Ventoy stick (sdd).
 
 Boot: BIOS -> internal disk / Ventoy -> pick an ISO below.
 
@@ -90,11 +90,11 @@ main() {
     merge_ventoy_json "$WIGGLY_MOUNT/ventoy/ventoy.json"
     sync
 
-    log "Deployed PERC kit to internal Wiggly ($WIGGLY_MOUNT/$PERC_DIR)"
+    log "Deployed PERC kit into Uncle Wiggly’s rabbit hole ($WIGGLY_MOUNT/$PERC_DIR)"
     ls -lh "$perc_root"
     cat <<EOF
 
-Internal Ventoy (Wiggly) ready for PERC IT flash.
+Uncle Wiggly 🥕🐰 ready for PERC IT flash.
   Device:  $WIGGLY_DEV
   Mount:   $WIGGLY_MOUNT
   ISOs:    $perc_root/$FREEDOS_NAME

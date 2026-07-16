@@ -94,9 +94,9 @@ prompt_skip_or_bring_up() {
 
     if [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]] && command -v zenity &>/dev/null; then
         if zenity --question \
-            --title="Ventoy persistence seed" \
-            --width=440 \
-            --text="Network still not ready after waiting ${WAIT_SECS}s.\n\n${detail}\n\nSeed needs internet only for optional git clone of IndianaDell.\n\n• Keep waiting (45s more + NM retry)\n• Skip seed — start Grok without seeding" \
+            --title="Uncle Wiggly 🥕🐰 — seed" \
+            --width=480 \
+            --text="Network still not ready after waiting ${WAIT_SECS}s.\n\n${detail}\n\nSeed needs internet only for optional git clone of IndianaDell into Uncle Wiggly’s rabbit hole.\n\n• Keep waiting (45s more + NM retry)\n• Skip seed — start Grok without seeding" \
             --ok-label="Keep waiting" \
             --cancel-label="Skip seed" \
             2>/dev/null; then
@@ -158,8 +158,8 @@ ensure_network_before_seed() {
             return 0
         fi
         if [[ "${PROMPT}" == "1" && -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]] && command -v zenity &>/dev/null; then
-            zenity --warning --title="Ventoy persistence seed" \
-                --text="Network is still down after waiting.\n\nSkipping seed; Grok will start anyway." \
+            zenity --warning --title="Uncle Wiggly 🥕🐰 — seed" \
+                --text="Network is still down after waiting.\n\nSkipping seed into the rabbit hole; Grok will start anyway." \
                 2>/dev/null || true
         fi
         return 1

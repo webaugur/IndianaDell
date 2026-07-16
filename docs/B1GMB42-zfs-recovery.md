@@ -11,7 +11,7 @@ header-includes:
 **Boot environment:** `rpool/ROOT/ubuntu_cortt9`, `bpool/BOOT/ubuntu_cortt9`  
 **Encryption:** off (no ZFS passphrase on these pools)
 
-Use this when the installed Ubuntu system will not boot. Boot **Ventoy Ubuntu 26.04** from **Wiggly** (`sdc1`) instead — do not import `rpool` until you are ready to repair.
+Use this when the installed Ubuntu system will not boot. Boot **Ventoy Ubuntu 26.04** from **Uncle Wiggly** 🥕🐰 (`sdc1`, label `Wiggly`) instead — do not import `rpool` until you are ready to repair.
 
 ### Required host setting: force import
 
@@ -182,7 +182,7 @@ grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs
 | `sdb1` | EFI (`/boot/efi` when running) |
 | `sdb3` | Plain **4 GiB** swap (HDD) |
 | `rpool/swap` | **33 GiB** swap zvol (prefers special/SSD; fstab `pri=10,nofail`) |
-| `sdc1` Wiggly | Ventoy + Ubuntu live ISO + persistence |
+| `sdc1` Uncle Wiggly 🥕🐰 (`Wiggly`) | Ventoy rabbit hole + Ubuntu live ISO + persistence |
 | `sdc3` DOSBOOT | Recovery scripts + this manual |
 
 **Before `zpool export rpool`:** disable the zvol swap so export is clean:
