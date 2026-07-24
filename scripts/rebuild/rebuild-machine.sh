@@ -147,6 +147,35 @@ log "Phase 6: bin permissions"
 chmod +x "${ROOT}/bin/"* "${ROOT}/scripts/"*/*.sh "${ROOT}/scripts/rebuild/"*.sh 2>/dev/null || true
 chmod +x "${ROOT}/amd-radeon/"*.sh 2>/dev/null || true
 
+log "Phase 6b: Wayland clipboard + Qt/GNOME theming defaults"
+# ARBOARD_BACKEND: makes Rust TUIs (Grok, etc.) prefer wl-clipboard over flaky xdg-desktop-portal
+grep -q 'ARBOARD_BACKEND=wayland' "$HOME/.bashrc" 2>/dev/null || \
+  echo -e '\n# --- Wayland clipboard fix for Rust TUI apps ---\nexport ARBOARD_BACKEND=wayland' >> "$HOME/.bashrc"
+
+# QT_QPA_PLATFORMTHEME: makes Qt apps use GTK/Adwaita styling on GNOME
+grep -q 'QT_QPA_PLATFORMTHEME=gtk3' "$HOME/.bashrc" 2>/dev/null || \
+  echo -e '\n# --- Qt theming to match GNOME/Adwaita ---\nexport QT_QPA_PLATFORMTHEME=gtk3' >> "$HOME/.bashrc"
+
+# CopyQ clipboard manager autostart (GNOME Wayland lacks data-control protocol)
+if command -v copyq >/dev/null 2>&1; then
+  mkdir -p "$HOME/.config/autostart"
+  if [[ ! -f "$HOME/.config/autostart/com.github.hluk.copyq.desktop" ]]; then
+    cat > "$HOME/.config/autostart/com.github.hluk.copyq.desktop" << 'DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=CopyQ
+GenericName=Clipboard Manager
+Icon=copyq
+Exec=copyq
+Terminal=false
+Categories=Utility;Qt;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+DESKTOP
+    log "Installed CopyQ autostart entry"
+  fi
+fi
+
 save_manifests
 
 log "Phase 7: verify"

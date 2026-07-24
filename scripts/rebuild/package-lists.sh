@@ -17,6 +17,8 @@ APT_CORE=(
   libboost-dev libboost-program-options-dev
   pandoc texlive-latex-recommended texlive-fonts-recommended texlive-xetex
   vulkan-tools mesa-utils mesa-utils-bin clinfo flatpak gh
+  # Wayland clipboard + Qt/GNOME theming (see bin/fix-desktop-integration.sh)
+  wl-clipboard copyq adwaita-qt adwaita-qt6 qt6-gtk-platformtheme qt5-gtk-platformtheme
 )
 
 # Legacy name kept empty so older docs/scripts that reference APT_SDR_HAM do not expand unbound.
