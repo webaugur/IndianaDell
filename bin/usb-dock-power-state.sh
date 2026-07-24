@@ -7,6 +7,9 @@
 
 set -euo pipefail
 
+# Ensure Wayland clipboard works for any Rust TUI that might be launched
+export ARBOARD_BACKEND=wayland
+
 echo "=== JMicron USB-SATA Dock Power & Driver State ==="
 echo
 

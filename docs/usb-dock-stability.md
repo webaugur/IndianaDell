@@ -87,6 +87,7 @@ If the wrapper script fails on all attempts, the only reliable workaround is a r
 
 - GRUB: `usbcore.quirks=152d:2352:g` present in `/boot/grub/grub.cfg` (5 occurrences) via the IndianaDell override file.
 - udev rule: `99-usb-dock.rules` installed; USB device `2-8` shows `power/control = on`, `power/autosuspend = -1`.
+- **Clipboard fix**: `ARBOARD_BACKEND=wayland` added to `~/.bashrc` and to the top of all dock-related scripts. This forces Rust TUI apps (Grok Build, testdisk wrappers, etc.) to use `wl-clipboard` directly instead of the frequently-broken `xdg-desktop-portal` on GNOME/Wayland.
 - All scripts and documentation committed and pushed.
 
 ## eSATA Port on the Dock

@@ -16,6 +16,9 @@
 
 set -euo pipefail
 
+# Ensure Wayland clipboard works for any Rust TUI that might be launched
+export ARBOARD_BACKEND=wayland
+
 if [[ $# -lt 2 ]]; then
     echo "Usage: $0 [smartctl options] /dev/sdX"
     echo "Example: $0 -a /dev/sdd"

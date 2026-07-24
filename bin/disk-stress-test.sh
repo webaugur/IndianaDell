@@ -18,6 +18,9 @@
 
 set -euo pipefail
 
+# Ensure Wayland clipboard works for any Rust TUI that might be launched
+export ARBOARD_BACKEND=wayland
+
 IDENT="${1:-}"
 
 if [[ -z "$IDENT" ]]; then
