@@ -30,6 +30,7 @@
 | `usb-dock-power-state.sh` | Shows `power/control`, `power/autosuspend`, driver binding, and `max_sectors_kb` for the dock and its `sdX` devices. Works for both USB 2.0 and 3.x. |
 | `smartctl-usb-dock.sh` | Tries `-d sat`, `-d scsi`, `-d usb`, and no `-d` flag until one returns valid SMART data. |
 | `99-usb-dock.rules` | udev rule that disables autosuspend on the USB device and attempts to tune block devices behind this VID:PID. Review before installing. |
+| `copyq.service` | User systemd service for CopyQ clipboard manager (required on GNOME Wayland because Mutter lacks the `data-control` protocol). |
 | `disk-testdisk-scan.sh` | Updated with correct by-id examples and dock warning (no longer pipes the interactive program). |
 | `disk-stress-test.sh` | Updated with correct by-id examples and dock warning. |
 
@@ -87,7 +88,9 @@ If the wrapper script fails on all attempts, the only reliable workaround is a r
 
 - GRUB: `usbcore.quirks=152d:2352:g` present in `/boot/grub/grub.cfg` (5 occurrences) via the IndianaDell override file.
 - udev rule: `99-usb-dock.rules` installed; USB device `2-8` shows `power/control = on`, `power/autosuspend = -1`.
-- **Clipboard fix**: `ARBOARD_BACKEND=wayland` added to `~/.bashrc` and to the top of all dock-related scripts. This forces Rust TUI apps (Grok Build, testdisk wrappers, etc.) to use `wl-clipboard` directly instead of the frequently-broken `xdg-desktop-portal` on GNOME/Wayland.
+- **Clipboard fix**: 
+  - `ARBOARD_BACKEND=wayland` added to `~/.bashrc` and to the top of all dock-related scripts.
+  - Installed **CopyQ** clipboard manager with a user systemd service (`copyq.service`) because GNOME Wayland lacks the `data-control` protocol. This allows copies from Grok and other TUIs without requiring the terminal to stay focused.
 - All scripts and documentation committed and pushed.
 
 ## eSATA Port on the Dock
