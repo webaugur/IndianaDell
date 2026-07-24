@@ -1,0 +1,14 @@
+# JMicron USB-SATA dock (152d:2352) stability tweaks
+# Place in /etc/udev/rules.d/ after reviewing.
+
+# Disable autosuspend on the USB device itself
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="152d", ATTR{idProduct}=="2352", ATTR{power/control}="on", ATTR{power/autosuspend}="-1"
+
+# Also disable autosuspend on any scsi_disk that appears from this bridge
+ACTION=="add", SUBSYSTEM=="scsi_disk", ATTRS{id/vendor}=="152d", ATTRS{id/product}=="2352", ATTR{../power/control}="on", ATTR{../power/autosuspend}="-1"
+
+# Raise max_sectors_kb on the resulting block devices (helps large transfers)
+ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd*", ATTRS{id/vendor}=="152d", ATTRS{id/product}=="2352", ATTR{queue/max_sectors_kb}="1024"
+
+# Optional: force usb-storage driver instead of uas (uncomment if uas is unstable)
+# ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="152d", ATTR{idProduct}=="2352", ATTR{bInterfaceClass}=="08", ATTR{bInterfaceSubClass}=="06", ATTR{bInterfaceProtocol}=="62", RUN+="/sbin/modprobe usb-storage"
