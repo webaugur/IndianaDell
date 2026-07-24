@@ -89,10 +89,30 @@ If the wrapper script fails on all attempts, the only reliable workaround is a r
 - udev rule: `99-usb-dock.rules` installed; USB device `2-8` shows `power/control = on`, `power/autosuspend = -1`.
 - All scripts and documentation committed and pushed.
 
+## eSATA Port on the Dock
+
+The SSI/JMicron “2Bay Duplicator” dock exposes one **eSATA target (device) port**.
+
+- It is **not** an eSATA host port.
+- You connect the dock’s eSATA port **to a host PC’s eSATA port**.
+- The internal SATA ports in the bays act as hosts to the drives.
+- The dock also supports standalone/one-button offline cloning (source → destination) without a host PC.
+
+### eSATA Availability on Lab Hosts
+
+| Host | eSATA Ports | Notes |
+|------|-------------|-------|
+| **Tower5810** | None | Two Intel C610/X99 AHCI controllers (`00:11.4` sSATA + `00:1f.2` 6-port SATA) — internal SATA only. Rear I/O has no eSATA. |
+| **Thumper (T5610)** | None | Single Intel C600/X79 6-port AHCI (`00:1f.2`) — internal SATA only. Rear I/O has no eSATA. |
+
+**User note (2026-07-24):** Possible spare eSATA HBA card in storage. Topic deferred for later investigation.
+
+Because neither primary lab host currently has an eSATA host port, the dock’s eSATA port cannot be used without adding an HBA or moving the drives internally.
+
 ## Future Improvements (optional)
 
 - Add a “USB Dock Stability Checklist” one-pager.
 - Create a companion `photorec` wrapper with the same stable identifier logic.
-- Add the dock to `thumper-inventory.md` or `augury-lab-inventory.md` once it moves to the lab.
+- Add the dock to `thumper-inventory.md` or `augury-lab-inventory.md` once it moves to the lab or after eSATA HBA testing.
 
-*Document created 2026-07-24 during recovery of two 2 TB WD drives in a JMicron USB 2.0 dock on Tower5810. Updated same day to reflect USB 2.0 reality and applied system changes.*
+*Document created 2026-07-24 during recovery of two 2 TB WD drives in a JMicron USB 2.0 dock on Tower5810. Updated same day to reflect USB 2.0 reality, applied system changes, and eSATA port analysis.*
