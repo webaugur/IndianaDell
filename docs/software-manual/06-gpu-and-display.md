@@ -79,3 +79,14 @@ lspci -nn | grep -i vga
 | | Configure monitor layout (use GNOME Settings) |
 
 **Required post-rebuild:** `sudo bin/apply-amdgpu` + reboot (Chapter 3).
+---
+
+## Lab host note — Thumper (NVIDIA)
+
+This chapter is **Tower5810 / AMD only**. The lab host **`thumper.local`** (Dell Precision T5610) runs **NVIDIA TITAN Xp** and is **not** configured with `apply-amdgpu`.
+
+**Full Thumper GPU doc** (inventory, dual-card plan, **power/clock locking**, LingBot-Map pointer):
+
+→ [`docs/thumper-gpu.md`](../thumper-gpu.md)
+
+Summary: a second TITAN Xp with a weak cooler can be limited with `nvidia-smi -pl` / `-lgc` (and a oneshot systemd unit). Prefer `CUDA_VISIBLE_DEVICES` so heavy jobs stay on the well-cooled card. DragonSDR LingBot-Map lives under `~/Data/lingbot-map` on Thumper — see also `~/Documents/DragonSDR/tools/lingbot-map/README.md`.

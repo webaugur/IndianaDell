@@ -151,6 +151,28 @@ check_udev_rule() {
   fi
 }
 
+# Soft-fail Docker / Docker Compose (non-optional for some lab workflows
+# but must never break the overall IndianaDell verification).
+check_docker_compose() {
+  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    log "OK   docker compose"
+    return 0
+  fi
+
+  log "MISS docker compose (soft fail — will not block IndianaDell)"
+  if [[ $FIX -eq 1 ]]; then
+    echo -e "\033[1;31m[SOFT FAIL]\033[0m Attempting to install docker + docker compose..."
+    if ! sudo apt update && sudo apt install -y docker.io docker-compose-v2; then
+      echo -e "\033[1;31m[SOFT FAIL]\033[0m docker install failed on this system (non-fatal)."
+      echo "          You can install manually later: sudo apt install docker.io docker-compose-v2"
+      echo "          Then: sudo usermod -aG docker \$USER && newgrp docker"
+    else
+      sudo usermod -aG docker "$USER" 2>/dev/null || true
+      log "FIXED docker compose (soft)"
+    fi
+  fi
+}
+
 # ---------------------------------------------------------------------------
 # Hardware detection (keep checks generic where possible)
 # ---------------------------------------------------------------------------
@@ -288,6 +310,9 @@ SHIM
     log "FIXED PATH shim"
   fi
 fi
+
+# 9. Docker Compose (soft fail — never blocks overall verification)
+check_docker_compose
 
 # 9. Plymouth boot theme (optional but enabled by default)
 #    Use --essential-only to skip this check.

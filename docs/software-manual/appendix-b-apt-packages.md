@@ -12,7 +12,7 @@
 
 ## Chapter 6 — GPU and Display
 
-`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`
+`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`
 
 ## Chapter 8 — GNU Radio and SDR (DragonSDR `APT_SDR` + build libs)
 

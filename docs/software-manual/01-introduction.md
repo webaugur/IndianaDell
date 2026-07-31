@@ -80,7 +80,7 @@ Fresh Ubuntu 26.04
 | iotest, dellmerge | Ch. 12 |
 | Dell driver CABs | Ch. 13 |
 | Known gaps | Ch. 14 |
-| Ventoy live persistence, Grok autostart | Ch. 15 |
+| Ventoy live persistence (Uncle Wiggly + PNY rebuild stick), Grok, secrets | Ch. 15 |
 | ZFS `rpool` / `bpool` recovery | Ch. 2 + `docs/B1GMB42-zfs-recovery.md` (+ Ch. 15 live boot) |
 | `/etc/default/zfs` force import | Ch. 2 / ZFS recovery manual — `ZPOOL_IMPORT_OPTS="-f"` |
 | All `bin/` commands | Appendix A |

@@ -48,12 +48,14 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 | Script | Purpose |
 |--------|---------|
-| `seed-ventoy-persistence.sh` | Snapshot session into Ventoy casper image |
+| `seed-ventoy-persistence.sh` | Snapshot session into Ventoy casper image (Uncle Wiggly full seed) |
 | `seed-network-check.sh` | Internet/DNS check before seed |
 | `grok-indianadell-launch.sh` | Seed then Grok fullscreen autostart |
 | `install-ventoy-session.sh` | Install helpers, autostart, PATH |
 | `mount-rpool-recovery.sh` | ZFS rpool chroot recovery (workspace root) |
 | `mount-bpool-recovery.sh` | ZFS bpool mount at `/recovery/boot` (`scripts/recovery/`) |
+
+**PNY rebuild stick** (lean 3 GB persistence, live user `user`, groups, `thumper`/SSH): no dedicated `bin/` launcher yet — procedure and overlay paths are documented in **Chapter 15** (`upper/usr/local/sbin/indianadell-live-user.sh`, `thumper-lan-ssh.sh`).
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 

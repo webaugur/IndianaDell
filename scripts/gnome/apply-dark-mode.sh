@@ -53,6 +53,25 @@ if [[ "${APPLY_GDM:-1}" == 1 ]]; then
   apply_gdm_dark
 fi
 
+# Ensure per-user GTK settings.ini files request dark mode.
+# Some GTK3/GTK4 apps (especially Nautilus) read these and can override
+# the global color-scheme if gtk-application-prefer-dark-theme=0.
+ensure_gtk_dark_ini() {
+  local dir="$1"
+  local file="$dir/settings.ini"
+  mkdir -p "$dir"
+  if [[ ! -f "$file" ]] || ! grep -q 'gtk-application-prefer-dark-theme=1' "$file" 2>/dev/null; then
+    printf '[Settings]\ngtk-application-prefer-dark-theme=1\n' > "$file"
+    log "WROTE $file (gtk-application-prefer-dark-theme=1)"
+  else
+    log "OK   $file already requests dark theme"
+  fi
+}
+
+log "GTK settings.ini (gtk-3.0 + gtk-4.0)"
+ensure_gtk_dark_ini "$HOME/.config/gtk-3.0"
+ensure_gtk_dark_ini "$HOME/.config/gtk-4.0"
+
 log "Done."
 gsettings get org.gnome.desktop.interface color-scheme
 gsettings get org.gnome.desktop.interface gtk-theme

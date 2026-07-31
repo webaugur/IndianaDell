@@ -24,6 +24,28 @@
 
 When the user asks about second GPU, temperature throttling, or Thumper CUDA, **read `docs/thumper-gpu.md` first**.
 
+## Desktop launchers in ~/Applications (DragonSDR / suite apps)
+
+After creating or modifying any `.desktop` files under `~/Applications/` (Renode, Velxio, Ghidra, OpenWebRX, SDR++, etc.):
+
+1. Run `scripts/gnome/fix-nautilus-desktop-launch.sh`
+   (restores double-click execution via the xdg-desktop-launch MIME handler for Nautilus 50+).
+2. Run `scripts/gnome/sync-desktop-icons.sh --dir ~/Applications`
+   (sets `metadata::custom-icon` from each file’s `Icon=` line so Nautilus actually displays the branded icon).
+
+Both scripts are required; the launcher fix alone does not update icon metadata. The icon sync script is the companion to the launcher fix.
+
+## QEMU-lcgamboa shared-library builder — cost of regressions (2026-07-25)
+
+**DragonSDR requirement (non-negotiable):**  
+`tools/emulators/qemu-lcgamboa/build-all.sh` must produce `libqemu-<arch>.so` for **every** architecture in `targets.txt`. The `lcgamboa/picsimlab-esp32` script is only mandatory for the two ESP targets (Velxio compatibility). All other arches must also ship as shared libraries in the same build.
+
+**Observed pattern:**  
+The implementation repeatedly regressed to plain `qemu-system-<arch>` executables or deferred the shared-library work. This directly violated the explicit requirement.
+
+**Business impact:**  
+These regressions have consumed nearly a quarter of the user’s week and caused real monetary loss. Any future session touching the QEMU builder must treat the full shared-library requirement as binding and must not weaken, defer, or reinterpret it when facing implementation difficulty.
+
 ## Lab AI assistant / Home Assistant
 
 Thumper as **McFloater master node** (voice, HA, KMC/Tuya plugs, later video call):

@@ -28,6 +28,7 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | **PERC H710 IT flash** | `docs/B1GMB42-perc-it-flash.md` | — |
 | **Software inventory stub** | `B1GMB42-software-inventory.md` | `B1GMB42-software-inventory.pdf` |
 | **Quick reference** | `docs/features-available.md` | — |
+| **Thumper GPU (NVIDIA)** | `docs/thumper-gpu.md` | — |
 | **FactoryDocs index** | `FactoryDocs/README.md` | — |
 
 **Build all PDFs:**
@@ -93,17 +94,19 @@ Verify: `grep ZPOOL_IMPORT_OPTS /etc/default/zfs` should show `"-f"`.
 One-shot alternative at the GRUB/kernel cmdline: `zfsforce=1`.  
 Recovery scripts always pass `-f` on manual import; the installed OS still needs the default above for normal boots.
 
-## Ventoy live persistence — Uncle Wiggly 🥕🐰
+## Ventoy live persistence — Uncle Wiggly 🥕🐰 + PNY rebuild stick
 
-Ubuntu 26.04 on **Uncle Wiggly** (internal Ventoy, partition label `Wiggly`, `sdc1`) with 24 GB `persistence/ubuntu-26.04.dat` overlay. Drop ISOs into the **rabbit hole** — they fall into the boot black hole. See **Software Manual Ch. 15**.
+**Uncle Wiggly** (internal Ventoy, label `Wiggly`) — Ubuntu 26.04 with **24 GB** `persistence/ubuntu-26.04.dat`. Drop ISOs into the rabbit hole (subdirs OK, e.g. `QubesOS/`).  
+
+**PNY rebuild stick** (~30 GB USB) — lean **3 GB** persistence, live user **`user`**, lab groups, hostname **`thumper`**, optional OpenSSH on LAN. See **Software Manual Ch. 15** for full overlay paths and seed policy.
 
 ```bash
 bin/setup-wiggly-ventoy                    # verify ISO + ventoy.json + .dat (Tower5810)
 scripts/ventoy/install-ventoy-session.sh   # install ~/bin helpers + autostart + PATH
-~/bin/seed-ventoy-persistence.sh           # snapshot session into casper image
+~/bin/seed-ventoy-persistence.sh           # snapshot session into casper image (Wiggly full)
 ```
 
-Autologin `ubuntu`, network-checked seed, Grok fullscreen autostart, and IndianaDell PATH.
+Wiggly full seed: autologin `ubuntu`, network-checked seed, Grok helpers, IndianaDell PATH. Rebuild stick identity/groups/SSH: Ch. 15.
 
 **Related tools:** `bin/efi-timing-suite` (BIOS A/B baselines → `B1GMB42.timing`), `bin/setup-perc-ventoy` (PERC H710 FreeDOS/IT flash on Uncle Wiggly).
 

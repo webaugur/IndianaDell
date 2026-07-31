@@ -1,0 +1,4 @@
+#!/bin/bash
+# X11 forwarding test: Tower5810 (tower5810.local)
+# Uses trusted X11 forwarding (-Y) via the master SSH config
+exec ssh -Y tower5810.local xeyes

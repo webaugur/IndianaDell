@@ -1,0 +1,4 @@
+#!/bin/bash
+# X11 forwarding test: Mediapoly (media.local)
+# Uses trusted X11 forwarding (-Y) via the master SSH config
+exec ssh -Y media.local xeyes

@@ -1,0 +1,4 @@
+#!/bin/bash
+# X11 forwarding test: clock2 (clock2.local)
+# Uses trusted X11 forwarding (-Y) via the master SSH config
+exec ssh -Y clock2.local xeyes

@@ -11,7 +11,8 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
 | ZFS / disk layout tools | Out of scope — handled at OS install time |
 | Windows / dual-boot | FactoryDocs holds CABs; no auto-install |
 | HackRF hardware test | No device attached at last verify (2026-07-05) |
-| Ventoy seed on every boot | Manual — run `~/bin/seed-ventoy-persistence.sh` after changes |
+| Ventoy full seed on every boot | Manual — run `~/bin/seed-ventoy-persistence.sh` after changes |
+| PNY rebuild-stick seed automation | Manual loop-mount of `ubuntu-26.04.dat` (see Ch. 15); stick units only fix groups/SSH/hostname |
 
 ## Lost in TPM/ZFS crash
 

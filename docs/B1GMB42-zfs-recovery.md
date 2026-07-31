@@ -11,6 +11,8 @@ header-includes:
 **Boot environment:** `rpool/ROOT/ubuntu_cortt9`, `bpool/BOOT/ubuntu_cortt9`  
 **Encryption:** off (no ZFS passphrase on these pools)
 
+**Not Thumper.** Lab host `thumper.local` (T5610) uses a different disk set (`rpool` on Hynix 256 G, `user-data-pool` on WD 2 TB). Reconstruct from **`docs/thumper-storage.md`** — do not apply Tower `sdX` partition maps to Thumper.
+
 Use this when the installed Ubuntu system will not boot. Boot **Ventoy Ubuntu 26.04** from **Uncle Wiggly** 🥕🐰 (`sdc1`, label `Wiggly`) instead — do not import `rpool` until you are ready to repair.
 
 ### Required host setting: force import

@@ -96,6 +96,23 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | `bin/gpu-stress` | 3-GPU Vulkan/EGL stress test |
 | `bin/iotest` | Block-device IO benchmark |
 | `bin/apply-amdgpu` | Install multi-GPU `etc/` configs (sudo) |
+
+### Lab host — Thumper (`thumper.local`)
+
+Not managed by `rebuild-machine`. NVIDIA TITAN Xp (12 GB); optional second card needs **power/clock locks** if the cooler is weak.
+
+| Doc | Contents |
+|-----|----------|
+| [`docs/thumper-gpu.md`](thumper-gpu.md) | Inventory, `nvidia-smi -pl` / `-lgc`, dual-GPU policy, LingBot-Map paths |
+| [`docs/thumper-storage.md`](thumper-storage.md) | Disk by-id, ZFS GUIDs/asize, GPT reconstruction, bootloader repair |
+| [`docs/thumper-inventory.md`](thumper-inventory.md) | Full hardware inventory (CPU/RAM/GPU/disks/net) post–Ubuntu 26.04 |
+| DragonSDR `tools/lingbot-map/README.md` | Install/serve 3D recon viewer on Thumper |
+
+```bash
+ssh user@thumper.local
+# heavy jobs → good cooler (index 0):  CUDA_VISIBLE_DEVICES=0
+# weak second card → cap:  sudo nvidia-smi -i 1 -pl 125 && sudo nvidia-smi -i 1 -lgc 500,1200
+```
 | `bin/amd-install` | Full AMD ROCm driver install |
 | `bin/amd-preflight` / `bin/amd-verify` / `bin/amd-uninstall` | AMD driver steps |
 | `bin/install-dragonsdr` | Install full DragonSDR suite |

@@ -5,7 +5,8 @@
 **OS:** Ubuntu 26.04 LTS (resolute)\
 **Workspace:** `~/Documents/IndianaDell`
 
-**Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)
+**Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)\
+**Lab host Thumper (NVIDIA GPUs, power/clock locks):** `docs/thumper-gpu.md`
 
 This manual documents every **host-facing install** the IndianaDell workspace provides: apt packages, rustup, Python venvs, built tools, Flatpak apps, GNOME preferences, Plymouth themes, optional GPU/ROCm tooling, ZFS recovery, Ventoy live persistence, and GitHub sync. Each chapter covers one topic using the same structure:
 
@@ -99,41 +100,41 @@ Software arrives in three layers. Understanding the order prevents skipped steps
 
 ## Reading guide
 
-  ---------------------------------------------------------------------------------------------------------------
-  If you need...                                    Read
-  ------------------------------------------------- -------------------------------------------------------------
-  Full restore after reinstall                      Ch. 2 + Ch. 3
+  -----------------------------------------------------------------------------------------------------------------------------------------
+  If you need...                                                              Read
+  --------------------------------------------------------------------------- -------------------------------------------------------------
+  Full restore after reinstall                                                Ch. 2 + Ch. 3
 
-  Python, Rust, pandoc                              Ch. 4
+  Python, Rust, pandoc                                                        Ch. 4
 
-  Boot/login/desktop look                           Ch. 5 + Ch. 7
+  Boot/login/desktop look                                                     Ch. 5 + Ch. 7
 
-  FirePro GPUs, ROCm                                Ch. 6
+  FirePro GPUs, ROCm                                                          Ch. 6
 
-  GNU Radio, gqrx, SoapySDR                         Ch. 8
+  GNU Radio, gqrx, SoapySDR                                                   Ch. 8
 
-  fldigi, WSJT-X, CHIRP                             Ch. 9
+  fldigi, WSJT-X, CHIRP                                                       Ch. 9
 
-  HackRF, Mayhem, URH                               Ch. 10
+  HackRF, Mayhem, URH                                                         Ch. 10
 
-  Telegram                                          Ch. 11
+  Telegram                                                                    Ch. 11
 
-  iotest, dellmerge                                 Ch. 12
+  iotest, dellmerge                                                           Ch. 12
 
-  Dell driver CABs                                  Ch. 13
+  Dell driver CABs                                                            Ch. 13
 
-  Known gaps                                        Ch. 14
+  Known gaps                                                                  Ch. 14
 
-  Ventoy live persistence, Grok autostart           Ch. 15
+  Ventoy live persistence (Uncle Wiggly + PNY rebuild stick), Grok, secrets   Ch. 15
 
-  ZFS `rpool` / `bpool` recovery                    Ch. 2 + `docs/B1GMB42-zfs-recovery.md` (+ Ch. 15 live boot)
+  ZFS `rpool` / `bpool` recovery                                              Ch. 2 + `docs/B1GMB42-zfs-recovery.md` (+ Ch. 15 live boot)
 
-  `/etc/default/zfs` force import                   Ch. 2 / ZFS recovery manual --- `ZPOOL_IMPORT_OPTS="-f"`
+  `/etc/default/zfs` force import                                             Ch. 2 / ZFS recovery manual --- `ZPOOL_IMPORT_OPTS="-f"`
 
-  All `bin/` commands                               Appendix A
+  All `bin/` commands                                                         Appendix A
 
-  All apt package names                             Appendix B
-  ---------------------------------------------------------------------------------------------------------------
+  All apt package names                                                       Appendix B
+  -----------------------------------------------------------------------------------------------------------------------------------------
 
 ## PATH and launchers
 
@@ -153,53 +154,53 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 
 ## What gets installed
 
-`bin/rebuild-machine` restores the full automated software stack in one run (\~15--30 minutes, network dependent). It installs **91 apt packages** from `scripts/rebuild/package-lists.sh` (`APT_CORE` 38 + `APT_SDR_HAM` 53), plus rustup, HackRF repos/build, Mayhem v2.4.0 assets, URH venv, udev rules, and Flatpak Telegram.
+`bin/rebuild-machine` restores the **workstation** software stack (core apt, rustup, Flatpak Telegram). The **SDR / ham / HackRF** stack is installed from **DragonSDR** when `~/Documents/DragonSDR` is present (`bin/install-dragonsdr`).
 
 ## How it is installed
 
 ``` bash
 cd ~/Documents/IndianaDell
 chmod +x bin/* scripts/rebuild/*.sh
-bin/rebuild-machine                 # full restore
+bin/rebuild-machine                 # full restore (includes DragonSDR suite if present)
 bin/rebuild-machine --verify-only   # check only, no installs
+bin/install-dragonsdr               # SDR suite alone
 ```
 
 **Environment overrides:**
 
-  Variable                Effect
-  ----------------------- ---------------------------------------
-  `SKIP_TELEGRAM=1`       Skip Flatpak Telegram install
-  `SKIP_HACKRF_BUILD=1`   Skip cmake build of HackRF host tools
+  -----------------------------------------------------------------------------------------------
+  Variable                                Effect
+  --------------------------------------- -------------------------------------------------------
+  `SKIP_TELEGRAM=1`                       Skip Flatpak Telegram install
+
+  `SKIP_DRAGONSDR=1`                      Skip SDR suite install/verify
+
+  `SKIP_HACKRF_BUILD=1`                   Forwarded to DragonSDR suite (skip cmake host build)
+
+  `SKIP_HAM=1`                            Forwarded to DragonSDR (skip desktop ham apps)
+
+  `DRAGONSDR_ROOT=…`                      Override suite path (default `~/Documents/DragonSDR`)
+  -----------------------------------------------------------------------------------------------
 
 **Phases** (from `scripts/rebuild/rebuild-machine.sh`):
 
-  --------------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------
   Phase                             Action
-  --------------------------------- ----------------------------------------------------------------------------------
+  --------------------------------- ----------------------------------------------------------------------------
   1                                 `apt-get update`
 
-  2                                 Install `APT_CORE` (38 packages) --- build, Python, docs, GPU utils, flatpak, gh
+  2                                 Install `APT_CORE` --- build, Python, docs, GPU utils, flatpak, gh
 
-  3                                 Install `APT_SDR_HAM` (53 packages) --- GNU Radio, ham, SDR hardware, HackRF
+  3                                 Flatpak remote + `org.telegram.desktop` (unless skipped)
 
-  4                                 Flatpak remote + `org.telegram.desktop` (unless skipped)
+  4                                 rustup stable if `rustc` missing
 
-  5                                 rustup stable if `rustc` missing
+  5                                 DragonSDR `install-suite` (apt SDR/ham + HackRF/Mayhem/URH) unless skipped
 
-  6                                 Clone HackRF/Mayhem/URH repos under `hackrf/repos/`
+  6                                 chmod `bin/` and scripts
 
-  7                                 Build HackRF host tools to `hackrf/build/` (unless skipped)
-
-  8                                 Download Mayhem v2.4.0 + extract SD card tree
-
-  9                                 Create `hackrf/venv-urh/` with URH
-
-  10                                Install HackRF udev rules; chmod `bin/` and scripts
-
-  11                                Regenerate apt manifests; run `verify_stack`
-  --------------------------------------------------------------------------------------------------------------------
-
-**Debconf preseed:** `xastir/install-setuid` is set to `false` before apt to avoid interactive hangs.
+  7                                 Regenerate apt manifests; run `verify_stack`
+  --------------------------------------------------------------------------------------------------------------
 
 **Log file:** `scripts/rebuild/last-run.log`
 
@@ -207,45 +208,36 @@ bin/rebuild-machine --verify-only   # check only, no installs
 
 ``` bash
 bin/rebuild-machine --verify-only
+bin/install-dragonsdr --verify-only
 ```
 
 `verify_stack` checks:
 
-- Every package in `APT_CORE` and `APT_SDR_HAM` via `dpkg-query`
-- Commands: `rustc`, `cargo`, `gnuradio-config-info`, `grcc`, `gqrx`, `fldigi`, `wsjtx`, `chirpw`, `hackrf_info`, `inspectrum`, `pandoc`, `xelatex`, `vkcube`
-- `hackrf/venv-urh/bin/urh`
-- Mayhem firmware zip and extracted SD tree
-- Built `hackrf/build/hackrf-tools/src/hackrf_sweep`
+- Every package in `APT_CORE` via `dpkg-query`
+- Commands: `rustc`, `cargo`, `pandoc`, `xelatex`, `vkcube`
 - Launchers: `dellmerge`, `gpu-stress`, `iotest`, `apply-amdgpu`, `rebuild-machine`
+- DragonSDR suite (unless `SKIP_DRAGONSDR=1` or suite missing)
 - Flatpak Telegram (unless `SKIP_TELEGRAM=1`)
 
 Exit code 0 means all checks passed.
 
 ## How to customize
 
-- **Add apt packages:** Edit `scripts/rebuild/package-lists.sh`, update Appendix B, re-run rebuild.
-- **Pin HackRF/Mayhem version:** Edit `hackrf/scripts/download-mayhem.sh` and MANIFEST; rebuild does not auto-upgrade pinned releases.
+- **Add workstation apt packages:** Edit `scripts/rebuild/package-lists.sh`, update Appendix B, re-run rebuild.
+- **Add SDR/ham packages:** Edit `~/Documents/DragonSDR/tools/package-lists.sh`, re-run `bin/install-dragonsdr`.
+- **Pin Mayhem version:** Edit `DragonSDR/hackrf/scripts/download-mayhem.sh`.
 - **Skip heavy steps:** Use `SKIP_*` env vars for CI or partial recovery.
 
 ## What rebuild does / does not do
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------
-  Rebuild **does**                        Rebuild **does not**
-  --------------------------------------- --------------------------------------------------------------------------------------------------------
-  apt install all listed packages         Partition disks or ZFS
-
-  rustup, HackRF build, Mayhem download   `sudo bin/apply-amdgpu`
-
-  URH venv, udev rules                    `bin/apply-dark-mode` / `apply-max-performance` / `fix-nautilus-desktop-launch` / `sync-desktop-icons`
-
-  Regenerate `apt-full-manifest.txt`      Plymouth theme install
-
-  chmod workspace scripts                 Flash HackRF / PortaPack firmware
-
-                                          `bin/amd-install` (ROCm)
-
-                                          Install FactoryDocs CABs to Windows
-  ------------------------------------------------------------------------------------------------------------------------------------------------
+  Rebuild **does**                       Rebuild **does not**
+  -------------------------------------- -------------------------------------
+  apt install `APT_CORE`                 Partition disks or ZFS
+  rustup; DragonSDR suite when present   `sudo bin/apply-amdgpu`
+  Flatpak Telegram                       GNOME prefs / themes by default
+  Regenerate apt manifests               Flash HackRF / PortaPack firmware
+  chmod workspace scripts                `bin/amd-install` (ROCm)
+                                         Install FactoryDocs CABs to Windows
 
 After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist**.
 
@@ -269,15 +261,7 @@ sudo apt-get install -y zfsutils-linux
 cd ~/Documents/IndianaDell    # or DOSBOOT/IndianaDell/recovery
 sudo ./mount-rpool-recovery.sh mount
 sudo ./scripts/recovery/mount-bpool-recovery.sh mount
-sudo ./mount-rpool-recovery.sh chroot
-# inside chroot: confirm ZPOOL_IMPORT_OPTS="-f", repair, update-initramfs/grub
 ```
-
-**Without scripts:** manual `zpool import -N -f -R /recovery rpool` --- see ZFS recovery manual Section 3.
-
-Build PDF: `bin/build-zfs-recovery-doc`. Deploy to DOSBOOT: `bin/deploy-dosboot-recovery`.
-
-See also **Chapter 15** for Ventoy live boot.
 
 # Chapter 3 --- Post-Rebuild Checklist
 
@@ -337,17 +321,18 @@ See Chapter 5.
 ## 4. HackRF hardware (when device is available)
 
 ``` bash
-source bin/hackrf-env
+bin/install-dragonsdr --verify-only   # suite present?
+source bin/hackrf-env                 # PATH → ~/Documents/DragonSDR/hackrf
 hackrf_info                           # should list board
 bin/hackrf-flash-mayhem               # extract USB flash bundle
 # follow bundle README for DFU flash
 bin/hackrf-prepare-sdcard             # ensure SD tree is extracted
-# copy hackrf/sd-card/mayhem-v2.4.0/* to FAT32 microSD root
+# copy ~/Documents/DragonSDR/hackrf/sd-card/mayhem-v2.4.0/* to FAT32 microSD root
 ```
 
 **Verify:** `hackrf_info`, on-device Mayhem version, SD apps visible on PortaPack.
 
-See Chapter 10.
+See Chapter 10 and `~/Documents/DragonSDR/README.md`.
 
 ## 5. Documentation PDFs
 
@@ -458,7 +443,7 @@ bin/urh --version
 
 **Python bindings verified on this host:** `gnuradio`, `SoapySDR`, `Hamlib` (capital H in Python).
 
-**Project venv:** URH lives in `hackrf/venv-urh/` (Chapter 10), not system-wide.
+**Project venv:** URH lives in `~/Documents/DragonSDR/hackrf/venv-urh/` (Chapter 10), not system-wide.
 
 ## How it is installed
 
@@ -622,10 +607,24 @@ sudo reboot
 
 - `etc/environment.d/99-amdgpu-wayland.conf`
 - `etc/X11/xorg.conf.d/20-amdgpu-multi-gpu.conf`
-- `etc/modprobe.d/amdgpu-multigpu.conf`
-- `etc/udev/rules.d/99-amdgpu-multigpu.rules`
+- `etc/modprobe.d/amdgpu-multigpu.conf` (`runpm=0`)
+- `etc/udev/rules.d/99-amdgpu-multigpu.rules` (tags + DPM performance hook)
+- `etc/amdgpu-set-dpm-performance.sh` → `/usr/local/sbin/indiana-amdgpu-dpm-performance`
 - `etc/profile.d/amdgpu-multigpu.sh`
 - `etc/gdm3/custom.conf` (if present)
+
+**DPM performance (all cards):** on a desktop workstation every amdgpu is pinned to max clocks --- not only the display GPU. `apply-amdgpu` runs the helper immediately; udev re-applies when cards appear at boot.
+
+``` bash
+# verify
+for c in /sys/class/drm/card[0-9]/device; do
+  [[ -f $c/power_dpm_force_performance_level ]] || continue
+  echo "$(basename $(dirname $c)): level=$(cat $c/power_dpm_force_performance_level) state=$(cat $c/power_dpm_state)"
+done
+# expect: level=high  state=performance  on card1..card3
+```
+
+Tradeoff: slightly higher idle power/heat/fan noise vs `auto`/`balanced`. Revert by editing the udev rule / helper and re-running `sudo bin/apply-amdgpu`, or manually `echo auto | sudo tee …/power_dpm_force_performance_level`.
 
 **Optional ROCm:**
 
@@ -660,7 +659,17 @@ lspci -nn | grep -i vga
   Ensure `bin/gpu-stress` is executable      Install ROCm
                                              Configure monitor layout (use GNOME Settings)
 
-**Required post-rebuild:** `sudo bin/apply-amdgpu` + reboot (Chapter 3).
+## **Required post-rebuild:** `sudo bin/apply-amdgpu` + reboot (Chapter 3).
+
+## Lab host note --- Thumper (NVIDIA)
+
+This chapter is **Tower5810 / AMD only**. The lab host **`thumper.local`** (Dell Precision T5610) runs **NVIDIA TITAN Xp** and is **not** configured with `apply-amdgpu`.
+
+**Full Thumper GPU doc** (inventory, dual-card plan, **power/clock locking**, LingBot-Map pointer):
+
+→ [`docs/thumper-gpu.md`](../thumper-gpu.md)
+
+Summary: a second TITAN Xp with a weak cooler can be limited with `nvidia-smi -pl` / `-lgc` (and a oneshot systemd unit). Prefer `CUDA_VISIBLE_DEVICES` so heavy jobs stay on the well-cooled card. DragonSDR LingBot-Map lives under `~/Data/lingbot-map` on Thumper --- see also `~/Documents/DragonSDR/tools/lingbot-map/README.md`.
 
 # Chapter 7 --- GNOME Session
 
@@ -777,20 +786,42 @@ The script reads the first `Icon=` under `[Desktop Entry]` only (not `Icon[lang]
 
 ``` bash
 bin/sync-desktop-icons                 # scan default directories
-bin/sync-desktop-icons -v              # log each set / skip
-bin/sync-desktop-icons --dry-run       # print actions, no gio set
+bin/sync-desktop-icons -v              # log each set / skip / rename
+bin/sync-desktop-icons --dry-run       # print actions, no gio set / rename
 bin/sync-desktop-icons --file PATH     # one .desktop (inotify-friendly)
 bin/sync-desktop-icons --dir DIR       # add/replace scan dir (repeatable)
 bin/sync-desktop-icons --watch         # inotify loop (needs inotify-tools)
 bin/sync-desktop-icons --clear-missing # unset custom-icon* if Icon= absent
+bin/sync-desktop-icons --no-rename     # keep chrome-*-Default.desktop names
 ```
 
 **Default scan directories** (when `--dir` is not used and `SYNC_DESKTOP_ICON_DIRS` is unset):
 
 - `$HOME/.local/share/applications`
 - `$HOME/Applications`
+- `$HOME/Desktop`
 
-Only **top-level** `*.desktop` files in each directory are processed (flat XDG apps layout and a personal `Applications` folder). Nested trees are not walked.
+Only **top-level** `*.desktop` files in each directory are processed (flat XDG apps layout and a personal `Applications` / Desktop folder). Nested trees are not walked.
+
+### Rename Chrome gibberish basenames
+
+Chrome/Chromium PWAs create launchers like `chrome-lodlkdfmihgonocnmddehnfgiljnadcf-Default.desktop` while `Name=` is a short human label (`X`, `YouTube`). **By default** (`--rename`), if the file **and** its directory are **writable**, matching basenames are renamed to `${Name}.desktop` before icon metadata is applied.
+
+  -----------------------------------------------------------------------------------------------------------------------
+  Rule                       Behavior
+  -------------------------- --------------------------------------------------------------------------------------------
+  Pattern                    `chrome-<id>-Default.desktop`, `chrome-<id>.desktop` (id ≥ 16 alnum); same for `chromium-`
+
+  Source of new name         First `Name=` under `[Desktop Entry]` only (not action groups, not `Name[lang]=`)
+
+  Not writable               Skip rename, warn, still try icon metadata
+
+  Target already exists      Skip rename, warn (no overwrite)
+
+  Disable                    `--no-rename`
+  -----------------------------------------------------------------------------------------------------------------------
+
+Example: `~/Desktop/chrome-lodlk…-Default.desktop` (`Name=X`) → `~/Desktop/X.desktop`.
 
 **Environment:**
 
@@ -867,27 +898,47 @@ Run dark mode, max performance, `fix-nautilus-desktop-launch`, and `sync-desktop
 
 # Chapter 8 --- GNU Radio and Desktop SDR
 
+## Ownership
+
+GNU Radio, SoapySDR, and desktop SDR apps are installed by the **DragonSDR** suite, not by IndianaDell apt lists.
+
+  ---------------------------------------------------------------------------------------
+  Item                       Location
+  -------------------------- ------------------------------------------------------------
+  Suite install              `~/Documents/DragonSDR/bin/install-suite`
+
+  Package list               `~/Documents/DragonSDR/tools/package-lists.sh` (`APT_SDR`)
+
+  IndianaDell wrapper        `bin/install-dragonsdr`
+  ---------------------------------------------------------------------------------------
+
 ## What gets installed
 
-  -----------------------------------------------------------------------------------------------------------------------------------------
-  Component             Version           Packages / path
-  --------------------- ----------------- -------------------------------------------------------------------------------------------------
-  GNU Radio             3.10.12.0         `gnuradio`, `gnuradio-dev`, `gnuradio-doc`
+  -----------------------------------------------------------------------------------------------------------------------------
+  Component                   Packages / path
+  --------------------------- -------------------------------------------------------------------------------------------------
+  GNU Radio                   `gnuradio`, `gnuradio-dev`, `gnuradio-doc`
 
-  Companion blocks      apt               `gr-osmosdr`, `gr-limesdr`, `gr-fosphor`, `gr-air-modes`, `gr-hpsdr`, `gr-dab`, `gr-satellites`
+  Companion blocks            `gr-osmosdr`, `gr-limesdr`, `gr-fosphor`, `gr-air-modes`, `gr-hpsdr`, `gr-dab`, `gr-satellites`
 
-  SoapySDR              apt + Python      `libsoapysdr-dev`, `python3-soapysdr`, modules
+  SoapySDR                    `libsoapysdr-dev`, `python3-soapysdr`, modules
 
-  Hardware libs         apt               RTL-SDR, HackRF, Airspy, bladeRF, Lime, UHD
+  Hardware libs               RTL-SDR, HackRF, Airspy, bladeRF, Lime, UHD
 
-  Desktop apps          apt               `gqrx-sdr`, `quisk`, `inspectrum`, `hacktv`
-  -----------------------------------------------------------------------------------------------------------------------------------------
+  Desktop apps                `gqrx-sdr`, `quisk`, `inspectrum`, `hacktv`
+  -----------------------------------------------------------------------------------------------------------------------------
 
-**SoapySDR modules on this host:** HackRF, RTL-SDR (osmosdr), Airspy, bladeRF, Lime, MiriSDR, HydraSDR, PlutoSDR, Red Pitaya, remote, audio, UHD.
+**SoapySDR modules (typical host):** HackRF, RTL-SDR (osmosdr), Airspy, bladeRF, Lime, MiriSDR, HydraSDR, PlutoSDR, Red Pitaya, remote, audio, UHD.
 
 ## How it is installed
 
-All packages in `APT_SDR_HAM` (rebuild Phase 3). Dev libraries in `APT_CORE` support building OOT modules.
+``` bash
+bin/install-dragonsdr              # full suite (apt + HackRF workspace)
+# or only packages:
+bin/install-dragonsdr --apt-only
+```
+
+Called automatically during `bin/rebuild-machine` when `~/Documents/DragonSDR` is present (`SKIP_DRAGONSDR=1` to skip).
 
 **Typical workflow:**
 
@@ -903,40 +954,18 @@ For HackRF-specific host tools and URH, see Chapter 10.
 ## How to verify
 
 ``` bash
+bin/install-dragonsdr --verify-only
 gnuradio-config-info --version
-grcc --help | head -1
-python3 -c "import gnuradio; print(gnuradio.__version__)"
 python3 -c "import SoapySDR; print('SoapySDR OK')"
 SoapySDRUtil --info
-gqrx --version 2>/dev/null || command -v gqrx
+command -v gqrx
 ```
-
-With hardware attached:
-
-``` bash
-rtl_test -t                  # RTL-SDR
-hackrf_info                  # HackRF
-```
-
-## How to customize
-
-- Add OOT modules: `sudo apt install gr-<name>` or build from source against `gnuradio-dev`
-- GPU waterfall: `gr-fosphor` blocks in flowgraphs
-- Filtered apt list: `apt-hamradio-dev-manifest.txt` (178 SDR/ham-related packages on full system)
-
-## What rebuild does / does not do
-
-  ------------------------------------------------------------------------------------------------------------
-  Does                                                            Does not
-  --------------------------------------------------------------- --------------------------------------------
-  Install full GNU Radio + gr-\* stack                            Calibrate specific SDR hardware
-
-  Install gqrx, quisk, inspectrum                                 Install SDRangel or SigDigger
-
-  Verify `gnuradio-config-info`, `grcc`, `gqrx` in verify_stack   Flash firmware on SDR devices
-  ------------------------------------------------------------------------------------------------------------
 
 # Chapter 9 --- Ham Radio (Desktop)
+
+## Ownership
+
+Desktop ham applications are part of the **DragonSDR** suite (`APT_HAM` in `tools/package-lists.sh`).
 
 ## What gets installed
 
@@ -962,9 +991,13 @@ hackrf_info                  # HackRF
 
 ## How it is installed
 
-Apt packages in `APT_SDR_HAM` (rebuild Phase 3).
+``` bash
+bin/install-dragonsdr
+# omit ham apps:
+SKIP_HAM=1 bin/install-dragonsdr
+```
 
-**xastir debconf:** rebuild preseeds `xastir/install-setuid boolean false` to avoid interactive install hangs.
+**xastir debconf:** suite install preseeds `xastir/install-setuid boolean false` to avoid interactive hangs.
 
 ``` bash
 fldigi &
@@ -981,31 +1014,28 @@ xastir &
 ``` bash
 command -v fldigi wsjtx chirpw direwolf gpredict grig xastir
 python3 -c "import Hamlib; print('Hamlib OK')"
-bin/rebuild-machine --verify-only   # checks fldigi, wsjtx, chirpw
+bin/install-dragonsdr --verify-only
 ```
 
 Configure rig control in each app via Hamlib model selection.
 
-## How to customize
-
-- Radio definitions: CHIRP stock configs + your radio CSV
-- WSJT-X: `~/.config/WSJT-X/`
-- xastir maps: `xastir-data` package + user map sources
-- direwolf: `~/.direwolf/direwolf.conf`
-
-## What rebuild does / does not do
-
-  ------------------------------------------------------------------------------------
-  Does                                    Does not
-  --------------------------------------- --------------------------------------------
-  Install all ham desktop apps + Hamlib   Configure radios or call signs
-
-  Preseed xastir setuid prompt            Set up APRS IS or igates
-
-  Verify fldigi, wsjtx, chirpw commands   Install fldigi/WSJT-X from source
-  ------------------------------------------------------------------------------------
-
 # Chapter 10 --- HackRF and PortaPack Mayhem
+
+## Ownership
+
+The HackRF / PortaPack Mayhem workspace moved out of IndianaDell into **DragonSDR**:
+
+  ----------------------------------------------------------------------------------------
+  Item                                Path
+  ----------------------------------- ----------------------------------------------------
+  Workspace                           `~/Documents/DragonSDR/hackrf/`
+
+  Manifest                            `~/Documents/DragonSDR/hackrf/MANIFEST.txt`
+
+  Suite install                       `~/Documents/DragonSDR/bin/install-suite`
+
+  IndianaDell wrappers                `bin/hackrf-*`, `bin/urh`, `bin/install-dragonsdr`
+  ----------------------------------------------------------------------------------------
 
 ## What gets installed
 
@@ -1015,33 +1045,29 @@ Configure rig control in each app via Hamlib model selection.
 
 `hackrf`, `hackrf-firmware`, `libhackrf-dev`, `hackrf-doc`, `inspectrum`, `hacktv`, `dfu-util`, `openocd`, ARM GCC toolchain, plus GNU Radio/SoapySDR deps (Chapter 8).
 
-### Built from source (`hackrf/build/`)
+### Built from source (`DragonSDR/hackrf/build/`)
 
-  ------------------------------------------------------------------------------------
   Tool                                    Notes
-  --------------------------------------- --------------------------------------------
-  `hackrf_sweep`                          Spectrum sweep --- not in older apt splits
-
-  `hackrf_info`, `hackrf_transfer`, ...   Newer libhackrf (0.10.0) than apt alone
-
+  --------------------------------------- -------------------------------------
+  `hackrf_sweep`                          Spectrum sweep
+  `hackrf_info`, `hackrf_transfer`, ...   Host utilities
   `libhackrf.so`                          Under `hackrf/build/libhackrf/src/`
-  ------------------------------------------------------------------------------------
 
 Install prefix: `hackrf/local/` (CMAKE_INSTALL_PREFIX).
 
 ### Release assets (`hackrf/releases/`)
 
-  ------------------------------------------------------------------------------------------------------------
-  File                                                     Size                 Purpose
-  -------------------------------------------------------- -------------------- ------------------------------
-  `FIRMWARE_mayhem_v2.4.0.zip`                             8 MB                 USB flash bundle
+  ---------------------------------------------------------------------------------------------------
+  File                                                     Purpose
+  -------------------------------------------------------- ------------------------------------------
+  `FIRMWARE_mayhem_v2.4.0.zip`                             USB flash bundle
 
-  `COPY_TO_SDCARD_hackrf_mayhem_v2.4.0-no-world-map.zip`   201 MB               PortaPack microSD
+  `COPY_TO_SDCARD_hackrf_mayhem_v2.4.0-no-world-map.zip`   PortaPack microSD
 
-  `OCI_hackrf_mayhem_v2.4.0.ppfw.tar`                      2.5 MB               Web flasher image
-  ------------------------------------------------------------------------------------------------------------
+  `OCI_hackrf_mayhem_v2.4.0.ppfw.tar`                      Web flasher image
+  ---------------------------------------------------------------------------------------------------
 
-**Extracted SD tree:** `hackrf/sd-card/mayhem-v2.4.0/` (276 MB, 84 apps in `APPS/`)
+**Extracted SD tree:** `hackrf/sd-card/mayhem-v2.4.0/`
 
 ### Source repos (`hackrf/repos/`)
 
@@ -1049,70 +1075,40 @@ Install prefix: `hackrf/local/` (CMAKE_INSTALL_PREFIX).
 
 ### Python venv
 
-`hackrf/venv-urh/` --- Universal Radio Hacker **2.10.0** (PyQt6). Launch: `bin/urh`
+`hackrf/venv-urh/` --- Universal Radio Hacker. Launch: `bin/urh` (wrapper → DragonSDR).
 
 ### udev
 
-`hackrf/scripts/99-hackrf.rules` installed to `/etc/udev/rules.d/` --- plugdev access.
+`hackrf/scripts/99-hackrf.rules` → `/etc/udev/rules.d/`
 
 ## How it is installed
 
-**Automated (rebuild Phases 6--10):**
-
-1.  Clone repos (shallow, skip if `.git` exists)
-2.  Init Mayhem submodules if needed
-3.  `cmake` + build HackRF host (skip: `SKIP_HACKRF_BUILD=1`)
-4.  `hackrf/scripts/download-mayhem.sh`
-5.  `hackrf/scripts/prepare-sdcard.sh`
-6.  URH venv if missing
-7.  `hackrf/scripts/setup-udev.sh`
+``` bash
+bin/install-dragonsdr                 # full suite
+SKIP_HACKRF_BUILD=1 bin/install-dragonsdr
+bin/install-dragonsdr --hackrf-only   # workspace only (apt already done)
+```
 
 **Manual (hardware present):**
 
 ``` bash
-source bin/hackrf-env
-bin/hackrf-flash-mayhem         # extract flash bundle
-bin/hackrf-prepare-sdcard       # re-extract SD payload
-bin/hackrf-build-mayhem         # compile Mayhem from source (advanced)
-bin/hackrf-download-mayhem      # re-fetch releases
+source bin/hackrf-env                 # PATH → DragonSDR/hackrf/build
+bin/hackrf-flash-mayhem
+bin/hackrf-prepare-sdcard
+bin/hackrf-build-mayhem               # compile Mayhem from source
+bin/hackrf-download-mayhem
+bin/urh
 ```
-
-**PATH:** `source bin/hackrf-env` adds `hackrf/build/hackrf-tools/src` and `hackrf/local/bin`.
 
 ## How to verify
 
 ``` bash
-bin/rebuild-machine --verify-only
+bin/install-dragonsdr --verify-only
 source bin/hackrf-env
-hackrf_info                     # needs USB device
-hackrf/build/hackrf-tools/src/hackrf_sweep --help | head -1
+hackrf_info
+ls ~/Documents/DragonSDR/hackrf/sd-card/mayhem-v2.4.0/APPS | wc -l
 bin/urh --version
-ls hackrf/sd-card/mayhem-v2.4.0/APPS | wc -l
 ```
-
-## How to customize
-
-- **Upgrade Mayhem:** Edit `hackrf/scripts/download-mayhem.sh` version URLs; re-run download + prepare
-- **SD apps:** Copy subsets from `sd-card/mayhem-v2.4.0/APPS/` to microSD
-- **Full inventory:** `hackrf/MANIFEST.txt`
-
-### Mayhem v2.4.0 highlights
-
-On-device: Morse RX/TX, RTTY, FPV detect, ADSB, ACARS, BLE, TPMS, KeeLoq, EPIRB, SAME, MDC-1200, P25, KISS TNC, Looking Glass, SubGHz, Flipper TX, waterfall designer, time sink.
-
-SD apps include: `fpv_detect`, `kiss_tnc`, `keeloqtx`, `siggen`, `fmradio`, `sstvrx`, `wardrivemap`, `waterfall_designer`, and more.
-
-## What rebuild does / does not do
-
-  ----------------------------------------------------------------------------------------
-  Does                                        Does not
-  ------------------------------------------- --------------------------------------------
-  Clone repos, build tools, download Mayhem   DFU-flash firmware to hardware
-
-  Create URH venv, install udev               Format or write microSD in a reader
-
-  Verify zip, SD tree, hackrf_sweep           Test with HackRF USB attached
-  ----------------------------------------------------------------------------------------
 
 # Chapter 11 --- Flatpak Applications
 
@@ -1297,21 +1293,23 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
 
 ## Not installed
 
-  --------------------------------------------------------------------------------------------------
-  Item                             Notes
-  -------------------------------- -----------------------------------------------------------------
-  SDRangel, SigDigger              Not on Flathub; use gqrx + URH + inspectrum
+  ------------------------------------------------------------------------------------------------------------------------------------
+  Item                                Notes
+  ----------------------------------- ------------------------------------------------------------------------------------------------
+  SDRangel, SigDigger                 Not on Flathub; use gqrx + URH + inspectrum
 
-  Rust SDR crate workspace         Toolchain only --- add crates per project with `cargo add`
+  Rust SDR crate workspace            Toolchain only --- add crates per project with `cargo add`
 
-  ZFS / disk layout tools          Out of scope --- handled at OS install time
+  ZFS / disk layout tools             Out of scope --- handled at OS install time
 
-  Windows / dual-boot              FactoryDocs holds CABs; no auto-install
+  Windows / dual-boot                 FactoryDocs holds CABs; no auto-install
 
-  HackRF hardware test             No device attached at last verify (2026-07-05)
+  HackRF hardware test                No device attached at last verify (2026-07-05)
 
-  Ventoy seed on every boot        Manual --- run `~/bin/seed-ventoy-persistence.sh` after changes
-  --------------------------------------------------------------------------------------------------
+  Ventoy full seed on every boot      Manual --- run `~/bin/seed-ventoy-persistence.sh` after changes
+
+  PNY rebuild-stick seed automation   Manual loop-mount of `ubuntu-26.04.dat` (see Ch. 15); stick units only fix groups/SSH/hostname
+  ------------------------------------------------------------------------------------------------------------------------------------
 
 ## Lost in TPM/ZFS crash
 
@@ -1387,224 +1385,661 @@ uname -a && lsb_release -a
 
 # Chapter 15 --- Ventoy Live Session & Persistence
 
-Portable Ubuntu 26.04 on the **Wiggly** Ventoy stick, with a writable overlay so login state, apps, Grok, and IndianaDell survive reboots.
+This chapter covers **two** Ventoy volumes used on the lab:
 
-## What gets persisted
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Volume                        Friendly name           Role                                                                                   Typical size
+  ----------------------------- ----------------------- -------------------------------------------------------------------------------------- -------------------------
+  Internal Seagate ST500DM002   **Uncle Wiggly** 🥕🐰   Full rabbit hole: many ISOs, 24 GB Ubuntu persistence, DOSBOOT / Windows / ISO-STASH   \~466 GB disk
 
-  --------------------------------------------------------------------------------------------------------------
-  Item                    Location (live boot)                        Seeded to casper image
-  ----------------------- ------------------------------------------- ------------------------------------------
-  User home               `/home/ubuntu`                              `cow/upper/home/ubuntu/`
+  PNY USB 2.0 (\~30 GB)         **Rebuild stick**       Lean Ubuntu 26.04 live + **3 GB** persistence for recovery / thumper rebuild           \~30 GB USB
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  Installed packages      dpkg overlay                                `cow/upper/var/lib/dpkg/`
+Both use Ventoy: drop ISOs onto the data partition; they appear in the boot menu. Writable **casper-rw** persistence keeps login state across live boots.
 
-  GDM autologin           `/etc/gdm3/custom.conf`                     `cow/upper/etc/gdm3/`
+**EFI note (Tower5810):** Uncle Wiggly's SATA port may be **disabled in Setup** for fast POST (`docs/fast-boot.md`). If `/dev/disk/by-label/Wiggly` is missing but the Seagate is cabled, re-enable that SATA port in **F2 Setup**, then reboot.
 
-  Grok auth + sessions    `~/.grok/`                                  same (never in git)
+------------------------------------------------------------------------
 
-  GitHub CLI auth         `~/.config/gh/`                             same
+## Overlay layout (both volumes)
 
-  SSH keys                `~/.ssh/`                                   same
+Ubuntu live + Ventoy persistence uses an ext4 file labeled **`casper-rw`**:
 
-  **Runtime source**      `/home/user/` when ZFS rpool is available   pulled at login via `resolve-secrets.sh`
+``` text
+persistence/ubuntu-26.04.dat   # ext4, LABEL=casper-rw
+  upper/                       # modern overlay upper (preferred)
+    home/<liveuser>/
+    etc/
+    usr/local/sbin/
+    …
+  work/                        # created by live system as needed
+```
 
-  IndianaDell workspace   `~/Documents/IndianaDell`                   same (git clone or rsync)
+Older seeds may have used `cow/upper/`; current IndianaDell seeds use **`upper/`**. Seed scripts prefer `upper/` and remove a stale `cow/` tree when seeding.
 
-  PATH overrides          `~/.config/indianadell/path.sh`             same
-  --------------------------------------------------------------------------------------------------------------
+**Ventoy config** (on the same data partition as the ISO):
 
-**Persistence image:** `/persistence/ubuntu-26.04.dat` (24 GB ext4, label `casper-rw`) on the internal Ventoy exFAT volume (**Wiggly**, `sdc1`).
+``` json
+{
+    "persistence": [
+        {
+            "image": "/ubuntu-26.04-desktop-amd64.iso",
+            "backend": "/persistence/ubuntu-26.04.dat",
+            "autosel": 1
+        }
+    ]
+}
+```
 
-**Ventoy config:** `ventoy/ventoy.json` maps `ubuntu-26.04-desktop-amd64.iso` → that `.dat` file with `autosel: 1`. Canonical copy in `scripts/ventoy/ventoy.json`.
+Canonical repo copy for Uncle Wiggly: `scripts/ventoy/ventoy.json`. Paths are **absolute from the Ventoy data partition root**. Persistence backend and ISO must live on the **same** Ventoy data partition.
 
-## How it is installed
+### Subdirectories and non-ISO files
 
-**One-time setup from Tower5810** (Wiggly mounted at `/mnt/wiggly`):
+Ventoy **recursively scans** the data partition for bootable images (`.iso`, etc.). Subfolders are fine and already used on Wiggly:
+
+  -------------------------------------------------------------------------------------------------------------------------
+  Path example                                    Notes
+  ----------------------------------------------- -------------------------------------------------------------------------
+  `/perc/*.iso`                                   PERC FreeDOS/Linux kit; FreeDOS can use `auto_memdisk` in `ventoy.json`
+
+  `/Windows NT ISOs/*.iso`                        Period OS media
+
+  `/QubesOS/Qubes-….iso` + `.asc` + signing key   Signatures sit next to the ISO; Ventoy ignores non-bootable files
+  -------------------------------------------------------------------------------------------------------------------------
+
+Optional: empty `.ventoyignore` in a folder hides that tree from the boot menu.
+
+Create a persistence image (example 3 GiB):
+
+``` bash
+# From extracted Ventoy release, or scripts/ventoy/ if present
+sudo ./CreatePersistentImg.sh -s 3072 -t ext4 -l casper-rw -o persistence/ubuntu-26.04.dat
+# Extend later:
+sudo scripts/ventoy/ExtendPersistentImg.sh /path/to/ubuntu-26.04.dat <extra-MB>
+# then resize2fs on the loop device if needed
+```
+
+------------------------------------------------------------------------
+
+## Uncle Wiggly 🥕🐰 (internal Ventoy)
+
+**Names:** friendly **Uncle Wiggly**; partition label **`Wiggly`** (historically `sdc1`, mount `/mnt/wiggly`). Same Seagate also holds **DOSBOOT**, Windows, **ISO-STASH** --- see hardware inventory.
+
+### What gets persisted (full seed)
+
+  -----------------------------------------------------------------------------------------------------------------------------------------
+  Item                    Live path                                      In casper image
+  ----------------------- ---------------------------------------------- ------------------------------------------------------------------
+  User home               `/home/ubuntu` (Wiggly full seed convention)   `upper/home/ubuntu/`
+
+  Installed packages      dpkg overlay                                   `upper/var/lib/dpkg/`
+
+  GDM autologin           `/etc/gdm3/custom.conf`                        `upper/etc/gdm3/`
+
+  Grok auth + sessions    `~/.grok/`                                     same (**never in git**)
+
+  GitHub CLI auth         `~/.config/gh/`                                same
+
+  SSH keys                `~/.ssh/`                                      same
+
+  Chrome (tier C)         `~/.config/google-chrome/` curated             bookmarks, prefs, logins, Web Data, Extensions --- **no caches**
+
+  Runtime secret source   `/home/user/` when ZFS rpool is available      pulled via `resolve-secrets.sh`
+
+  IndianaDell workspace   `~/Documents/IndianaDell`                      full tree (git clone or rsync)
+
+  PATH overrides          `~/.config/indianadell/path.sh`                same
+  -----------------------------------------------------------------------------------------------------------------------------------------
+
+**Persistence image:** `/persistence/ubuntu-26.04.dat` (**24 GB** ext4, label `casper-rw`) on label **`Wiggly`**.
+
+### One-time setup (Tower5810)
 
 ``` bash
 sudo mount -o uid=$(id -u),gid=$(id -g) /dev/disk/by-label/Wiggly /mnt/wiggly
 bin/setup-wiggly-ventoy    # verify ISO, ventoy.json, .dat filesystem
 ```
 
-Extend an undersized image: `sudo scripts/ventoy/ExtendPersistentImg.sh /mnt/wiggly/persistence/ubuntu-26.04.dat <MB>` then `resize2fs` on the loop device if needed.
-
-**Seed session state** from a running session with Wiggly mounted (e.g. `/mnt/wiggly`):
+### Seed session state
 
 ``` bash
-# One-time or after changes — seeds current ubuntu session into the .dat image
 ~/bin/seed-ventoy-persistence.sh
-# or, if the image is already mounted:
+# or:
 PERSIST_MOUNT=/mnt/persist-check ~/bin/seed-ventoy-persistence.sh
+SEED_CHROME=c ~/bin/seed-ventoy-persistence.sh   # default chrome tier
+SEED_CHROME=off ~/bin/seed-ventoy-persistence.sh
 ```
 
-The seed script copies home, dpkg/apt state, GDM autologin, SSH keys (including `/home/user/.ssh/id_rsa` when present), and the IndianaDell tree.
+  -------------------------------------------------------------------------------------------------------------
+  Mode                   When                                      Network?
+  ---------------------- ----------------------------------------- --------------------------------------------
+  Live casper overlay    Already booted from Ventoy persistence    **No** --- local rsync only
 
-## Login experience (configured)
+  External `.dat` seed   Seeding from Tower5810 / mounted volume   Only if IndianaDell must be **git cloned**
+  -------------------------------------------------------------------------------------------------------------
 
-1.  **GDM autologin** --- user `ubuntu` (`/etc/gdm3/custom.conf`)
-2.  **PATH** --- IndianaDell `bin/` and `scripts/` override system (`~/.config/indianadell/path.sh`)
-3.  **Grok autostart** --- Ptyxis fullscreen, resumes IndianaDell session (`~/.config/autostart/grok-indianadell.desktop`)
+**Network check:** waits up to `SEED_NETWORK_WAIT_SECS` (default **120s**). Skip: `SEED_SKIP_NETWORK_CHECK=1`.
 
-Launcher: `~/bin/grok-indianadell-launch.sh`\
-`resolve-secrets.sh` materializes secrets from `/home/user` when rpool exists, else uses Ventoy `$HOME`.\
-Runs `~/bin/seed-ventoy-persistence.sh` **before** Grok (logs to `~/.cache/seed-ventoy.log`).\
-Seed verifies **internet + DNS** first; if down, offers NetworkManager bring-up or skip. Default session: `~/Documents/IndianaDell` (session ID in script env vars).
+### Chrome profile seed (`SEED_CHROME`)
+
+Default **`c`**. Prefer `/home/user/.config/google-chrome` when rpool home exists; never copies Cache / Code Cache / GPU\* / Service Worker.
+
+  ---------------------------------------------------------------------------------------
+  Tier                What is copied
+  ------------------- -------------------------------------------------------------------
+  `off` / `0`         Nothing
+
+  `a`                 Bookmarks + Preferences
+
+  `b`                 a + Local State + Secure Preferences
+
+  **`c`**             b + Login Data + Web Data + Extensions + Local Extension Settings
+
+  `d`                 Reserved (same as `c` for now)
+  ---------------------------------------------------------------------------------------
+
+### Login experience (Wiggly full seed)
+
+1.  **GDM autologin** --- live user **`ubuntu`** (Wiggly seed convention; see rebuild stick for **`user`**)
+2.  **PATH** --- IndianaDell `bin/` and `scripts/` via `~/.config/indianadell/path.sh`
+3.  **Grok autostart** --- often disabled (`X-GNOME-Autostart-enabled=false`)
+4.  **Installer** --- no autostart; Desktop Install icon when needed
+
+`resolve-secrets.sh` materializes secrets from `/home/user` when rpool exists, else Ventoy `$HOME`.
+
+------------------------------------------------------------------------
+
+## PNY rebuild stick (lean USB)
+
+**Device:** \~30 GB PNY USB (model often `USB 2.0 FD`). **Not** production storage --- install/recovery only.
+
+### Why repartition / reinstall Ventoy
+
+The old layout was \~6 GB Ventoy + 32 MB VTOYEFI + \~24 GB DOSBOOT. Ubuntu 26.04 desktop ISO is **\~6.1 GB**, so the small Ventoy slice could not hold ISO + persistence. Rebuild (2026-07) used Ventoy **1.1.16** force-install so almost the whole stick is one data partition:
+
+  Partition   Size       Label       Role
+  ----------- ---------- ----------- -----------------------------------
+  `…1`        \~29.9 G   `Ventoy`    ISO + persistence + `ventoy.json`
+  `…2`        32 M       `VTOYEFI`   Ventoy EFI
+
+``` bash
+# SAFETY: confirm USB transport + ~30 GB before -I
+lsblk -o NAME,SIZE,MODEL,TRAN,LABEL
+# From extracted ventoy-*-linux:
+sudo bash ./Ventoy2Disk.sh -I -L Ventoy /dev/sdX   # double-confirm y/y
+```
+
+Hiren's / old Ubuntu 22 / DOSBOOT content on that stick was wiped by reinstall. BartPE and current media live on **Uncle Wiggly** (or ISO-STASH).
+
+### Layout on the stick
+
+``` text
+/ubuntu-26.04-desktop-amd64.iso          # ~6.1 G (copied from Wiggly)
+/persistence/ubuntu-26.04.dat            # 3 G casper-rw
+/ventoy/ventoy.json                      # persistence map, autosel=1
+```
+
+**Capacity rule of thumb:** 6.1 G ISO + 3 G `.dat` ≈ 9 G used; leave free space for future ISOs. A **24 GB** Wiggly-class overlay does **not** fit on this stick.
+
+### Lean seed policy (rebuild stick)
+
+**Include** (as live user home --- see identity below):
+
+  ---------------------------------------------------------------------------------------------------------------------------------------
+  Item                    Source (Tower5810)                          Notes
+  ----------------------- ------------------------------------------- -------------------------------------------------------------------
+  SSH keys                `/home/user/.ssh/`                          `id_rsa`, config, authorized_keys; mode 700/600
+
+  GitHub CLI              `/home/user/.config/gh/`                    `hosts.yml` token
+
+  Grok                    `/home/user/.grok/`                         auth + sessions; **prune `downloads/`** to save space
+
+  GnuPG                   `/home/user/.gnupg/`                        optional
+
+  gitconfig               `/home/user/.gitconfig`                     
+
+  Cursor auth             `~/.config/cursor/auth.json`                if present
+
+  Shell dots              `.bashrc`, `.profile`, ...                  
+
+  IndianaDell config      `~/.config/indianadell`, autostart, dconf   
+
+  `~/bin`                 host `~/bin` helpers                        
+
+  Keyrings                `~/.local/share/keyrings`                   
+
+  **Project PDFs only**   `Documents/IndianaDell/B1GMB42-*.pdf`       manuals / trifolds / ZFS recovery --- **not** full Documents tree
+  ---------------------------------------------------------------------------------------------------------------------------------------
+
+**Exclude:** full `Documents/`, `.cache`, Chrome bulk, cargo/rustup/wine/googleearth, full `.local` (except keyrings).
+
+Seed path in the image: `upper/home/user/…` (after username change below).
+
+Mount / edit / unmount pattern:
+
+``` bash
+DAT=/run/media/$USER/Ventoy/persistence/ubuntu-26.04.dat   # or by-label Ventoy
+MOUNT=/mnt/persist-usb
+sudo mkdir -p "$MOUNT"
+LOOP=$(sudo losetup --show -f "$DAT")
+sudo mount "$LOOP" "$MOUNT"
+# edit $MOUNT/upper/ ...
+sync
+sudo umount "$MOUNT"
+sudo losetup -d "$LOOP"
+```
+
+### Live user identity: `user` (not `ubuntu`)
+
+Casper creates the live account from **`/etc/casper.conf`**. **`FLAVOUR` must be non-empty** or casper ignores `USERNAME` / `HOST` and substitutes the flavour string.
+
+Seeded on the rebuild stick:
+
+``` bash
+# /etc/casper.conf  (in upper/)
+export USERNAME="user"
+export USERFULLNAME="User"
+export HOST="thumper"
+export BUILD_SYSTEM="Ubuntu"
+export FLAVOUR="Ubuntu"    # required for USERNAME/HOST to stick
+```
+
+Also:
+
+  -----------------------------------------------------------------------------------
+  File                           Purpose
+  ------------------------------ ----------------------------------------------------
+  `upper/etc/gdm3/custom.conf`   `AutomaticLoginEnable=true`, `AutomaticLogin=user`
+
+  `upper/etc/sudoers.d/casper`   `user ALL=(ALL) NOPASSWD: ALL`
+
+  `upper/home/user/`             Seeded secrets + lean home (uid/gid **1000**)
+  -----------------------------------------------------------------------------------
+
+Casper's `15autologin` / `25adduser` / `44pk_allow_ubuntu` all use `$USERNAME`, so PolicyKit and autologin follow `casper.conf` when FLAVOUR is set.
+
+### Boot unit: groups + rename safety net
+
+**Script:** `upper/usr/local/sbin/indianadell-live-user.sh`\
+**Unit:** `indianadell-live-user.service` (WantedBy `multi-user.target` and `graphical.target`)\
+**Log:** `/var/log/indianadell-live-user.log`
+
+Behavior:
+
+1.  If account **`ubuntu`** exists and **`user`** does not → `groupmod`/`usermod` rename + move home (old overlays / missed FLAVOUR).
+2.  Add **`user`** to every **special group that exists** on the live system (skip missing groups quietly).
+3.  Refresh sudoers + GDM autologin for `user`.
+4.  Set hostname **`thumper`** and `127.0.1.1 thumper.local thumper` in `/etc/hosts`.
+
+**Group list** (lab / rebuild relevant --- install packages later may create more groups; reboot re-runs attach):
+
+  --------------------------------------------------------------------------------------------------------------------
+  Category                                Groups
+  --------------------------------------- ----------------------------------------------------------------------------
+  Admin / desktop                         `adm`, `cdrom`, `sudo`, `dip`, `plugdev`, `lpadmin`, `sambashare`, `users`
+
+  Serial / radio                          `dialout`, `tty`, `uucp`
+
+  AV / GPU / input                        `audio`, `video`, `render`, `input`
+
+  Print / scan                            `lp`, `scanner`
+
+  Network                                 `netdev`, `bluetooth`
+
+  Containers / VMs                        `docker`, `lxd`, `kvm`, `libvirt`, `libvirt-qemu`
+
+  Other                                   `disk`, `floppy`, `ssl-cert`, `wireshark`, `fuse`
+  --------------------------------------------------------------------------------------------------------------------
+
+Matches the intent of Tower5810's host user groups (`id user`) plus hardware-facing groups we may install on live.
+
+### Fast-boot deferments (Tower5810 parity + live snap kill)
+
+Same idea as `bin/apply-fast-boot` / `docs/fast-boot.md`, adapted for **casper overlay** (cannot run `systemctl disable` on the ISO lower layer --- use **mask symlinks**).
+
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Mechanism              Path in overlay                                                                       Role
+  ---------------------- ------------------------------------------------------------------------------------- ----------------------------------------------------------------------
+  Boot masks             `etc/systemd/system/<unit> → /dev/null`                                               Unit cannot start early (present as soon as root mounts)
+
+  Permanent mask list    `etc/indianadell-live-mask.list`                                                      Never auto-start (snap seed, NM-wait-online, ...)
+
+  Deferred list          `etc/indianadell-deferred.list`                                                       Unmasked + `start --no-block` **after** `graphical.target`
+
+  Socket-lazy list       `etc/indianadell-socket-lazy.list`                                                    `docker` / `cups` / `snapd` / `libvirt` sockets only
+
+  Early assert           `indianadell-live-fastboot.service` → `usr/local/sbin/indianadell-live-fastboot.sh`   Re-mask/stop thrashers; log `/var/log/indianadell-live-fastboot.log`
+
+  Post-desktop start     `indianadell-deferred.service` → `usr/local/sbin/indianadell-start-deferred`          After GDM; does **not** block desktop
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Permanent masks (rebuild stick --- the usual multi-minute hang):**
+
+- `snapd.seeded.service` (main culprit on Ubuntu live)
+- `snapd.autoimport.service`, `snapd.core-fixup.service`, `snapd.recovery-chooser-trigger.service`, ...
+- `NetworkManager-wait-online.service`
+
+**Deferred (masked at boot, started later in background):** `snapd.service`, cloud-init*, cups*, bluetooth, avahi, ModemManager, docker/libvirt stack, apport/whoopsie, unattended-upgrades, etc. (full list on the stick).
+
+`snapd.service` itself is only started after the desktop is up (and only if you unmask/start it); **seeded** stays masked so it never blocks login.
+
+Verify on live:
+
+``` bash
+systemctl is-enabled snapd.seeded.service   # expect: masked
+systemctl is-active snapd.seeded.service    # inactive
+systemd-analyze blame | head -20
+sudo tail /var/log/indianadell-live-fastboot.log
+```
+
+### Plymouth theme (`indianadell`)
+
+Tower's custom theme is seeded into the overlay (\~20 MB):
+
+  ---------------------------------------------------------------------------------------------------------------------
+  Item                  Overlay path
+  --------------------- -----------------------------------------------------------------------------------------------
+  Theme tree            `usr/share/plymouth/themes/indianadell/` (from host `/usr/share/plymouth/themes/indianadell`)
+
+  Default alternative   `etc/alternatives/default.plymouth` → `…/indianadell.plymouth`
+
+  Default symlink       `usr/share/plymouth/themes/default.plymouth` → alternatives
+
+  Daemon config         `etc/plymouth/plymouthd.conf` → `Theme=indianadell`
+  ---------------------------------------------------------------------------------------------------------------------
+
+`indianadell-live-fastboot.sh` re-asserts the default theme once rootfs is up.
+
+**Caveat:** The **very first** splash frames still come from the **ISO initrd** (stock spinner/BGRT). After casper mounts the persistence overlay, Plymouth uses `Theme=indianadell` for late boot / shutdown / any restart of plymouthd. Fully replacing early ISO splash would require rebuilding `casper/initrd` on the ISO (not done on this stick).
+
+Install source on Tower: `sudo bin/themes-install-boot` (see Ch. 5). Stick seed copies the **installed** theme tree, not a separate rebuild of animation frames.
+
+### Hostname `thumper` / `thumper.local` and OpenSSH on LAN
+
+**Hostname:** `casper.conf` `HOST=thumper` plus `/etc/hostname` and `/etc/hosts` (`thumper.local`). Cloud-init can be steered with `upper/etc/cloud/cloud.cfg.d/99-thumper-hostname.cfg` if present.
+
+**SSH unit (optional seed):** `thumper-lan-ssh.service` → `upper/usr/local/sbin/thumper-lan-ssh.sh`
+
+- Waits for network if needed; installs **`openssh-server`** (apt, or debs under `/var/cache/thumper-debs/` if cached).
+- Drop-in `/etc/ssh/sshd_config.d/99-thumper-lan.conf`: listen `0.0.0.0` / `::`, pubkey + password auth, no root login, no empty passwords.
+- Enables/starts `ssh.service` (disables socket-only activation if needed).
+- Allows UFW OpenSSH if UFW is active; starts `avahi-daemon` when available for mDNS **`thumper.local`**.
+- Log: `/var/log/thumper-lan-ssh.log`
+
+**Login:**
+
+``` bash
+ssh user@thumper.local
+# or LAN IP from the live session
+```
+
+Use the same SSH private key as Tower5810 (`id_rsa`); public key is in `~/.ssh/authorized_keys` on the stick. Live password is typically blank at the console (casper); SSH should use **keys** (empty passwords disabled for SSH).
+
+MOTD hint (if seeded): `etc/update-motd.d/99-thumper-ssh`.
+
+------------------------------------------------------------------------
+
+## Secrets policy (`resolve-secrets.sh`)
+
+Canonical secret relative paths (never commit to git):
+
+``` text
+.ssh
+.grok
+.config/gh
+```
+
+When ZFS rpool `/home/user` is present, it is the live secret **source**; Ventoy persistence is the portable **store** under the live home. Chrome seed is separate (`SEED_CHROME`).
+
+------------------------------------------------------------------------
 
 ## ZFS recovery (rpool + bpool)
 
-**Manual:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (repo root and `DOSBOOT/IndianaDell/recovery/`).
+**Manual:** `docs/B1GMB42-zfs-recovery.md` + `B1GMB42-zfs-recovery.pdf` (repo root and DOSBOOT recovery kit).
 
-Boot Ventoy Ubuntu live --- **do not** use the broken installed system as root.
+Boot Ventoy Ubuntu live --- **do not** use a broken installed system as root.
 
 ``` bash
 sudo apt-get install -y zfsutils-linux
-cd ~/Documents/IndianaDell          # or /media/.../DOSBOOT1/IndianaDell/recovery
+cd ~/Documents/IndianaDell          # or recovery kit path
 sudo ./mount-rpool-recovery.sh mount
 sudo ./scripts/recovery/mount-bpool-recovery.sh mount
 sudo ./mount-rpool-recovery.sh chroot
-# repair inside chroot; then exit and umount both scripts
+# repair; then exit and umount both scripts
 ```
 
-**Before rebooting the installed system:** ensure `/etc/default/zfs` has `ZPOOL_IMPORT_OPTS="-f"`. Recovery scripts pass `-f` on import; the host boot path needs this default or boot can hang after export/unclean shutdown. Kernel one-shot: `zfsforce=1`.
+**Before rebooting installed OS:** `/etc/default/zfs` must set `ZPOOL_IMPORT_OPTS="-f"`. Kernel one-shot: `zfsforce=1`.
 
-**No IndianaDell?** Same manual, Section 3 --- raw `zpool import` commands.
+Deploy kit: `bin/deploy-dosboot-recovery` (from Tower5810). PDF on the rebuild stick: `~/Documents/IndianaDell/B1GMB42-zfs-recovery.pdf`.
 
-Deploy kit to DOSBOOT: `bin/deploy-dosboot-recovery` (from Tower5810).
+------------------------------------------------------------------------
 
 ## GitHub repository
 
-Full workspace (including FactoryDocs): https://github.com/webaugur/IndianaDell (private)
+https://github.com/webaugur/IndianaDell (private)
 
 ``` bash
-bin/pull-repo --verify           # IndianaDell + hackrf/repos + LFS + stack verify
-bin/push-repo                    # push main (SSH default)
+bin/pull-repo --verify
+bin/pull-repo --dragonsdr
+bin/push-repo
 ```
 
-HTTPS push (optional): `INDIANADELL_REMOTE=https://github.com/webaugur/IndianaDell.git` after `gh auth login`.
+HTTPS optional: `INDIANADELL_REMOTE=…` after `gh auth login`. Large FactoryDocs use **Git LFS**.
 
-Large FactoryDocs installers (\>100 MB) use **Git LFS**. `bin/pull-repo` runs `git lfs pull`.
+On the rebuild stick, after network is up: `git clone git@github.com:webaugur/IndianaDell.git` using seeded SSH keys.
+
+------------------------------------------------------------------------
 
 ## How to verify
 
-Boot Ventoy → Ubuntu 26.04 (persistence auto-selected). Then:
+### Uncle Wiggly (full)
 
 ``` bash
-findmnt / | grep -q cow && echo "persistence overlay active"
-grep AutomaticLogin=ubuntu /etc/gdm3/custom.conf
-echo "$INDIANADELL_ROOT"    # should be ~/Documents/IndianaDell
+findmnt / | grep -qE 'cow|overlay' && echo "persistence overlay active"
+grep AutomaticLogin= /etc/gdm3/custom.conf
+echo "$INDIANADELL_ROOT"
 which dellmerge pull-repo push-repo grok
 bin/pull-repo --verify
-google-chrome --version
 ```
+
+### PNY rebuild stick
+
+``` bash
+# Identity
+whoami                    # expect: user
+id                        # expect sudo,adm,plugdev,dialout,… as available
+hostname; hostname -f     # thumper / thumper.local
+grep AutomaticLogin=user /etc/gdm3/custom.conf
+
+# Persistence
+findmnt / | grep -qE 'cow|overlay' && echo "overlay ok"
+test -f ~/.ssh/id_rsa && test -f ~/.config/gh/hosts.yml && test -f ~/.grok/auth.json && echo "secrets ok"
+ls ~/Documents/IndianaDell/*.pdf
+
+# SSH on LAN (after thumper-lan-ssh has run)
+ss -tlnp | grep ':22'
+systemctl is-active ssh
+# from another host:
+#   ssh user@thumper.local
+
+# Fast-boot / snapd not thrashing
+systemctl is-enabled snapd.seeded.service   # masked
+systemd-analyze blame | head -15
+
+# Plymouth (rootfs theme)
+grep Theme= /etc/plymouth/plymouthd.conf    # indianadell
+readlink -f /etc/alternatives/default.plymouth
+
+# Logs
+sudo tail -50 /var/log/indianadell-live-user.log
+sudo tail -50 /var/log/thumper-lan-ssh.log
+sudo tail -50 /var/log/indianadell-live-fastboot.log
+```
+
+------------------------------------------------------------------------
 
 ## How to customize
 
-  --------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------
   Goal                           Action
-  ------------------------------ -------------------------------------------------------------------
-  Re-seed after changes          `~/bin/seed-ventoy-persistence.sh`
+  ------------------------------ ----------------------------------------------------------------------------------------------------
+  Re-seed Wiggly full session    `~/bin/seed-ventoy-persistence.sh`
 
   Change Grok session            Edit `GROK_SESSION_ID` in `grok-indianadell-launch.sh`
 
-  Disable autostart              Remove `~/.config/autostart/grok-indianadell.desktop`, re-seed
+  Enlarge persistence            `ExtendPersistentImg.sh` + `resize2fs`
 
-  Enlarge persistence            `scripts/ventoy/ExtendPersistentImg.sh` (+ `resize2fs` if needed)
+  Verify Wiggly layout           `bin/setup-wiggly-ventoy`
 
-  Verify/fix Ventoy layout       `bin/setup-wiggly-ventoy` from Tower5810
-  --------------------------------------------------------------------------------------------------
+  Edit rebuild stick overlay     loop-mount `ubuntu-26.04.dat`, edit `upper/`, unmount
+
+  Live user name                 `upper/etc/casper.conf` (`USERNAME` + **`FLAVOUR`**) + GDM + home dir + `indianadell-live-user.sh`
+
+  Extra groups                   Edit `SPECIAL_GROUPS` in `indianadell-live-user.sh`
+
+  SSH / hostname                 `thumper-lan-ssh.sh` + sshd drop-in + hosts/hostname
+
+  Boot defer / mask lists        `etc/indianadell-deferred.list`, `etc/indianadell-live-mask.list`
+
+  Refresh Plymouth on stick      rsync host `/usr/share/plymouth/themes/indianadell/` into overlay; keep `plymouthd.conf`
+
+  Hide ISO folder from menu      `.ventoyignore` in that folder
+
+  Qubes + signatures             e.g. `Wiggly/QubesOS/*.iso` + `.asc` + key (subdirs OK)
+  -----------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Related tools
+
+  --------------------------------------------------------------------------------------
+  Tool                                      Role
+  ----------------------------------------- --------------------------------------------
+  `bin/setup-wiggly-ventoy`                 Verify Wiggly ISO + `ventoy.json` + `.dat`
+
+  `bin/boot-uncle-wiggly-vm`                QEMU live + persistence smoke test
+
+  `bin/boxes-import-wiggly-isos`            GNOME Boxes domain per ISO on Wiggly
+
+  `bin/setup-perc-ventoy`                   PERC FreeDOS/IT kit on Wiggly (`perc/`)
+
+  `~/bin/seed-ventoy-persistence.sh`        Full seed into casper image
+
+  `scripts/ventoy/resolve-secrets.sh`       Secret path policy + Chrome tiers
+
+  `scripts/ventoy/ventoy.json`              Canonical Wiggly Ventoy plugin config
+
+  Ventoy release `CreatePersistentImg.sh`   Build empty `casper-rw` `.dat`
+  --------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
 
 ## What rebuild does / does not do
 
-  ---------------------------------------------------------------------------------------------------
-  Does                                                   Does not
-  ------------------------------------------------------ --------------------------------------------
-  Install Chrome, gh, git-lfs when run on live session   Configure Ventoy `ventoy.json`
+  -------------------------------------------------------------------------------------------------------------------------
+  Does                                                          Does not
+  ------------------------------------------------------------- -----------------------------------------------------------
+  Install Chrome, gh, git-lfs when run on a full live session   Auto-configure Ventoy `ventoy.json`
 
-  Document seed script in this chapter                   Auto-run seed on reboot
+  Document seed / stick layout in this chapter                  Auto-run seed every boot (except stick units: groups/SSH)
 
-                                                         Manage Ventoy ISO partition layout
-  ---------------------------------------------------------------------------------------------------
+                                                                Manage Seagate partition map (Wiggly/DOSBOOT/Windows)
+
+                                                                Fit a 24 GB Wiggly `.dat` on the 30 GB PNY stick
+  -------------------------------------------------------------------------------------------------------------------------
 
 # Appendix A --- bin/ Launchers
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  ---------------------------------------------------------------------------------------------------------------------------------
-  Launcher                        Runs                                                                    Chapter
-  ------------------------------- ----------------------------------------------------------------------- -------------------------
-  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                    2
+  -----------------------------------------------------------------------------------------------------------------------------------------------------
+  Launcher                        Runs                                                                                     Chapter
+  ------------------------------- ---------------------------------------------------------------------------------------- ----------------------------
+  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                                     2
 
-  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                 1
+  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                                  1
 
-  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                        1, 3
+  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                                         1, 3
 
-  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + nested repos + LFS       15
+  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + LFS (`--dragonsdr` optional)              15
 
-  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)           15
+  `install-dragonsdr`             `~/Documents/DragonSDR/bin/install-suite` --- full SDR suite                             8--10
 
-  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- ISO + ventoy.json + .dat    15
+  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)                            15
 
-  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Wiggly   hardware / PERC doc
+  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat   15
 
-  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                2, 15
+  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Uncle Wiggly              hardware / PERC doc
 
-  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                          ---
+  `boot-uncle-wiggly-vm`          `scripts/ventoy/boot-uncle-wiggly-vm.sh` --- QEMU live+persistence test                  15
 
-  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                 2, 15
+  `boxes-import-wiggly-isos`      `scripts/ventoy/boxes-import-wiggly-isos.sh` --- Boxes VM per ISO on Wiggly              15
 
-  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                       6, 12
+  `themes-preview-boot`           `Themes/scripts/plymouth-preview.py` --- safe Plymouth window                            5
 
-  `dellmerge`                     `scripts/dell/dellmerge.sh`                                             12
+  `apply-fast-login`              `scripts/gnome/apply-fast-login.sh` --- GRUB 0s + GDM autologin + face                   5, 7
 
-  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                             6, 12
+  `apply-fast-boot`               `scripts/gnome/apply-fast-boot.sh` --- strip crashkernel, defer daemons                  5, 7 / `docs/fast-boot.md`
 
-  `iotest`                        `scripts/storage/iotest.sh`                                             12
+  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                                 2, 15
 
-  `apply-amdgpu`                  `etc/apply.sh`                                                          6
+  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                                           ---
 
-  `amd-install`                   `amd-radeon/install-all.sh`                                             6
+  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                                  2, 15
 
-  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                            6
+  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                                        6, 12
 
-  `amd-verify`                    `amd-radeon/04-verify.sh`                                               6
+  `dellmerge`                     `scripts/dell/dellmerge.sh`                                                              12
 
-  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                               6
+  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                                              6, 12
 
-  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                      5, 7
+  `iotest`                        `scripts/storage/iotest.sh`                                                              12
 
-  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                7
+  `apply-amdgpu`                  `etc/apply.sh`                                                                           6
 
-  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                          3, 7
+  `amd-install`                   `amd-radeon/install-all.sh`                                                              6
 
-  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                   3, 7
+  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                                             6
 
-  `themes-extract`                `Themes/scripts/extract-all.sh`                                         5
+  `amd-verify`                    `amd-radeon/04-verify.sh`                                                                6
 
-  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                  5
+  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                                                6
 
-  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                  5
+  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                                       5, 7
 
-  `hackrf-env`                    sources `hackrf/scripts/env.sh`                                         10
+  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                                 7
 
-  `urh`                           `hackrf/scripts/launch-urh.sh`                                          10
+  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                                           3, 7
 
-  `hackrf-setup-udev`             `hackrf/scripts/setup-udev.sh`                                          10
+  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                                    3, 7
 
-  `hackrf-download-mayhem`        `hackrf/scripts/download-mayhem.sh`                                     10
+  `themes-extract`                `Themes/scripts/extract-all.sh`                                                          5
 
-  `hackrf-prepare-sdcard`         `hackrf/scripts/prepare-sdcard.sh`                                      10
+  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                                   5
 
-  `hackrf-flash-mayhem`           `hackrf/scripts/flash-mayhem.sh`                                        10
+  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                                   5
 
-  `hackrf-build-mayhem`           `hackrf/scripts/build-mayhem.sh`                                        10
-  ---------------------------------------------------------------------------------------------------------------------------------
+  `hackrf-env`                    sources `DragonSDR/hackrf/scripts/env.sh`                                                10
+
+  `urh`                           `DragonSDR/bin/urh`                                                                      10
+
+  `hackrf-setup-udev`             `DragonSDR/bin/hackrf-setup-udev`                                                        10
+
+  `hackrf-download-mayhem`        `DragonSDR/bin/hackrf-download-mayhem`                                                   10
+
+  `hackrf-prepare-sdcard`         `DragonSDR/bin/hackrf-prepare-sdcard`                                                    10
+
+  `hackrf-flash-mayhem`           `DragonSDR/bin/hackrf-flash-mayhem`                                                      10
+
+  `hackrf-build-mayhem`           `DragonSDR/bin/hackrf-build-mayhem`                                                      10
+  -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
-  ---------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------
   Script                            Purpose
-  --------------------------------- -----------------------------------------------------------
-  `seed-ventoy-persistence.sh`      Snapshot session into Ventoy casper image
+  --------------------------------- --------------------------------------------------------------------
+  `seed-ventoy-persistence.sh`      Snapshot session into Ventoy casper image (Uncle Wiggly full seed)
 
   `seed-network-check.sh`           Internet/DNS check before seed
 
@@ -1615,7 +2050,9 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
   `mount-rpool-recovery.sh`         ZFS rpool chroot recovery (workspace root)
 
   `mount-bpool-recovery.sh`         ZFS bpool mount at `/recovery/boot` (`scripts/recovery/`)
-  ---------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------
+
+**PNY rebuild stick** (lean 3 GB persistence, live user `user`, groups, `thumper`/SSH): no dedicated `bin/` launcher yet --- procedure and overlay paths are documented in **Chapter 15** (`upper/usr/local/sbin/indianadell-live-user.sh`, `thumper-lan-ssh.sh`).
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
@@ -1623,14 +2060,13 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 # Appendix B --- Apt Packages by Chapter
 
-**Source of truth:** `scripts/rebuild/package-lists.sh` (`APT_CORE` + `APT_SDR_HAM`).\
-**Total:** 91 packages installed by `bin/rebuild-machine` (38 core + 53 SDR/ham).\
-**Full system snapshot:** `apt-full-manifest.txt` (\~2257 packages after rebuild).\
-**SDR/ham filter:** `apt-hamradio-dev-manifest.txt` (\~178 related packages).
+**Workstation packages:** `scripts/rebuild/package-lists.sh` (`APT_CORE` only).\
+**SDR / ham / HackRF packages:** `~/Documents/DragonSDR/tools/package-lists.sh` (`APT_SDR`, `APT_HAM`, `APT_SDR_BUILD`).\
+**Install SDR suite:** `bin/install-dragonsdr` → DragonSDR `bin/install-suite`.\
+**Full system snapshot:** `apt-full-manifest.txt` (after rebuild).\
+**SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.
 
-Packages below are grouped by manual chapter. Shared dev libraries appear under Chapter 4 and are reused by Chapters 8--10.
-
-## Chapter 4 --- Development
+## Chapter 4 --- Development (IndianaDell `APT_CORE`)
 
 `build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`, `gh`
 
@@ -1638,19 +2074,17 @@ Packages below are grouped by manual chapter. Shared dev libraries appear under 
 
 `vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`
 
-## Chapter 8 --- GNU Radio and SDR
+## Chapter 8 --- GNU Radio and SDR (DragonSDR `APT_SDR` + build libs)
 
 `gnuradio`, `gnuradio-dev`, `gnuradio-doc`, `gr-osmosdr`, `gr-limesdr`, `gr-fosphor`, `gr-air-modes`, `gr-hpsdr`, `gr-dab`, `gr-satellites`, `libsoapysdr-dev`, `python3-soapysdr`, `soapysdr-module-osmosdr`, `soapysdr-module-mirisdr`, `uhd-soapysdr`, `rtl-sdr`, `librtlsdr-dev`, `airspy`, `libairspy-dev`, `bladerf`, `libbladerf-dev`, `limesuite`, `limesuite-udev`, `uhd-host`, `libuhd-dev`, `gqrx-sdr`, `quisk`, `inspectrum`, `hacktv`
 
-## Chapter 9 --- Ham Radio
+## Chapter 9 --- Ham Radio (DragonSDR `APT_HAM`)
 
 `libhamlib-dev`, `libhamlib-utils`, `python3-hamlib`, `fldigi`, `wsjtx`, `wsjtx-data`, `chirp`, `direwolf`, `gpredict`, `grig`, `xastir`, `xastir-data`
 
-## Chapter 10 --- HackRF and Mayhem
+## Chapter 10 --- HackRF and Mayhem (DragonSDR `APT_SDR`)
 
 `hackrf`, `hackrf-firmware`, `libhackrf-dev`, `hackrf-doc`, `dfu-util`, `openocd`, `gcc-arm-none-eabi`, `binutils-arm-none-eabi`, `libnewlib-arm-none-eabi`, `ccache`, `lz4`, `bzip2`
-
-(Also uses Chapter 8 packages for GNU Radio/SoapySDR integration.)
 
 ## Chapter 11 --- Flatpak
 
@@ -1658,4 +2092,4 @@ Packages below are grouped by manual chapter. Shared dev libraries appear under 
 
 ## Chapters 5, 7, 12, 13 --- No dedicated apt arrays
 
-Themes, GNOME prefs, machine utilities, and FactoryDocs use workspace scripts or Ubuntu desktop packages already on the base install (`gdm3`, `gnome-shell`, `plymouth`, Yaru themes) --- not enumerated separately in `package-lists.sh`.
+Themes, GNOME prefs, machine utilities, and FactoryDocs use workspace scripts or Ubuntu desktop packages already on the base install.
