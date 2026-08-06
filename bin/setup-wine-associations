@@ -1,0 +1,315 @@
+#!/usr/bin/env bash
+#
+# setup-wine-associations
+# Optional but enabled-by-default script that:
+#   - Registers Wine as the default handler for Windows executables via GIO
+#   - Registers Wine as a system-wide binfmt_misc handler for PE32/PE32+ binaries
+#
+# The feature is opt-out via --disable, INDIANADELL_WINE_ASSOC=0, or a marker file.
+#
+# Usage:
+#   bin/setup-wine-associations                # enable (default)
+#   bin/setup-wine-associations --disable      # remove associations and binfmt
+#   bin/setup-wine-associations --dry-run      # show actions without executing
+#   bin/setup-wine-associations --help
+#
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+ENABLED=1
+DRY_RUN=0
+DISABLE=0
+
+CONFIG_DIR="${HOME}/.config/indianadell"
+MARKER_FILE="${CONFIG_DIR}/wine-associations.disabled"
+
+WINE_DESKTOP="wine.desktop"
+WINE32_BIN="/usr/bin/wine"
+WINE64_BIN="/usr/bin/wine64"
+
+BINFMT_DIR="/etc/binfmt.d"
+BINFMT_FILE="${BINFMT_DIR}/wine.conf"
+
+# MIME types we will claim (order matters – most specific first)
+MIME_TYPES=(
+    "application/x-ms-dos-executable"
+    "application/vnd.microsoft.portable-executable"
+    "application/x-ms-wine-extension-exe"
+    "application/x-ms-wine-extension-msi"
+    "application/x-ms-application"
+    "application/x-msi"
+    "application/x-ms-shortcut"
+)
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+print_help() {
+    sed -n '4,20p' "$0"
+    exit 0
+}
+
+log() {
+    printf '[wine-assoc] %s\n' "$*"
+}
+
+warn() {
+    printf '[wine-assoc] WARNING: %s\n' "$*" >&2
+}
+
+run() {
+    if (( DRY_RUN )); then
+        echo "DRY: $*"
+    else
+        "$@"
+    fi
+}
+
+have_cmd() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+is_root() {
+    [[ $EUID -eq 0 ]]
+}
+
+# -----------------------------------------------------------------------------
+# Argument parsing
+# -----------------------------------------------------------------------------
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --disable) DISABLE=1; ENABLED=0; shift ;;
+        --dry-run) DRY_RUN=1; shift ;;
+        -h|--help) print_help ;;
+        *) warn "Unknown argument: $1"; exit 1 ;;
+    esac
+done
+
+# Environment variable opt-out
+if [[ "${INDIANADELL_WINE_ASSOC:-1}" == "0" ]]; then
+    ENABLED=0
+fi
+
+# Marker file opt-out (created by --disable)
+if [[ -f "$MARKER_FILE" && $DISABLE -eq 0 ]]; then
+    ENABLED=0
+fi
+
+# -----------------------------------------------------------------------------
+# Pre-flight checks
+# -----------------------------------------------------------------------------
+check_prereqs() {
+    local missing=()
+
+    if ! have_cmd wine && ! have_cmd wine64; then
+        warn "Wine does not appear to be installed (wine/wine64 not in PATH)."
+        return 1
+    fi
+
+    if ! have_cmd gio; then
+        missing+=("gio (libglib2.0-bin)")
+    fi
+
+    if ! have_cmd update-desktop-database; then
+        missing+=("update-desktop-database (desktop-file-utils)")
+    fi
+
+    if (( ${#missing[@]} > 0 )); then
+        warn "Missing required tools: ${missing[*]}"
+        return 1
+    fi
+
+    # binfmt_misc availability
+    if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
+        warn "Kernel does not appear to support binfmt_misc (/proc/sys/fs/binfmt_misc missing)."
+        return 1
+    fi
+
+    return 0
+}
+
+# -----------------------------------------------------------------------------
+# Desktop / GIO MIME association
+# -----------------------------------------------------------------------------
+setup_desktop_associations() {
+    log "Configuring GIO MIME handlers for Wine..."
+
+    # Ensure a minimal wine.desktop exists if the package did not provide one
+    local desktop_dir="${HOME}/.local/share/applications"
+    mkdir -p "$desktop_dir"
+
+    # Always (re)write a correct, visible wine.desktop.
+    # The previous guard prevented updates when a stale/hidden file existed.
+    log "Installing visible ${WINE_DESKTOP}"
+    cat > "${desktop_dir}/${WINE_DESKTOP}" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Wine Windows Program Loader
+GenericName=Windows Emulator
+Comment=Run Windows applications
+Exec=wine start /unix %f
+TryExec=wine
+Icon=wine
+Terminal=false
+NoDisplay=false
+Categories=Emulator;
+MimeType=application/x-ms-dos-executable;application/x-msi;application/x-ms-shortcut;application/vnd.microsoft.portable-executable;application/x-ms-application;application/x-ms-wine-extension-exe;application/x-ms-wine-extension-msi;
+StartupNotify=true
+StartupWMClass=wine
+EOF
+
+    for mime in "${MIME_TYPES[@]}"; do
+        log "  Setting default handler for ${mime}"
+        run gio mime "$mime" "$WINE_DESKTOP"
+    done
+
+    log "Updating desktop database"
+    run update-desktop-database "${HOME}/.local/share/applications" || true
+
+    # Nautilus (GNOME 46+) requires the desktop file to be executable (trusted)
+    # and have proper GIO metadata for it to appear in "Open With" lists.
+    local desktop_path="${desktop_dir}/${WINE_DESKTOP}"
+    if [[ -f "$desktop_path" ]]; then
+        if [[ ! -x "$desktop_path" ]]; then
+            log "Marking ${WINE_DESKTOP} executable (required by Nautilus)"
+            run chmod +x "$desktop_path"
+        fi
+        # Set the trusted metadata bit that Nautilus respects
+        run gio set "$desktop_path" metadata::trusted true 2>/dev/null || true
+    fi
+}
+
+remove_desktop_associations() {
+    log "Removing GIO MIME handlers for Wine..."
+
+    for mime in "${MIME_TYPES[@]}"; do
+        # Only reset if we are currently the handler
+        local current
+        current=$(gio mime "$mime" 2>/dev/null | awk -F': ' '/default:/ {print $2}' || true)
+        if [[ "$current" == "$WINE_DESKTOP" ]]; then
+            log "  Resetting ${mime}"
+            run gio mime --unset "$mime" || true
+        fi
+    done
+
+    run update-desktop-database "${HOME}/.local/share/applications" || true
+}
+
+# -----------------------------------------------------------------------------
+# binfmt registration (system-wide, requires root or update-binfmts)
+# -----------------------------------------------------------------------------
+setup_binfmt() {
+    if ! is_root && ! have_cmd update-binfmts; then
+        warn "binfmt registration requires root or the update-binfmts helper."
+        warn "Skipping binfmt step. Run with sudo or install binfmt-support."
+        return 0
+    fi
+
+    log "Registering Wine binfmt handlers..."
+
+    # Prefer update-binfmts when available (Debian/Ubuntu)
+    if have_cmd update-binfmts; then
+        if (( DRY_RUN )); then
+            echo "DRY: update-binfmts --install wine32 ..."
+            echo "DRY: update-binfmts --install wine64 ..."
+        else
+            # These are the canonical names used by the wine package on Ubuntu
+            sudo update-binfmts --install wine32 "${WINE32_BIN}" --magic MZ --extension exe --offset 0 --package wine || true
+            sudo update-binfmts --install wine64 "${WINE64_BIN}" --magic MZ --extension exe --offset 0 --package wine64 || true
+        fi
+        return
+    fi
+
+    # Fallback: write /etc/binfmt.d/wine.conf and let systemd-binfmt handle it
+    if is_root; then
+        mkdir -p "$BINFMT_DIR"
+        log "Writing ${BINFMT_FILE}"
+        if (( ! DRY_RUN )); then
+            cat > "$BINFMT_FILE" <<'EOF'
+:wine64:M::MZ::/usr/bin/wine64:PF
+:wine32:M::MZ::/usr/bin/wine:PF
+EOF
+            # Trigger immediate registration if the filesystem is mounted.
+            # First remove any existing handlers to avoid "File exists" errors on re-run.
+            if [[ -f /proc/sys/fs/binfmt_misc/register ]]; then
+                [[ -f /proc/sys/fs/binfmt_misc/wine64 ]] && echo -1 > /proc/sys/fs/binfmt_misc/wine64 || true
+                [[ -f /proc/sys/fs/binfmt_misc/wine32 ]] && echo -1 > /proc/sys/fs/binfmt_misc/wine32 || true
+                echo ":wine64:M::MZ::/usr/bin/wine64:PF" > /proc/sys/fs/binfmt_misc/register || true
+                echo ":wine32:M::MZ::/usr/bin/wine:PF"   > /proc/sys/fs/binfmt_misc/register || true
+            fi
+        fi
+    else
+        warn "Cannot write ${BINFMT_FILE} without root. Use sudo."
+    fi
+}
+
+remove_binfmt() {
+    log "Removing Wine binfmt handlers..."
+
+    if have_cmd update-binfmts; then
+        run sudo update-binfmts --remove wine32 || true
+        run sudo update-binfmts --remove wine64 || true
+        return
+    fi
+
+    if is_root; then
+        rm -f "$BINFMT_FILE" || true
+        # Unregister live handlers
+        if [[ -f /proc/sys/fs/binfmt_misc/wine64 ]]; then
+            echo -1 > /proc/sys/fs/binfmt_misc/wine64 || true
+        fi
+        if [[ -f /proc/sys/fs/binfmt_misc/wine32 ]]; then
+            echo -1 > /proc/sys/fs/binfmt_misc/wine32 || true
+        fi
+    else
+        warn "Cannot fully remove binfmt entries without root."
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Enable / disable entry points
+# -----------------------------------------------------------------------------
+enable_feature() {
+    if ! check_prereqs; then
+        warn "Prerequisites not met; aborting."
+        exit 1
+    fi
+
+    setup_desktop_associations
+    setup_binfmt
+
+    # Remove any previous opt-out marker
+    rm -f "$MARKER_FILE" || true
+
+    log "Wine associations enabled (desktop + binfmt)."
+    log "To disable later: bin/setup-wine-associations --disable"
+}
+
+disable_feature() {
+    remove_desktop_associations
+    remove_binfmt
+
+    mkdir -p "$CONFIG_DIR"
+    touch "$MARKER_FILE"
+    log "Wine associations disabled. Marker written to ${MARKER_FILE}"
+    log "Re-enable with: bin/setup-wine-associations (no arguments)"
+}
+
+# -----------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------
+main() {
+    if (( DISABLE )); then
+        disable_feature
+    else
+        if (( ENABLED == 0 )); then
+            log "Feature disabled by environment variable or marker file. Exiting."
+            exit 0
+        fi
+        enable_feature
+    fi
+}
+
+main "$@"
