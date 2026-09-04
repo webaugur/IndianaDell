@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Pin all amdgpu cards to max DPM clocks (desktop workstation).
+# Let amdgpu scale clocks from load (auto / balanced).
 # Installed to /usr/local/sbin by etc/apply.sh; also invoked from udev.
 #
+# These cards (FirePro W5000/W5100) overheat when pinned to max DPM.
 # Sysfs:
-#   power_dpm_force_performance_level = high   (modern clock force)
-#   power_dpm_state                   = performance  (legacy DPM policy)
+#   power_dpm_force_performance_level = auto      (driver picks clocks)
+#   power_dpm_state                   = balanced  (legacy DPM policy)
 set -euo pipefail
 
 log() { printf 'amdgpu-dpm: %s\n' "$*"; }
@@ -20,10 +21,10 @@ set_one() {
   state_file="${dev}/power_dpm_state"
 
   if [[ -w "$level_file" ]]; then
-    printf 'high\n' >"$level_file" || log "WARN: could not set high on $level_file"
+    printf 'auto\n' >"$level_file" || log "WARN: could not set auto on $level_file"
   fi
   if [[ -w "$state_file" ]]; then
-    printf 'performance\n' >"$state_file" || log "WARN: could not set performance on $state_file"
+    printf 'balanced\n' >"$state_file" || log "WARN: could not set balanced on $state_file"
   fi
 }
 

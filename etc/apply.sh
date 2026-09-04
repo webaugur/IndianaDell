@@ -15,9 +15,11 @@ install -m 0644 "$ETC/gdm3/custom.conf" /etc/gdm3/custom.conf
 install -d /etc/environment.d
 install -m 0644 "$ETC/environment.d/99-amdgpu-wayland.conf" /etc/environment.d/
 
-# Max DPM clocks on all amdgpu cards (live + udev on future boots)
-install -m 0755 "$ETC/amdgpu-set-dpm-performance.sh" /usr/local/sbin/indiana-amdgpu-dpm-performance
-/usr/local/sbin/indiana-amdgpu-dpm-performance || true
+# Scale DPM clocks from load (live + udev on future boots). Do not pin high:
+# W5000/W5100 overheat and have frozen this machine.
+install -m 0755 "$ETC/amdgpu-set-dpm-auto.sh" /usr/local/sbin/indiana-amdgpu-dpm-auto
+rm -f /usr/local/sbin/indiana-amdgpu-dpm-performance
+/usr/local/sbin/indiana-amdgpu-dpm-auto || true
 udevadm control --reload-rules 2>/dev/null || true
 
 # Retired W5100 pin files
@@ -28,4 +30,4 @@ rm -f /etc/profile.d/amdgpu-w5100-wayland.sh
 rm -f /dev/dri/dri-primary-w5100
 
 update-initramfs -u 2>/dev/null || true
-echo "Applied unpinned 3-GPU amdgpu config (DPM performance on all cards). Reboot recommended."
+echo "Applied unpinned 3-GPU amdgpu config (DPM auto/balanced on all cards). Reboot recommended."
