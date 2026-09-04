@@ -11,6 +11,7 @@
 #   SKIP_TELEGRAM=1 ./scripts/rebuild/rebuild-machine.sh
 #   SKIP_DRAGONSDR=1 ./scripts/rebuild/rebuild-machine.sh
 #   SKIP_HACKRF_BUILD=1 ./scripts/rebuild/rebuild-machine.sh   # forwarded to DragonSDR
+#   SKIP_KICAD=1 ./scripts/rebuild/rebuild-machine.sh         # skip KiCad 10 + ngspice/gerbv
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -34,6 +35,8 @@ done
 
 # shellcheck source=package-lists.sh
 source "$(dirname "${BASH_SOURCE[0]}")/package-lists.sh"
+# shellcheck source=ensure-kicad-ppa.sh
+source "$(dirname "${BASH_SOURCE[0]}")/ensure-kicad-ppa.sh"
 
 dragonsdr_install() {
   local suite="${DRAGONSDR_ROOT}/bin/install-suite"
@@ -53,6 +56,25 @@ verify_stack() {
       fail=1
     fi
   done
+  if [[ "${SKIP_KICAD:-0}" == 1 ]]; then
+    log "SKIP KiCad verification"
+  else
+    for p in "${APT_KICAD[@]}"; do
+      if ! dpkg-query -W -f='${Status}' "$p" 2>/dev/null | grep -q 'install ok installed'; then
+        log "MISS apt: $p"
+        fail=1
+      fi
+    done
+    for c in kicad kicad-cli ngspice; do
+      command -v "$c" >/dev/null || { log "MISS cmd: $c"; fail=1; }
+    done
+    if ! python3 -c 'import pcbnew,sys; v=pcbnew.Version(); print(v); sys.exit(0 if str(v).startswith("10.") else 1)' >/dev/null 2>&1; then
+      log "MISS/FAIL pcbnew python (need 10.*)"
+      fail=1
+    else
+      log "OK   pcbnew python"
+    fi
+  fi
   for c in rustc cargo pandoc xelatex vkcube; do
     command -v "$c" >/dev/null || { log "MISS cmd: $c"; fail=1; }
   done
@@ -114,8 +136,19 @@ export DEBIAN_FRONTEND=noninteractive
 log "Phase 1: apt update"
 sudo apt-get update -qq
 
+log "Phase 1b: remove ubuntu-insights telemetry (always)"
+sudo apt-get remove -y --purge ubuntu-insights 2>/dev/null || true
+
 log "Phase 2: core + workstation packages (${#APT_CORE[@]})"
 sudo apt-get install -y "${APT_CORE[@]}"
+
+if [[ "${SKIP_KICAD:-0}" == 1 ]]; then
+  log "Phase 2b: SKIP KiCad (SKIP_KICAD=1)"
+else
+  log "Phase 2b: KiCad 10 PPA + packages (${#APT_KICAD[@]})"
+  ensure_kicad_ppa || die "KiCad PPA failed"
+  sudo apt-get install -y "${APT_KICAD[@]}"
+fi
 
 if [[ "${SKIP_TELEGRAM:-0}" != 1 ]]; then
   log "Phase 3: Flatpak + Telegram"

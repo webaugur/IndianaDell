@@ -20,6 +20,7 @@ Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell
 | **Git LFS** | Large FactoryDocs installers in repo |
 | **Chrome** | `google-chrome-stable` |
 | **Grok** | `~/.grok/bin/grok` — autostart on Ventoy persistence boot |
+| **KiCad 10** | PPA `kicad/kicad-10.0-releases` — schematic/PCB, 3D models, `ngspice` sim, `gerbv`; opt out `SKIP_KICAD=1` |
 
 Package manifests: `apt-hamradio-dev-manifest.txt` (178 SDR/ham), `apt-full-manifest.txt` (full dpkg list).  
 **Software manual:** `docs/software-manual/` (15 chapters) — `bin/build-all-docs` → `B1GMB42-software-manual.pdf` + hardware/inventory PDFs.  

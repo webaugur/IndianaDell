@@ -41,6 +41,10 @@ bin/build-software-manual
 
 Requires `pandoc` and `texlive-xetex` (installed by `bin/rebuild-machine` Phase 2).
 
+## Rebuild
+
+`bin/rebuild-machine` restores workstation apt (`APT_CORE`), **KiCad 10** (`APT_KICAD` + `ppa:kicad/kicad-10.0-releases`), rustup, and Flatpak Telegram. KiCad is default-on; opt out with `SKIP_KICAD=1`. SDR/ham stays in DragonSDR (`SKIP_DRAGONSDR=1` to skip). See `docs/software-manual/02-rebuild-and-recovery.md`.
+
 ## PATH (terminal defaults)
 
 IndianaDell tools override system binaries. Configured in `~/.config/indianadell/path.sh`, sourced from `~/.bashrc`.
@@ -110,4 +114,4 @@ Wiggly full seed: autologin `ubuntu`, network-checked seed, Grok helpers, Indian
 
 **Related tools:** `bin/efi-timing-suite` (BIOS A/B baselines → `B1GMB42.timing`), `bin/setup-perc-ventoy` (PERC H710 FreeDOS/IT flash on Uncle Wiggly).
 
-**Release:** `v1.0.6` — dual swap (4 GiB HDD + 33 GiB ZFS special zvol), Nautilus 50 tools, amdgpu DPM performance.
+**Release:** `v1.0.6` — dual swap (4 GiB HDD + 33 GiB ZFS special zvol), Nautilus 50 tools, amdgpu DPM auto (do not pin high).

@@ -1,10 +1,11 @@
 # Appendix B — Apt Packages by Chapter
 
-**Workstation packages:** `scripts/rebuild/package-lists.sh` (`APT_CORE` only).  
+**Workstation packages:** `scripts/rebuild/package-lists.sh` (`APT_CORE` + `APT_KICAD`).  
 **SDR / ham / HackRF packages:** `~/Documents/DragonSDR/tools/package-lists.sh` (`APT_SDR`, `APT_HAM`, `APT_SDR_BUILD`).  
 **Install SDR suite:** `bin/install-dragonsdr` → DragonSDR `bin/install-suite`.  
 **Full system snapshot:** `apt-full-manifest.txt` (after rebuild).  
-**SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.
+**SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.  
+**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` on rebuild and `fix-indianadell`).
 
 ## Chapter 4 — Development (IndianaDell `APT_CORE`)
 
@@ -12,7 +13,7 @@
 
 ## Chapter 6 — GPU and Display
 
-`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`
+`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`
 
 ## Chapter 8 — GNU Radio and SDR (DragonSDR `APT_SDR` + build libs)
 
@@ -25,6 +26,14 @@
 ## Chapter 10 — HackRF and Mayhem (DragonSDR `APT_SDR`)
 
 `hackrf`, `hackrf-firmware`, `libhackrf-dev`, `hackrf-doc`, `dfu-util`, `openocd`, `gcc-arm-none-eabi`, `binutils-arm-none-eabi`, `libnewlib-arm-none-eabi`, `ccache`, `lz4`, `bzip2`
+
+## EDA — KiCad 10 (`APT_KICAD`)
+
+Default-on for workstation rebuild. Requires `ppa:kicad/kicad-10.0-releases` (`scripts/rebuild/ensure-kicad-ppa.sh`) before install so apt does not pull universe 9.x.
+
+`kicad`, `kicad-libraries`, `kicad-symbols`, `kicad-footprints`, `kicad-packages3d`, `kicad-templates`, `kicad-demos`, `kicad-dbg`, `kicad-doc-en`, `kicad-doc-de`, `kicad-doc-fr`, `kicad-doc-es`, `kicad-doc-it`, `kicad-doc-ja`, `kicad-doc-pl`, `kicad-doc-ru`, `kicad-doc-zh`, `kicad-doc-ca`, `kicad-gruvbox-theme`, `ngspice`, `gerbv`
+
+`kicad-doc-id` is **not** in the list (universe still 9.0.8 while the PPA is 10.x). Skip the whole set with `SKIP_KICAD=1`.
 
 ## Chapter 11 — Flatpak
 

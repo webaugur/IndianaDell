@@ -17,8 +17,37 @@ APT_CORE=(
   libboost-dev libboost-program-options-dev
   pandoc texlive-latex-recommended texlive-fonts-recommended texlive-xetex
   vulkan-tools mesa-utils mesa-utils-bin clinfo x11-apps flatpak gh
+  smartmontools ddcutil arduino-cli
   # Wayland clipboard + Qt/GNOME theming (see bin/fix-desktop-integration.sh)
   wl-clipboard copyq adwaita-qt adwaita-qt6 qt6-gtk-platformtheme qt5-gtk-platformtheme
+)
+
+# KiCad 10 (EDA) — optional but installed by default on workstation rebuild.
+# Requires PPA: ppa:kicad/kicad-10.0-releases (see ensure_kicad_ppa in
+# scripts/rebuild/ensure-kicad-ppa.sh). Opt out: SKIP_KICAD=1
+# kicad-doc-id is omitted until the PPA ships 10.x (universe is still 9.0.8).
+APT_KICAD=(
+  kicad
+  kicad-libraries          # pulls symbols, footprints, packages3d, templates
+  kicad-symbols
+  kicad-footprints
+  kicad-packages3d         # large (~1GB+); keep — “useful options” includes 3D
+  kicad-templates
+  kicad-demos
+  kicad-dbg
+  kicad-doc-en
+  kicad-doc-de
+  kicad-doc-fr
+  kicad-doc-es
+  kicad-doc-it
+  kicad-doc-ja
+  kicad-doc-pl
+  kicad-doc-ru
+  kicad-doc-zh
+  kicad-doc-ca
+  kicad-gruvbox-theme
+  ngspice                  # Eeschema / simulation companion
+  gerbv                    # standalone Gerber viewer (optional companion)
 )
 
 # Legacy name kept empty so older docs/scripts that reference APT_SDR_HAM do not expand unbound.

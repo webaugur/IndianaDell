@@ -16,6 +16,11 @@ sudo reboot
 
 See Chapter 6 for ROCm (`bin/amd-install`) — optional and not supported for ML on these GPUs.
 
+```bash
+sudo bin/apply-sensor-watch          # thermal/fan watchdog (delayed systemd)
+indiana-sensor-watch --once          # print current sensors
+```
+
 ## 2. GNOME session preferences
 
 Run as the **desktop user** (not root):
@@ -69,7 +74,19 @@ bin/hackrf-prepare-sdcard             # ensure SD tree is extracted
 
 See Chapter 10 and `~/Documents/DragonSDR/README.md`.
 
-## 5. Documentation PDFs
+## 5. KiCad 10 (workstation default)
+
+Installed by `bin/rebuild-machine` Phase 2b unless `SKIP_KICAD=1`. Opt out is rebuild-time only; this checklist just confirms the GUI/CLI stack.
+
+```bash
+kicad-cli version
+python3 -c 'import pcbnew; print(pcbnew.Version())'
+command -v ngspice gerbv gerbview
+```
+
+Expect `10.0.*` from `kicad-cli` and `pcbnew`. `kicad-doc-id` may remain on 9.x; that is not a blocker.
+
+## 6. Documentation PDFs
 
 ```bash
 bin/build-all-docs                    # software manual + hardware + inventory PDFs
@@ -79,7 +96,7 @@ bin/build-software-manual             # this manual only
 
 Outputs: `B1GMB42-software-manual.pdf`, `B1GMB42-slot-port-inventory.pdf`, `B1GMB42-software-inventory.pdf`.
 
-## 6. Machine inventory baseline
+## 7. Machine inventory baseline
 
 ```bash
 bin/dellmerge > b1gmb42.report
@@ -87,13 +104,13 @@ sudo bin/iotest                       # optional storage survey
 bin/gpu-stress 60 vkcube              # optional GPU smoke test
 ```
 
-## 7. FactoryDocs recovery (optional)
+## 8. FactoryDocs recovery (optional)
 
 Only 19 of 101 pre-crash Dell packages are on disk. Re-download per `FactoryDocs/README.md` and `MANIFEST-pre-crash.txt`. These are **workspace archives**, not installed by rebuild.
 
 See Chapter 13.
 
-## 8. ZFS force import (required on this host)
+## 9. ZFS force import (required on this host)
 
 After any reinstall or recovery chroot, confirm the installed system will force-import pools at boot:
 
@@ -109,6 +126,7 @@ If missing, set it in `/etc/default/zfs`, then `sudo update-initramfs -c -k all`
 ```bash
 cd ~/Documents/IndianaDell
 bin/rebuild-machine --verify-only
+kicad-cli version                             # expect 10.0.*
 grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
@@ -127,6 +145,7 @@ bin/urh --version
 | Nautilus 50 .desktop icons | `bin/sync-desktop-icons` | No |
 | Custom boot | `sudo bin/themes-install-boot` | Yes |
 | HackRF flash | `bin/hackrf-flash-mayhem` + DFU | Maybe |
+| KiCad 10 | `kicad-cli version` (rebuild Phase 2b) | No |
 | ROCm (optional) | `bin/amd-install` | Yes |
 | All doc PDFs | `bin/build-all-docs` | No |
 | ZFS force import | check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` | If initramfs updated |

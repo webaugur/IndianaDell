@@ -5,6 +5,7 @@
 #
 # Verifies and repairs (with --fix) the complete non-optional stack:
 #   - All APT_CORE packages (package-lists.sh is the source of truth)
+#   - APT_KICAD (KiCad 10 + ngspice/gerbv) unless SKIP_KICAD=1
 #   - All required bin/ launchers
 #   - All system configuration files under etc/ (amdgpu, grub, udev, gdm, etc.)
 #   - Environment variables, CopyQ autostart, USB dock stability
@@ -51,6 +52,8 @@ log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" | tee -a "$LOG"; }
 # Single source of truth for packages
 # shellcheck source=scripts/rebuild/package-lists.sh
 source "$ROOT/scripts/rebuild/package-lists.sh"
+# shellcheck source=scripts/rebuild/ensure-kicad-ppa.sh
+source "$ROOT/scripts/rebuild/ensure-kicad-ppa.sh"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -151,6 +154,45 @@ check_udev_rule() {
   fi
 }
 
+check_kicad() {
+  if [[ "${SKIP_KICAD:-0}" == 1 ]]; then
+    log "SKIP kicad (SKIP_KICAD=1)"
+    return 0
+  fi
+
+  if [[ $FIX -eq 1 ]]; then
+    ensure_kicad_ppa || {
+      log "MISS KiCad PPA (ensure_kicad_ppa failed)"
+      need_fix=1
+      return 1
+    }
+  fi
+
+  local p
+  for p in "${APT_KICAD[@]}"; do
+    check_pkg "$p"
+  done
+
+  local c
+  for c in kicad kicad-cli ngspice; do
+    if command -v "$c" >/dev/null 2>&1; then
+      log "OK   cmd: $c"
+    else
+      log "MISS cmd: $c"
+      need_fix=1
+    fi
+  done
+
+  local ver
+  # pcbnew prints wx asserts on stderr; version still comes from stdout.
+  if ver=$(python3 -c 'import pcbnew,sys; v=pcbnew.Version(); print(v); sys.exit(0 if str(v).startswith("10.") else 1)' 2>/dev/null); then
+    log "OK   pcbnew python $ver"
+  else
+    log "MISS/FAIL pcbnew python (need 10.*)"
+    need_fix=1
+  fi
+}
+
 # Soft-fail Docker / Docker Compose (non-optional for some lab workflows
 # but must never break the overall IndianaDell verification).
 check_docker_compose() {
@@ -219,11 +261,14 @@ echo
 for p in "${APT_CORE[@]}"; do
   check_pkg "$p"
 done
+check_kicad
 
 # 2. Required bin/ launchers (non-optional for a working IndianaDell machine)
 for b in \
   dellmerge gpu-stress iotest apply-amdgpu rebuild-machine \
   apply-dark-mode apply-max-performance apply-fast-boot apply-fast-login \
+  apply-sensor-watch indiana-sensor-watch indiana-monitor-input \
+  indiana-ir-send indiana-ir-flash \
   fix-nautilus-desktop-launch sync-desktop-icons \
   themes-extract themes-install-boot themes-restore-boot \
   install-dragonsdr hackrf-env \
@@ -270,6 +315,18 @@ else
     sudo systemctl daemon-reload
     sudo systemctl enable indianadell-deferred.service
     log "FIXED deferred service"
+  fi
+fi
+
+# 6b. Sensor watchdog
+if systemctl is-enabled indianadell-sensor-watch.service >/dev/null 2>&1; then
+  log "OK   systemd: indianadell-sensor-watch.service"
+else
+  log "MISS systemd: indianadell-sensor-watch.service"
+  need_fix=1
+  if [[ $FIX -eq 1 ]]; then
+    sudo "$ROOT/bin/apply-sensor-watch"
+    log "FIXED sensor-watch service"
   fi
 fi
 
