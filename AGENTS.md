@@ -24,6 +24,15 @@
 
 When the user asks about second GPU, temperature throttling, or Thumper CUDA, **read `docs/thumper-gpu.md` first**.
 
+## New scripts in bin/
+
+After adding or modifying executable scripts under `bin/`:
+
+- Run `bin/install-to-bin`
+  (creates symlinks in `~/bin/` so the new commands are available in `$PATH` without typing the full path).
+
+This step is required for any new command (e.g. `wssh`, `xeyes-thumper`, etc.) to be directly invocable from the shell.
+
 ## Desktop launchers in ~/Applications (DragonSDR / suite apps)
 
 After creating or modifying any `.desktop` files under `~/Applications/` (Renode, Velxio, Ghidra, OpenWebRX, SDR++, etc.):

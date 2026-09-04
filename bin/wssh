@@ -1,0 +1,23 @@
+#!/bin/bash
+# wssh — Wayland SSH wrapper using waypipe
+#
+# Forwards Wayland windows over SSH (in addition to X11).
+# Usage examples:
+#   wssh thumper gnome-system-monitor
+#   wssh earth gnome-calculator
+#
+# Requires 'waypipe' on both the local and remote machine.
+# Falls back to plain ssh -Y if waypipe is missing locally.
+
+set -e
+
+if ! command -v waypipe >/dev/null 2>&1; then
+    echo "wssh: 'waypipe' not found locally." >&2
+    echo "      Install it with: sudo apt install waypipe" >&2
+    echo "      Falling back to ssh -Y ..." >&2
+    exec ssh -Y "$@"
+fi
+
+# Use waypipe to proxy Wayland traffic.
+# The "--" separator tells waypipe everything after it is the remote command.
+exec waypipe ssh -Y "$@" --

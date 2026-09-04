@@ -4,7 +4,7 @@
 # FORCE=1. Does not start VMs (Boxes can boot them on demand).
 set -euo pipefail
 
-WIGGLY_MOUNT="${WIGGLY_MOUNT:-/mnt/wiggly}"
+WIGGLY_MOUNT="${WIGGLY_MOUNT:-/run/media/user/wiggly}"
 WIGGLY_DEV="${WIGGLY_DEV:-/dev/disk/by-label/Wiggly}"
 CONN="${LIBVIRT_URI:-qemu:///session}"
 IMG_DIR="${BOXES_IMG_DIR:-$HOME/.local/share/gnome-boxes/images}"

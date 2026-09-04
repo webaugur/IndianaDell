@@ -9,6 +9,7 @@ FactoryDocs/_incoming/
 
 # Rebuild log (local only)
 scripts/rebuild/last-run.log
+testdisk.log
 
 # EFI timing reports (local baselines)
 *.timing
