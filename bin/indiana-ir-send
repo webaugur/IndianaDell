@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE=$(dirname "$(readlink -f "$0")")
+ROOT="$(cd "$HERE/.." && pwd)"
+exec "$ROOT/scripts/ir/indiana-ir-send.sh" "$@"
