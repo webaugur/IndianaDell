@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Install the IndianaDell sensor watchdog (systemd + sbin + conf).
+#
+#   sudo bin/apply-sensor-watch
+#   sudo bin/apply-sensor-watch --status
+#   sudo bin/apply-sensor-watch --undo
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ETC="$ROOT/etc"
+MODE=apply
+
+log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
+
+usage() {
+  sed -n '2,8p' "$0"
+  exit 2
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --undo) MODE=undo; shift ;;
+    --status) MODE=status; shift ;;
+    -h|--help) usage ;;
+    *) echo "Unknown option: $1" >&2; usage ;;
+  esac
+done
+
+[[ "$(id -u)" -eq 0 ]] || { echo "Run with sudo" >&2; exit 1; }
+
+status_mode() {
+  echo "=== unit ==="
+  systemctl is-enabled indianadell-sensor-watch.service 2>/dev/null || true
+  systemctl is-active indianadell-sensor-watch.service 2>/dev/null || true
+  systemctl status indianadell-sensor-watch.service --no-pager -l 2>/dev/null | head -16 || true
+  echo
+  echo "=== installed files ==="
+  ls -l /usr/local/sbin/indiana-sensor-watch /etc/indiana-sensor-watch.conf \
+    /etc/systemd/system/indianadell-sensor-watch.service 2>/dev/null || true
+  echo
+  echo "=== --once ==="
+  if [[ -x /usr/local/sbin/indiana-sensor-watch ]]; then
+    /usr/local/sbin/indiana-sensor-watch --once || true
+  elif [[ -x "$ROOT/scripts/sensors/indiana-sensor-watch.sh" ]]; then
+    "$ROOT/scripts/sensors/indiana-sensor-watch.sh" --once || true
+  fi
+}
+
+undo_mode() {
+  systemctl disable --now indianadell-sensor-watch.service 2>/dev/null || true
+  if [[ -x /usr/local/sbin/indiana-sensor-watch ]]; then
+    /usr/local/sbin/indiana-sensor-watch --restore || true
+  fi
+  rm -f /etc/systemd/system/indianadell-sensor-watch.service
+  systemctl daemon-reload
+  log "disabled indianadell-sensor-watch (left /usr/local/sbin helper and /etc/indiana-sensor-watch.conf)"
+}
+
+apply_mode() {
+  if ! dpkg-query -W -f='${Status}' smartmontools 2>/dev/null | grep -q 'install ok installed'; then
+    log "installing smartmontools"
+    apt-get install -y smartmontools
+  fi
+  if ! dpkg-query -W -f='${Status}' libnotify-bin 2>/dev/null | grep -q 'install ok installed'; then
+    log "installing libnotify-bin"
+    apt-get install -y libnotify-bin
+  fi
+  # smartmontools enables smartd; we poll from the watchdog and must not
+  # wake HDDs or add another boot daemon.
+  if systemctl is-enabled smartmontools.service >/dev/null 2>&1 \
+     || systemctl is-enabled smartd.service >/dev/null 2>&1; then
+    systemctl disable --now smartmontools.service smartd.service 2>/dev/null || true
+    log "disabled smartd (watchdog owns SMART polls)"
+  fi
+
+  install -d /usr/local/sbin /etc/systemd/system
+  install -m 0755 "$ROOT/scripts/sensors/indiana-sensor-watch.sh" /usr/local/sbin/indiana-sensor-watch
+  if [[ ! -e /etc/indiana-sensor-watch.conf ]]; then
+    install -m 0644 "$ETC/indiana-sensor-watch.conf" /etc/indiana-sensor-watch.conf
+  else
+    log "keeping existing /etc/indiana-sensor-watch.conf"
+  fi
+  install -m 0644 "$ETC/systemd/system/indianadell-sensor-watch.service" \
+    /etc/systemd/system/indianadell-sensor-watch.service
+  systemctl daemon-reload
+  systemctl enable --now indianadell-sensor-watch.service
+  log "enabled indianadell-sensor-watch (first sample ~2 min after graphical.target)"
+}
+
+case "$MODE" in
+  status) status_mode ;;
+  undo) undo_mode ;;
+  apply) apply_mode ;;
+esac

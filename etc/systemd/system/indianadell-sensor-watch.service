@@ -1,0 +1,20 @@
+[Unit]
+Description=IndianaDell thermal/fan watchdog
+After=graphical.target
+Wants=graphical.target
+Documentation=file:///home/user/Documents/IndianaDell/docs/software-manual/06-gpu-and-display.md
+
+[Service]
+Type=simple
+# Boot delay lives in the daemon (skipped on restart so the popup is immediate).
+ExecStart=/usr/local/sbin/indiana-sensor-watch
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/usr/local/sbin/indiana-sensor-watch --restore
+TimeoutStopSec=20
+Restart=on-failure
+RestartSec=30
+Nice=10
+KillMode=mixed
+
+[Install]
+WantedBy=graphical.target

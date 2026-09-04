@@ -1,0 +1,11 @@
+[Unit]
+Description=Thumper rail-watch UDP sink (deviation log + first daily desktop alert)
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/Documents/IndianaDell/scripts/sensors/thumper-rail-recv.py --bind 0.0.0.0:9370 --log %h/logs/thumper-rail-events-udp.csv
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target

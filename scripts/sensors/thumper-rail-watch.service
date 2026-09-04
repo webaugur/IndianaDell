@@ -1,0 +1,15 @@
+[Unit]
+Description=Thumper GPU/RAPL droop logger (NVML + RAPL; UDP mirror to Tower)
+After=multi-user.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# RAPL energy_uj is root-only. NVML needs the NVIDIA device nodes.
+ExecStart=/usr/bin/python3 /home/user/bin/thumper-rail-watch.py --log /home/user/logs/thumper-rail-events.csv --udp 10.0.0.113:9370
+Restart=on-failure
+# Restart after the logger process dies; a PSU trip takes the whole machine with it.
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
