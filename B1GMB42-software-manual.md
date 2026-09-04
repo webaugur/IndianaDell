@@ -6,7 +6,8 @@
 **Workspace:** `~/Documents/IndianaDell`
 
 **Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)\
-**Lab host Thumper (NVIDIA GPUs, power/clock locks):** `docs/thumper-gpu.md`
+**Lab host Thumper (NVIDIA GPUs, power/clock locks):** `docs/thumper-gpu.md`\
+**Lab host Thumper (ZFS / disks / boot reconstruction):** `docs/thumper-storage.md`
 
 This manual documents every **host-facing install** the IndianaDell workspace provides: apt packages, rustup, Python venvs, built tools, Flatpak apps, GNOME preferences, Plymouth themes, optional GPU/ROCm tooling, ZFS recovery, Ventoy live persistence, and GitHub sync. Each chapter covers one topic using the same structure:
 
@@ -19,6 +20,8 @@ This manual documents every **host-facing install** the IndianaDell workspace pr
 **Build PDFs:** `bin/build-all-docs` (all manuals) or `bin/build-software-manual` (this book only).
 
 **Quick reference:** `docs/features-available.md` (cheat sheet, not a replacement for this manual).
+
+**Chapter index (this manual):** - 00 Front matter - 01 Introduction - 02 Rebuild and recovery - 03 Post-rebuild checklist - 04 Development - 05 Themes - 06 GPU and display - 07 GNOME session - 08 GNU Radio / SDR - 09 Ham radio - 10 HackRF Mayhem - 11 Flatpak apps - 12 Machine utilities - 13 Factory docs - 14 Gaps and limits - 15 Ventoy live session - 16 QEMU - Appendix A --- Bin launchers - Appendix B --- Apt packages
 
 **GitHub:** https://github.com/webaugur/IndianaDell (private)
 
@@ -41,12 +44,10 @@ Software arrives in three layers. Understanding the order prevents skipped steps
             v
     +---------------------------+
     | Automated (rebuild-machine)|
-    | apt core + SDR/ham         |
+    | apt core                   |
+    | KiCad 10 + tscircuit       |
     | rustup stable              |
-    | HackRF host build          |
-    | Mayhem download + SD tree  |
-    | URH venv                   |
-    | HackRF udev rules          |
+    | DragonSDR suite (if present)|
     | Flatpak Telegram           |
     +---------------------------+
             |
@@ -87,6 +88,8 @@ Software arrives in three layers. Understanding the order prevents skipped steps
 
   `~/.cargo/`                                  Rust toolchain (rustup)
 
+  `~/.local/`                                  tscircuit / `tsci` (npm `--prefix`, KiCad TypeScript companion)
+
   `hackrf/venv-urh/`                           Universal Radio Hacker Python venv
 
   `hackrf/build/`                              HackRF host tools built from source
@@ -105,7 +108,9 @@ Software arrives in three layers. Understanding the order prevents skipped steps
   --------------------------------------------------------------------------- -------------------------------------------------------------
   Full restore after reinstall                                                Ch. 2 + Ch. 3
 
-  Python, Rust, pandoc                                                        Ch. 4
+  KiCad 10, tscircuit (`tsci` TypeScript → `.kicad_sch`)                      Ch. 2 + Ch. 3 + Appendix B
+
+  Python, Rust, pandoc, Node                                                  Ch. 4
 
   Boot/login/desktop look                                                     Ch. 5 + Ch. 7
 
@@ -154,7 +159,7 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 
 ## What gets installed
 
-`bin/rebuild-machine` restores the **workstation** software stack (core apt, rustup, Flatpak Telegram). The **SDR / ham / HackRF** stack is installed from **DragonSDR** when `~/Documents/DragonSDR` is present (`bin/install-dragonsdr`).
+`bin/rebuild-machine` restores the **workstation** software stack (core apt, **KiCad 10**, rustup, Flatpak Telegram). The **SDR / ham / HackRF** stack is installed from **DragonSDR** when `~/Documents/DragonSDR` is present (`bin/install-dragonsdr`).
 
 ## How it is installed
 
@@ -168,9 +173,9 @@ bin/install-dragonsdr               # SDR suite alone
 
 **Environment overrides:**
 
-  -----------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------
   Variable                                Effect
-  --------------------------------------- -------------------------------------------------------
+  --------------------------------------- ---------------------------------------------------------------------------
   `SKIP_TELEGRAM=1`                       Skip Flatpak Telegram install
 
   `SKIP_DRAGONSDR=1`                      Skip SDR suite install/verify
@@ -179,8 +184,10 @@ bin/install-dragonsdr               # SDR suite alone
 
   `SKIP_HAM=1`                            Forwarded to DragonSDR (skip desktop ham apps)
 
+  `SKIP_KICAD=1`                          Skip KiCad 10 PPA + `APT_KICAD` + tscircuit npm (ngspice, gerbv, 3D libs)
+
   `DRAGONSDR_ROOT=…`                      Override suite path (default `~/Documents/DragonSDR`)
-  -----------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------
 
 **Phases** (from `scripts/rebuild/rebuild-machine.sh`):
 
@@ -190,6 +197,8 @@ bin/install-dragonsdr               # SDR suite alone
   1                                 `apt-get update`
 
   2                                 Install `APT_CORE` --- build, Python, docs, GPU utils, flatpak, gh
+
+  2b                                KiCad 10 PPA + `APT_KICAD` + tscircuit npm (unless `SKIP_KICAD=1`)
 
   3                                 Flatpak remote + `org.telegram.desktop` (unless skipped)
 
@@ -214,6 +223,7 @@ bin/install-dragonsdr --verify-only
 `verify_stack` checks:
 
 - Every package in `APT_CORE` via `dpkg-query`
+- Every package in `APT_KICAD` plus `kicad` / `kicad-cli` / `ngspice` / `node` / `npm`, `import pcbnew` 10.\*, and tscircuit + `@tscircuit/capacity-autorouter` (unless `SKIP_KICAD=1`)
 - Commands: `rustc`, `cargo`, `pandoc`, `xelatex`, `vkcube`
 - Launchers: `dellmerge`, `gpu-stress`, `iotest`, `apply-amdgpu`, `rebuild-machine`
 - DragonSDR suite (unless `SKIP_DRAGONSDR=1` or suite missing)
@@ -230,14 +240,21 @@ Exit code 0 means all checks passed.
 
 ## What rebuild does / does not do
 
-  Rebuild **does**                       Rebuild **does not**
-  -------------------------------------- -------------------------------------
-  apt install `APT_CORE`                 Partition disks or ZFS
-  rustup; DragonSDR suite when present   `sudo bin/apply-amdgpu`
-  Flatpak Telegram                       GNOME prefs / themes by default
-  Regenerate apt manifests               Flash HackRF / PortaPack firmware
-  chmod workspace scripts                `bin/amd-install` (ROCm)
-                                         Install FactoryDocs CABs to Windows
+  -------------------------------------------------------------------------------------------------------
+  Rebuild **does**                                                Rebuild **does not**
+  --------------------------------------------------------------- ---------------------------------------
+  apt install `APT_CORE` + `APT_KICAD` (KiCad 10 PPA)             Partition disks or ZFS
+
+  tscircuit + `@tscircuit/capacity-autorouter` under `~/.local`   `sudo bin/apply-amdgpu`
+
+  rustup; DragonSDR suite when present                            GNOME prefs / themes by default
+
+  Flatpak Telegram                                                Flash HackRF / PortaPack firmware
+
+  Regenerate apt manifests                                        `bin/amd-install` (ROCm)
+
+  chmod workspace scripts                                         Install FactoryDocs CABs to Windows
+  -------------------------------------------------------------------------------------------------------
 
 After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist**.
 
@@ -280,6 +297,11 @@ sudo reboot
 **Verify after reboot:** `echo $WAYLAND_DISPLAY`, `glxinfo -B`, `vkcube` on each display if needed.
 
 See Chapter 6 for ROCm (`bin/amd-install`) --- optional and not supported for ML on these GPUs.
+
+``` bash
+sudo bin/apply-sensor-watch          # thermal/fan watchdog (delayed systemd)
+indiana-sensor-watch --once          # print current sensors
+```
 
 ## 2. GNOME session preferences
 
@@ -334,7 +356,32 @@ bin/hackrf-prepare-sdcard             # ensure SD tree is extracted
 
 See Chapter 10 and `~/Documents/DragonSDR/README.md`.
 
-## 5. Documentation PDFs
+## 5. KiCad 10 and tscircuit (workstation default)
+
+Installed by `bin/rebuild-machine` Phase 2b unless `SKIP_KICAD=1`. Opt out is rebuild-time only; this checklist just confirms the GUI/CLI stack.
+
+**KiCad 10** (PPA `kicad/kicad-10.0-releases`): schematic/PCB editor, 3D models, `ngspice`, `gerbv`.
+
+**tscircuit** ([github.com/tscircuit/tscircuit](https://github.com/tscircuit/tscircuit)): TypeScript/React circuits via `tsci`. Export to KiCad, then open the files in KiCad 10. Autorouter package is `@tscircuit/capacity-autorouter` ([tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)), installed under `~/.local` with `tsci`.
+
+``` bash
+kicad-cli version
+python3 -c 'import pcbnew; print(pcbnew.Version())'
+command -v ngspice gerbv gerbview tsci
+tsci --help | head
+```
+
+TypeScript → KiCad:
+
+``` bash
+tsci init my-board
+cd my-board
+tsci export index.tsx -f kicad_sch    # also kicad_pcb, kicad_zip, kicad-library
+```
+
+Expect `10.0.*` from `kicad-cli` and `pcbnew`. `kicad-doc-id` may remain on 9.x; that is not a blocker.
+
+## 6. Documentation PDFs
 
 ``` bash
 bin/build-all-docs                    # software manual + hardware + inventory PDFs
@@ -344,7 +391,7 @@ bin/build-software-manual             # this manual only
 
 Outputs: `B1GMB42-software-manual.pdf`, `B1GMB42-slot-port-inventory.pdf`, `B1GMB42-software-inventory.pdf`.
 
-## 6. Machine inventory baseline
+## 7. Machine inventory baseline
 
 ``` bash
 bin/dellmerge > b1gmb42.report
@@ -352,13 +399,13 @@ sudo bin/iotest                       # optional storage survey
 bin/gpu-stress 60 vkcube              # optional GPU smoke test
 ```
 
-## 7. FactoryDocs recovery (optional)
+## 8. FactoryDocs recovery (optional)
 
 Only 19 of 101 pre-crash Dell packages are on disk. Re-download per `FactoryDocs/README.md` and `MANIFEST-pre-crash.txt`. These are **workspace archives**, not installed by rebuild.
 
 See Chapter 13.
 
-## 8. ZFS force import (required on this host)
+## 9. ZFS force import (required on this host)
 
 After any reinstall or recovery chroot, confirm the installed system will force-import pools at boot:
 
@@ -374,6 +421,8 @@ If missing, set it in `/etc/default/zfs`, then `sudo update-initramfs -c -k all`
 ``` bash
 cd ~/Documents/IndianaDell
 bin/rebuild-machine --verify-only
+kicad-cli version                             # expect 10.0.*
+tsci --help >/dev/null && echo OK tscircuit   # TypeScript → KiCad
 grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
@@ -400,6 +449,8 @@ bin/urh --version
 
   HackRF flash                  `bin/hackrf-flash-mayhem` + DFU                       Maybe
 
+  KiCad 10 + tscircuit          `kicad-cli version`; `tsci export … -f kicad_sch`     No
+
   ROCm (optional)               `bin/amd-install`                                     Yes
 
   All doc PDFs                  `bin/build-all-docs`                                  No
@@ -413,33 +464,39 @@ bin/urh --version
 
 ## What gets installed
 
-  ------------------------------------------------------------------------------------------------------------
-  Component                  Version / path             Install source
-  -------------------------- -------------------------- ------------------------------------------------------
-  Python                     3.14 (system)              Ubuntu base + apt
+  --------------------------------------------------------------------------------------------------------------------------
+  Component                          Version / path             Install source
+  ---------------------------------- -------------------------- ------------------------------------------------------------
+  Python                             3.14 (system)              Ubuntu base + apt
 
-  pip, venv                  apt                        `python3-pip`, `python3-venv`
+  pip, venv                          apt                        `python3-pip`, `python3-venv`
 
-  numpy, scipy, matplotlib   apt                        science stack
+  numpy, scipy, matplotlib           apt                        science stack
 
-  PyQt5                      apt                        GNU Radio Companion, some tools
+  PyQt5                              apt                        GNU Radio Companion, some tools
 
-  Rust                       1.96.1 stable              rustup to `~/.cargo/bin`
+  Rust                               1.96.1 stable              rustup to `~/.cargo/bin`
 
-  C/C++ build                apt                        `build-essential`, `cmake`, `pkg-config`
+  C/C++ build                        apt                        `build-essential`, `cmake`, `pkg-config`
 
-  Clang/LLVM                 apt                        bindgen-style Rust, native tooling
+  Clang/LLVM                         apt                        bindgen-style Rust, native tooling
 
-  SSL/USB/FFTW/Volk          apt dev libs               SDR and native builds
+  SSL/USB/FFTW/Volk                  apt dev libs               SDR and native builds
 
-  ARM cross-compile          apt                        PortaPack Mayhem firmware (`gcc-arm-none-eabi`)
+  ARM cross-compile                  apt                        PortaPack Mayhem firmware (`gcc-arm-none-eabi`)
 
-  pandoc + XeLaTeX           apt                        Manual PDF generation
+  pandoc + XeLaTeX                   apt                        Manual PDF generation
 
-  Git, curl, wget            apt                        repos and downloads
+  Git, curl, wget                    apt                        repos and downloads
 
-  GitHub CLI (`gh`)          2.46 (apt)                 HTTPS/token fallback; `gh auth login` for API access
-  ------------------------------------------------------------------------------------------------------------
+  GitHub CLI (`gh`)                  2.46 (apt)                 HTTPS/token fallback; `gh auth login` for API access
+
+  Node.js + npm                      apt (`APT_KICAD`)          tscircuit CLI
+
+  tscircuit (`tsci`)                 npm `--prefix ~/.local`    TypeScript/React → `.kicad_sch` / `.kicad_pcb` (Chapter 3)
+
+  `@tscircuit/capacity-autorouter`   npm `--prefix ~/.local`    PCB autorouter used by tscircuit
+  --------------------------------------------------------------------------------------------------------------------------
 
 **Python bindings verified on this host:** `gnuradio`, `SoapySDR`, `Hamlib` (capital H in Python).
 
@@ -468,6 +525,8 @@ cmake --version | head -1
 arm-none-eabi-gcc --version | head -1
 pandoc --version | head -1
 xelatex --version | head -1
+node --version && npm --version
+tsci --help >/dev/null && echo OK tscircuit
 ```
 
 ## How to customize
@@ -608,12 +667,12 @@ sudo reboot
 - `etc/environment.d/99-amdgpu-wayland.conf`
 - `etc/X11/xorg.conf.d/20-amdgpu-multi-gpu.conf`
 - `etc/modprobe.d/amdgpu-multigpu.conf` (`runpm=0`)
-- `etc/udev/rules.d/99-amdgpu-multigpu.rules` (tags + DPM performance hook)
-- `etc/amdgpu-set-dpm-performance.sh` → `/usr/local/sbin/indiana-amdgpu-dpm-performance`
+- `etc/udev/rules.d/99-amdgpu-multigpu.rules` (tags + DPM auto hook)
+- `etc/amdgpu-set-dpm-auto.sh` → `/usr/local/sbin/indiana-amdgpu-dpm-auto`
 - `etc/profile.d/amdgpu-multigpu.sh`
 - `etc/gdm3/custom.conf` (if present)
 
-**DPM performance (all cards):** on a desktop workstation every amdgpu is pinned to max clocks --- not only the display GPU. `apply-amdgpu` runs the helper immediately; udev re-applies when cards appear at boot.
+**DPM auto (all cards):** every amdgpu uses load-based clocks (`auto` / `balanced`). These FirePro W5000/W5100 overheat when pinned to `high`. `apply-amdgpu` runs the helper immediately; udev re-applies when cards appear at boot.
 
 ``` bash
 # verify
@@ -621,10 +680,10 @@ for c in /sys/class/drm/card[0-9]/device; do
   [[ -f $c/power_dpm_force_performance_level ]] || continue
   echo "$(basename $(dirname $c)): level=$(cat $c/power_dpm_force_performance_level) state=$(cat $c/power_dpm_state)"
 done
-# expect: level=high  state=performance  on card1..card3
+# expect: level=auto  state=balanced  on card1..card3
 ```
 
-Tradeoff: slightly higher idle power/heat/fan noise vs `auto`/`balanced`. Revert by editing the udev rule / helper and re-running `sudo bin/apply-amdgpu`, or manually `echo auto | sudo tee …/power_dpm_force_performance_level`.
+Do not set `high` on this machine. To force clocks only for a short smoke test: `echo high | sudo tee …/power_dpm_force_performance_level`, then `echo auto` when done.
 
 **Optional ROCm:**
 
@@ -659,7 +718,51 @@ lspci -nn | grep -i vga
   Ensure `bin/gpu-stress` is executable      Install ROCm
                                              Configure monitor layout (use GNOME Settings)
 
-## **Required post-rebuild:** `sudo bin/apply-amdgpu` + reboot (Chapter 3).
+**Required post-rebuild:** `sudo bin/apply-amdgpu` + reboot (Chapter 3).
+
+## Sensor watchdog
+
+`thermald` does not run on this Haswell Xeon. `bin/apply-sensor-watch` installs `indianadell-sensor-watch.service` (starts after `graphical.target`, sleeps 120 s on a cold boot, then polls). It logs out-of-range CPU/GPU/DIMM/fan/SMART temps to syslog, pops a GNOME notification on the logged-in session bus, and steps GPU clocks / CPU `scaling_max_freq` down until under 80 °C (back up after a 72 °C deadband). Disk SMART uses `smartctl -n standby,0` so sleeping HDDs are not woken.
+
+A desktop notice is sent on **`systemctl reload`** and **`systemctl restart`**, not on first start or stop. Test the path without cycling the unit:
+
+``` bash
+sudo indiana-sensor-watch --notify test
+sudo systemctl reload indianadell-sensor-watch
+```
+
+``` bash
+sudo bin/apply-sensor-watch
+indiana-sensor-watch --once
+journalctl -t indiana-sensor-watch -f
+```
+
+Config: `/etc/indiana-sensor-watch.conf` (defaults in `etc/indiana-sensor-watch.conf`). `THROTTLE=0` / `THROTTLE_CPU=0` disable clock writes. `dell_smm` fan2 is ignored (unused HDD_FAN header).
+
+## Monitor input select
+
+These FirePros are mini-DP only. There is no `/dev/cec`, so HDMI-CEC cannot switch the set.
+
+`indiana-monitor-input` uses **DDC/CI** (`ddcutil`, VCP 60) on the current cable:
+
+``` bash
+indiana-monitor-input detect
+indiana-monitor-input grab    # request DisplayPort-1 (this PC)
+indiana-monitor-input set hdmi1
+```
+
+Verified on this Samsung (2018) via `card2-DP-4` / i2c-7: EDID works, **I2C 0x37 does not answer**. Until the OSD "DDC/CI" option is on (or a different panel is used), `grab` will fail with that fact. User must be in group `i2c` (or use sudo).
+
+## IR HDMI select (Arduino Uno)
+
+When DDC/CEC cannot switch the TV, a 940 nm LED on an Uno can send one Samsung discrete code. Wiring and flash: `tools/ir-blaster/README.md`.
+
+``` bash
+indiana-ir-flash                 # arduino-cli; no IDE
+indiana-ir-send hdmi2
+```
+
+## Host waits for `READY`/`OK` on the serial fd (Uno resets on port open). Group `dialout` required.
 
 ## Lab host note --- Thumper (NVIDIA)
 
@@ -1309,6 +1412,10 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
   Ventoy full seed on every boot      Manual --- run `~/bin/seed-ventoy-persistence.sh` after changes
 
   PNY rebuild-stick seed automation   Manual loop-mount of `ubuntu-26.04.dat` (see Ch. 15); stick units only fix groups/SSH/hostname
+
+  Freerouting / pcb2gcode             Not installed --- tscircuit ships `@tscircuit/capacity-autorouter`
+
+  `kicad-doc-id` 10.x                 Universe still 9.0.8; omitted from `APT_KICAD`
   ------------------------------------------------------------------------------------------------------------------------------------
 
 ## Lost in TPM/ZFS crash
@@ -1948,6 +2055,64 @@ sudo tail -50 /var/log/indianadell-live-fastboot.log
                                                                 Fit a 24 GB Wiggly `.dat` on the 30 GB PNY stick
   -------------------------------------------------------------------------------------------------------------------------
 
+# Chapter 16 --- QEMU
+
+QEMU is the core emulation and virtualization engine used throughout the IndianaDell / DragonSDR lab. On Tower5810 it provides the full range of system emulation targets, KVM-accelerated guests, and the shared-library builds required by Velxio / picsimlab for ESP32 development.
+
+The complete upstream documentation lives in the QEMU source tree under `docs/`. This chapter gives a high-level map of that documentation so you can quickly locate the relevant sections.
+
+## Sub-chapters (QEMU docs tree)
+
+### About
+
+High-level information about QEMU itself:
+
+- Supported build platforms and minimum requirements
+- Emulation capabilities and architecture coverage
+- Deprecated and removed features
+- License and contribution overview
+
+### Devel
+
+Developer and internals documentation (most relevant when working on QEMU itself or debugging deep issues):
+
+- Build system, Kconfig, and module architecture
+- TCG (Tiny Code Generator) internals and plugins
+- QAPI/QOM code generation, memory model, RCU, atomics
+- Block layer, migration, multi-threaded TCG, iothreads
+- Secure coding practices, style guide, patch submission process
+- Tracing, replay, and record/replay infrastructure
+
+### Interop
+
+Interoperability specifications and external interfaces:
+
+- QEMU Machine Protocol (QMP)
+- Guest agent protocol
+- Block replication, COLO (COarse-grained LOck-stepping) fault tolerance
+- NVDIMM, memory hotplug, PCI expander bridges, SR-IOV, etc.
+
+### Specs
+
+Hardware and firmware specifications that QEMU emulates or interacts with:
+
+- ACPI, SMBIOS, device tree fragments
+- Virtio, vhost, and paravirtualized device specifications
+- Firmware and boot interface details
+
+## Building QEMU on Tower5810
+
+The DragonSDR build script `tools/emulators/qemu-lcgamboa/build-all.sh` produces both:
+
+- The special Velxio/ESP32-compatible shared libraries (`libqemu-xtensa.so`, `libqemu-riscv32.so`)
+- Full-featured shared libraries for all other architectures with PipeWire, KVM, virglrenderer, Spice, vhost, and modern storage/networking support enabled by default.
+
+See the script and its pinned commit for the exact feature set.
+
+## Further reading
+
+For the absolute latest and most detailed information, always consult the `docs/` directory inside the QEMU source tree you are building. The structure described above is stable across recent QEMU releases.
+
 # Appendix A --- bin/ Launchers
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
@@ -1996,6 +2161,18 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
   `iotest`                        `scripts/storage/iotest.sh`                                                              12
 
   `apply-amdgpu`                  `etc/apply.sh`                                                                           6
+
+  `apply-sensor-watch`            `bin/apply-sensor-watch` --- install thermal/fan watchdog unit                           6
+
+  `indiana-sensor-watch`          `scripts/sensors/indiana-sensor-watch.sh` --- `--once` / daemon                          6
+
+  `indiana-monitor-input`         `scripts/display/indiana-monitor-input.sh` --- DDC/CI input select                       6
+
+  `indiana-ir-send`               `scripts/ir/indiana-ir-send.sh` --- USB serial to Uno IR blaster                         6
+
+  `indiana-ir-flash`              `scripts/ir/indiana-ir-flash.sh` --- arduino-cli compile/upload                          6
+
+  `tsci` / `tscircuit`            tscircuit CLI under `~/.local` --- TypeScript → KiCad export                             EDA / Ch. 3
 
   `amd-install`                   `amd-radeon/install-all.sh`                                                              6
 
@@ -2060,11 +2237,12 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 # Appendix B --- Apt Packages by Chapter
 
-**Workstation packages:** `scripts/rebuild/package-lists.sh` (`APT_CORE` only).\
+**Workstation packages:** `scripts/rebuild/package-lists.sh` (`APT_CORE` + `APT_KICAD`).\
 **SDR / ham / HackRF packages:** `~/Documents/DragonSDR/tools/package-lists.sh` (`APT_SDR`, `APT_HAM`, `APT_SDR_BUILD`).\
 **Install SDR suite:** `bin/install-dragonsdr` → DragonSDR `bin/install-suite`.\
 **Full system snapshot:** `apt-full-manifest.txt` (after rebuild).\
-**SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.
+**SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.\
+**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` + tscircuit npm on rebuild and `fix-indianadell`).
 
 ## Chapter 4 --- Development (IndianaDell `APT_CORE`)
 
@@ -2072,7 +2250,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 ## Chapter 6 --- GPU and Display
 
-`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`
+`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`
 
 ## Chapter 8 --- GNU Radio and SDR (DragonSDR `APT_SDR` + build libs)
 
@@ -2085,6 +2263,16 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 ## Chapter 10 --- HackRF and Mayhem (DragonSDR `APT_SDR`)
 
 `hackrf`, `hackrf-firmware`, `libhackrf-dev`, `hackrf-doc`, `dfu-util`, `openocd`, `gcc-arm-none-eabi`, `binutils-arm-none-eabi`, `libnewlib-arm-none-eabi`, `ccache`, `lz4`, `bzip2`
+
+## EDA --- KiCad 10 (`APT_KICAD`)
+
+Default-on for workstation rebuild. Requires `ppa:kicad/kicad-10.0-releases` (`scripts/rebuild/ensure-kicad-ppa.sh`) before install so apt does not pull universe 9.x.
+
+`kicad`, `kicad-libraries`, `kicad-symbols`, `kicad-footprints`, `kicad-packages3d`, `kicad-templates`, `kicad-demos`, `kicad-dbg`, `kicad-doc-en`, `kicad-doc-de`, `kicad-doc-fr`, `kicad-doc-es`, `kicad-doc-it`, `kicad-doc-ja`, `kicad-doc-pl`, `kicad-doc-ru`, `kicad-doc-zh`, `kicad-doc-ca`, `kicad-gruvbox-theme`, `ngspice`, `gerbv`, `nodejs`, `npm`
+
+**tscircuit** (not apt): `scripts/rebuild/install-tscircuit.sh` runs `npm install -g --prefix ~/.local tscircuit @tscircuit/capacity-autorouter typescript`. CLI is `tsci` / `tscircuit`. Export a circuit to KiCad with `tsci export circuit.tsx -f kicad_sch` (also `kicad_pcb`, `kicad_zip`). Autorouter npm name is `@tscircuit/capacity-autorouter` ([tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)).
+
+`kicad-doc-id` is **not** in the list (universe still 9.0.8 while the PPA is 10.x). Skip the whole set (including tscircuit) with `SKIP_KICAD=1`.
 
 ## Chapter 11 --- Flatpak
 

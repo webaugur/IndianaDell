@@ -1,6 +1,6 @@
 # KiCad 10 — IndianaDell implementation plan
 
-**Status:** implemented on Tower5810 (2026-09-04) — KiCad 10.0.6 + ngspice/gerbv in rebuild  
+**Status:** implemented on Tower5810 (2026-09-04) — KiCad **10.0.6** + ngspice/gerbv + **tscircuit** (`tsci`) in rebuild  
 **Owner:** IndianaDell (workstation restore) — **not** DragonSDR  
 **Host audited:** Tower5810 / Ubuntu 26.04 (“resolute”), 2026-08-11  
 **Goal:** Complete, reproducible **KiCad 10** install with all useful options; keep it on rebuild.
@@ -218,7 +218,8 @@ Push to `webaugur/IndianaDell` if the user wants remotes updated (do not open a 
 - [x] `import pcbnew` reports `10.*`
 - [x] `fix-indianadell` (or documented check) covers KiCad
 - [x] Appendix B / features docs mention KiCad 10 + opt-out
-- [ ] Changes committed (and pushed if requested)
+- [x] Changes committed (`0cba668`, `4adbd7f`)
+- [x] tscircuit + `@tscircuit/capacity-autorouter` on rebuild (`install-tscircuit.sh`, `SKIP_KICAD=1`)
 
 ---
 
@@ -239,6 +240,20 @@ sudo apt-get install -y \
 
 ---
 
-## 7. Origin
+## 7. Follow-on: tscircuit (TypeScript → KiCad)
+
+Implemented. Not a KiCad plugin — npm CLI next to KiCad 10.
+
+| Item | Location |
+|------|----------|
+| Install | `scripts/rebuild/install-tscircuit.sh` (Phase 2b, `~/.local`) |
+| Packages | `tscircuit`, `@tscircuit/capacity-autorouter` (GitHub: [tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)), `typescript` |
+| Launchers | `bin/tsci`, `bin/tscircuit` |
+| Export | `tsci export index.tsx -f kicad_sch` (`kicad_pcb`, `kicad_zip`, `kicad-library`) |
+| Opt out | `SKIP_KICAD=1` |
+
+Do **not** clone the autorouter git tree into IndianaDell (large bun/dev datasets). npm is the installable form.
+
+## 8. Origin
 
 Stashed from DragonSDR session KiCad audit (plan mode). Live host already had a nearly complete 10.0.4 PPA install; IndianaDell rebuild lists did not own it yet — this plan closes that gap and adds simulation/companion packages.

@@ -13,6 +13,8 @@ Documented boundaries of what IndianaDell does **not** install or support on thi
 | HackRF hardware test | No device attached at last verify (2026-07-05) |
 | Ventoy full seed on every boot | Manual — run `~/bin/seed-ventoy-persistence.sh` after changes |
 | PNY rebuild-stick seed automation | Manual loop-mount of `ubuntu-26.04.dat` (see Ch. 15); stick units only fix groups/SSH/hostname |
+| Freerouting / pcb2gcode | Not installed — tscircuit ships `@tscircuit/capacity-autorouter` |
+| `kicad-doc-id` 10.x | Universe still 9.0.8; omitted from `APT_KICAD` |
 
 ## Lost in TPM/ZFS crash
 

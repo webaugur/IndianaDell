@@ -5,7 +5,7 @@
 **Install SDR suite:** `bin/install-dragonsdr` → DragonSDR `bin/install-suite`.  
 **Full system snapshot:** `apt-full-manifest.txt` (after rebuild).  
 **SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.  
-**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` on rebuild and `fix-indianadell`).
+**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` + tscircuit npm on rebuild and `fix-indianadell`).
 
 ## Chapter 4 — Development (IndianaDell `APT_CORE`)
 

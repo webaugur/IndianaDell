@@ -16,6 +16,9 @@
 | pandoc + XeLaTeX | apt | Manual PDF generation |
 | Git, curl, wget | apt | repos and downloads |
 | GitHub CLI (`gh`) | 2.46 (apt) | HTTPS/token fallback; `gh auth login` for API access |
+| Node.js + npm | apt (`APT_KICAD`) | tscircuit CLI |
+| tscircuit (`tsci`) | npm `--prefix ~/.local` | TypeScript/React → `.kicad_sch` / `.kicad_pcb` (Chapter 3) |
+| `@tscircuit/capacity-autorouter` | npm `--prefix ~/.local` | PCB autorouter used by tscircuit |
 
 **Python bindings verified on this host:** `gnuradio`, `SoapySDR`, `Hamlib` (capital H in Python).
 
@@ -44,6 +47,8 @@ cmake --version | head -1
 arm-none-eabi-gcc --version | head -1
 pandoc --version | head -1
 xelatex --version | head -1
+node --version && npm --version
+tsci --help >/dev/null && echo OK tscircuit
 ```
 
 ## How to customize

@@ -74,9 +74,13 @@ bin/hackrf-prepare-sdcard             # ensure SD tree is extracted
 
 See Chapter 10 and `~/Documents/DragonSDR/README.md`.
 
-## 5. KiCad 10 (workstation default)
+## 5. KiCad 10 and tscircuit (workstation default)
 
 Installed by `bin/rebuild-machine` Phase 2b unless `SKIP_KICAD=1`. Opt out is rebuild-time only; this checklist just confirms the GUI/CLI stack.
+
+**KiCad 10** (PPA `kicad/kicad-10.0-releases`): schematic/PCB editor, 3D models, `ngspice`, `gerbv`.
+
+**tscircuit** ([github.com/tscircuit/tscircuit](https://github.com/tscircuit/tscircuit)): TypeScript/React circuits via `tsci`. Export to KiCad, then open the files in KiCad 10. Autorouter package is `@tscircuit/capacity-autorouter` ([tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)), installed under `~/.local` with `tsci`.
 
 ```bash
 kicad-cli version
@@ -85,7 +89,15 @@ command -v ngspice gerbv gerbview tsci
 tsci --help | head
 ```
 
-Expect `10.0.*` from `kicad-cli` and `pcbnew`. TypeScript circuits: `tsci init` then `tsci export index.tsx -f kicad_sch` (also `kicad_pcb` / `kicad_zip`). Autorouter is `@tscircuit/capacity-autorouter`. `kicad-doc-id` may remain on 9.x; that is not a blocker.
+TypeScript → KiCad:
+
+```bash
+tsci init my-board
+cd my-board
+tsci export index.tsx -f kicad_sch    # also kicad_pcb, kicad_zip, kicad-library
+```
+
+Expect `10.0.*` from `kicad-cli` and `pcbnew`. `kicad-doc-id` may remain on 9.x; that is not a blocker.
 
 ## 6. Documentation PDFs
 
@@ -128,6 +140,7 @@ If missing, set it in `/etc/default/zfs`, then `sudo update-initramfs -c -k all`
 cd ~/Documents/IndianaDell
 bin/rebuild-machine --verify-only
 kicad-cli version                             # expect 10.0.*
+tsci --help >/dev/null && echo OK tscircuit   # TypeScript → KiCad
 grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
@@ -146,7 +159,7 @@ bin/urh --version
 | Nautilus 50 .desktop icons | `bin/sync-desktop-icons` | No |
 | Custom boot | `sudo bin/themes-install-boot` | Yes |
 | HackRF flash | `bin/hackrf-flash-mayhem` + DFU | Maybe |
-| KiCad 10 | `kicad-cli version` (rebuild Phase 2b) | No |
+| KiCad 10 + tscircuit | `kicad-cli version`; `tsci export … -f kicad_sch` | No |
 | ROCm (optional) | `bin/amd-install` | Yes |
 | All doc PDFs | `bin/build-all-docs` | No |
 | ZFS force import | check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` | If initramfs updated |

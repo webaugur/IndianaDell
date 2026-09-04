@@ -133,6 +133,34 @@ watch -n2 'nvidia-smi --query-gpu=index,name,temperature.gpu,power.draw,power.li
 nvidia-smi -q -d PERFORMANCE | grep -A20 'Clocks Event Reasons'
 ```
 
+### PSU droop / rail logging (2026-08-21)
+
+The T5610 **does not export ATX +12V/+5V/+3.3V** to Linux. `sensors-detect` found only `coretemp`; `dell_smm` is fans/temps; SMBus `i2c-0` has no INA/PMBus; NVML has no bus-voltage field on the TITAN Xp. A 12V sag therefore has to be inferred.
+
+`scripts/sensors/thumper-rail-watch.py` still samples as fast as NVML returns, but **writes only on deviations** (p-state/clock/power-band edges, RAPL ≥ 100 W). **Errors** (HW power brake / HW slow / HW thermal, GPU ≥ 220 W, ≥ 80 W power drop with SM still high, GPU ≥ 90 °C, NVML fail) are fsync’d and UDP’d to Tower.
+
+Tower `thumper-rail-recv` pops **one GNOME notification the first error of each local calendar day** (`~/logs/thumper-rail-watch.notify-day`). Later errors the same day stay in the CSV only.
+
+| What | Path |
+|------|------|
+| Thumper events | `/home/user/logs/thumper-rail-events.csv` |
+| Tower copy | `~/logs/thumper-rail-events-udp.csv` |
+
+Idle 9–16 W P8 is not logged. Do not fsync every NVML sample onto `/home` (TEAM special vdev, `special_small_blocks=32K`).
+
+```bash
+# Tower5810
+systemctl --user enable --now thumper-rail-recv.service
+
+# Thumper
+sudo cp .../thumper-rail-watch.service /etc/systemd/system/
+sudo systemctl enable --now thumper-rail-watch.service
+```
+
+True +12V still needs a meter or an INA219 on the TITAN 8-pin.
+
+A 27B Ollama generate (2026-08-21) died at **233 W / 46 °C** on the first tokens with ping still 0.3 ms — that class of event is what the daily desktop alert is for.
+
 If a weak card still hits **~90 °C+** at **125 W**, stop using it until the cooler is fixed.
 
 ---

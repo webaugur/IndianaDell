@@ -70,11 +70,11 @@ Exit code 0 means all checks passed.
 | Rebuild **does** | Rebuild **does not** |
 |------------------|----------------------|
 | apt install `APT_CORE` + `APT_KICAD` (KiCad 10 PPA) | Partition disks or ZFS |
-| rustup; DragonSDR suite when present | `sudo bin/apply-amdgpu` |
-| Flatpak Telegram | GNOME prefs / themes by default |
-| Regenerate apt manifests | Flash HackRF / PortaPack firmware |
-| chmod workspace scripts | `bin/amd-install` (ROCm) |
-| | Install FactoryDocs CABs to Windows |
+| tscircuit + `@tscircuit/capacity-autorouter` under `~/.local` | `sudo bin/apply-amdgpu` |
+| rustup; DragonSDR suite when present | GNOME prefs / themes by default |
+| Flatpak Telegram | Flash HackRF / PortaPack firmware |
+| Regenerate apt manifests | `bin/amd-install` (ROCm) |
+| chmod workspace scripts | Install FactoryDocs CABs to Windows |
 
 After a successful rebuild, continue with **Chapter 3 — Post-Rebuild Checklist**.
 

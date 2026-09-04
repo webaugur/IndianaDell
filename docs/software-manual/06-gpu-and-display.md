@@ -27,12 +27,12 @@ sudo reboot
 - `etc/environment.d/99-amdgpu-wayland.conf`
 - `etc/X11/xorg.conf.d/20-amdgpu-multi-gpu.conf`
 - `etc/modprobe.d/amdgpu-multigpu.conf` (`runpm=0`)
-- `etc/udev/rules.d/99-amdgpu-multigpu.rules` (tags + DPM performance hook)
-- `etc/amdgpu-set-dpm-performance.sh` → `/usr/local/sbin/indiana-amdgpu-dpm-performance`
+- `etc/udev/rules.d/99-amdgpu-multigpu.rules` (tags + DPM auto hook)
+- `etc/amdgpu-set-dpm-auto.sh` → `/usr/local/sbin/indiana-amdgpu-dpm-auto`
 - `etc/profile.d/amdgpu-multigpu.sh`
 - `etc/gdm3/custom.conf` (if present)
 
-**DPM performance (all cards):** on a desktop workstation every amdgpu is pinned to max clocks — not only the display GPU. `apply-amdgpu` runs the helper immediately; udev re-applies when cards appear at boot.
+**DPM auto (all cards):** every amdgpu uses load-based clocks (`auto` / `balanced`). These FirePro W5000/W5100 overheat when pinned to `high`. `apply-amdgpu` runs the helper immediately; udev re-applies when cards appear at boot.
 
 ```bash
 # verify
@@ -40,10 +40,10 @@ for c in /sys/class/drm/card[0-9]/device; do
   [[ -f $c/power_dpm_force_performance_level ]] || continue
   echo "$(basename $(dirname $c)): level=$(cat $c/power_dpm_force_performance_level) state=$(cat $c/power_dpm_state)"
 done
-# expect: level=high  state=performance  on card1..card3
+# expect: level=auto  state=balanced  on card1..card3
 ```
 
-Tradeoff: slightly higher idle power/heat/fan noise vs `auto`/`balanced`. Revert by editing the udev rule / helper and re-running `sudo bin/apply-amdgpu`, or manually `echo auto | sudo tee …/power_dpm_force_performance_level`.
+Do not set `high` on this machine. To force clocks only for a short smoke test: `echo high | sudo tee …/power_dpm_force_performance_level`, then `echo auto` when done.
 
 **Optional ROCm:**
 
@@ -79,6 +79,50 @@ lspci -nn | grep -i vga
 | | Configure monitor layout (use GNOME Settings) |
 
 **Required post-rebuild:** `sudo bin/apply-amdgpu` + reboot (Chapter 3).
+
+## Sensor watchdog
+
+`thermald` does not run on this Haswell Xeon. `bin/apply-sensor-watch` installs `indianadell-sensor-watch.service` (starts after `graphical.target`, sleeps 120 s on a cold boot, then polls). It logs out-of-range CPU/GPU/DIMM/fan/SMART temps to syslog, pops a GNOME notification on the logged-in session bus, and steps GPU clocks / CPU `scaling_max_freq` down until under 80 °C (back up after a 72 °C deadband). Disk SMART uses `smartctl -n standby,0` so sleeping HDDs are not woken.
+
+A desktop notice is sent on **`systemctl reload`** and **`systemctl restart`**, not on first start or stop. Test the path without cycling the unit:
+
+```bash
+sudo indiana-sensor-watch --notify test
+sudo systemctl reload indianadell-sensor-watch
+```
+
+```bash
+sudo bin/apply-sensor-watch
+indiana-sensor-watch --once
+journalctl -t indiana-sensor-watch -f
+```
+
+Config: `/etc/indiana-sensor-watch.conf` (defaults in `etc/indiana-sensor-watch.conf`). `THROTTLE=0` / `THROTTLE_CPU=0` disable clock writes. `dell_smm` fan2 is ignored (unused HDD_FAN header).
+
+## Monitor input select
+
+These FirePros are mini-DP only. There is no `/dev/cec`, so HDMI-CEC cannot switch the set.
+
+`indiana-monitor-input` uses **DDC/CI** (`ddcutil`, VCP 60) on the current cable:
+
+```bash
+indiana-monitor-input detect
+indiana-monitor-input grab    # request DisplayPort-1 (this PC)
+indiana-monitor-input set hdmi1
+```
+
+Verified on this Samsung (2018) via `card2-DP-4` / i2c-7: EDID works, **I2C 0x37 does not answer**. Until the OSD “DDC/CI” option is on (or a different panel is used), `grab` will fail with that fact. User must be in group `i2c` (or use sudo).
+
+## IR HDMI select (Arduino Uno)
+
+When DDC/CEC cannot switch the TV, a 940 nm LED on an Uno can send one Samsung discrete code. Wiring and flash: `tools/ir-blaster/README.md`.
+
+```bash
+indiana-ir-flash                 # arduino-cli; no IDE
+indiana-ir-send hdmi2
+```
+
+Host waits for `READY`/`OK` on the serial fd (Uno resets on port open). Group `dialout` required.
 ---
 
 ## Lab host note — Thumper (NVIDIA)

@@ -16,12 +16,10 @@ Fresh Ubuntu 26.04
         v
 +---------------------------+
 | Automated (rebuild-machine)|
-| apt core + SDR/ham         |
+| apt core                   |
+| KiCad 10 + tscircuit       |
 | rustup stable              |
-| HackRF host build          |
-| Mayhem download + SD tree  |
-| URH venv                   |
-| HackRF udev rules          |
+| DragonSDR suite (if present)|
 | Flatpak Telegram           |
 +---------------------------+
         |
@@ -59,6 +57,7 @@ Fresh Ubuntu 26.04
 | `~/Documents/IndianaDell/` | Source of truth for scripts, themes, HackRF assets |
 | `/usr/` | Apt-installed binaries, Plymouth themes, udev rules (after apply) |
 | `~/.cargo/` | Rust toolchain (rustup) |
+| `~/.local/` | tscircuit / `tsci` (npm `--prefix`, KiCad TypeScript companion) |
 | `hackrf/venv-urh/` | Universal Radio Hacker Python venv |
 | `hackrf/build/` | HackRF host tools built from source |
 | `hackrf/local/` | Optional CMAKE_INSTALL_PREFIX for built libhackrf |
@@ -70,7 +69,8 @@ Fresh Ubuntu 26.04
 | If you need… | Read |
 |--------------|------|
 | Full restore after reinstall | Ch. 2 + Ch. 3 |
-| Python, Rust, pandoc | Ch. 4 |
+| KiCad 10, tscircuit (`tsci` TypeScript → `.kicad_sch`) | Ch. 2 + Ch. 3 + Appendix B |
+| Python, Rust, pandoc, Node | Ch. 4 |
 | Boot/login/desktop look | Ch. 5 + Ch. 7 |
 | FirePro GPUs, ROCm | Ch. 6 |
 | GNU Radio, gqrx, SoapySDR | Ch. 8 |

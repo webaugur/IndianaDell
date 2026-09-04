@@ -28,6 +28,7 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | **PERC H710 IT flash** | `docs/B1GMB42-perc-it-flash.md` | — |
 | **Software inventory stub** | `B1GMB42-software-inventory.md` | `B1GMB42-software-inventory.pdf` |
 | **Quick reference** | `docs/features-available.md` | — |
+| **KiCad 10 + tscircuit plan** | `KiCadPlan.md` | — |
 | **Thumper GPU (NVIDIA)** | `docs/thumper-gpu.md` | — |
 | **FactoryDocs index** | `FactoryDocs/README.md` | — |
 
