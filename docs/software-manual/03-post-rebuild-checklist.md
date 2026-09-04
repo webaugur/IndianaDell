@@ -81,10 +81,11 @@ Installed by `bin/rebuild-machine` Phase 2b unless `SKIP_KICAD=1`. Opt out is re
 ```bash
 kicad-cli version
 python3 -c 'import pcbnew; print(pcbnew.Version())'
-command -v ngspice gerbv gerbview
+command -v ngspice gerbv gerbview tsci
+tsci --help | head
 ```
 
-Expect `10.0.*` from `kicad-cli` and `pcbnew`. `kicad-doc-id` may remain on 9.x; that is not a blocker.
+Expect `10.0.*` from `kicad-cli` and `pcbnew`. TypeScript circuits: `tsci init` then `tsci export index.tsx -f kicad_sch` (also `kicad_pcb` / `kicad_zip`). Autorouter is `@tscircuit/capacity-autorouter`. `kicad-doc-id` may remain on 9.x; that is not a blocker.
 
 ## 6. Documentation PDFs
 

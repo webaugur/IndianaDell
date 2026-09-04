@@ -25,6 +25,12 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |
 | `apply-amdgpu` | `etc/apply.sh` | 6 |
+| `apply-sensor-watch` | `bin/apply-sensor-watch` — install thermal/fan watchdog unit | 6 |
+| `indiana-sensor-watch` | `scripts/sensors/indiana-sensor-watch.sh` — `--once` / daemon | 6 |
+| `indiana-monitor-input` | `scripts/display/indiana-monitor-input.sh` — DDC/CI input select | 6 |
+| `indiana-ir-send` | `scripts/ir/indiana-ir-send.sh` — USB serial to Uno IR blaster | 6 |
+| `indiana-ir-flash` | `scripts/ir/indiana-ir-flash.sh` — arduino-cli compile/upload | 6 |
+| `tsci` / `tscircuit` | tscircuit CLI under `~/.local` — TypeScript → KiCad export | EDA / Ch. 3 |
 | `amd-install` | `amd-radeon/install-all.sh` | 6 |
 | `amd-preflight` | `amd-radeon/00-preflight.sh` | 6 |
 | `amd-verify` | `amd-radeon/04-verify.sh` | 6 |

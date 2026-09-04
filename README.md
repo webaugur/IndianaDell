@@ -43,7 +43,7 @@ Requires `pandoc` and `texlive-xetex` (installed by `bin/rebuild-machine` Phase 
 
 ## Rebuild
 
-`bin/rebuild-machine` restores workstation apt (`APT_CORE`), **KiCad 10** (`APT_KICAD` + `ppa:kicad/kicad-10.0-releases`), rustup, and Flatpak Telegram. KiCad is default-on; opt out with `SKIP_KICAD=1`. SDR/ham stays in DragonSDR (`SKIP_DRAGONSDR=1` to skip). See `docs/software-manual/02-rebuild-and-recovery.md`.
+`bin/rebuild-machine` restores workstation apt (`APT_CORE`), **KiCad 10** (`APT_KICAD` + `ppa:kicad/kicad-10.0-releases` + **tscircuit** `tsci` for TypeScript schematics), rustup, and Flatpak Telegram. KiCad is default-on; opt out with `SKIP_KICAD=1`. SDR/ham stays in DragonSDR (`SKIP_DRAGONSDR=1` to skip). See `docs/software-manual/02-rebuild-and-recovery.md`.
 
 ## PATH (terminal defaults)
 

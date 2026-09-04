@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# tscircuit CLI — TypeScript/React circuits, export to KiCad (.kicad_sch / .kicad_pcb).
+# Installs under ~/.local via scripts/rebuild/install-tscircuit.sh (KiCad Phase 2b).
+set -euo pipefail
+PREFIX="${TSCIRCUIT_NPM_PREFIX:-$HOME/.local}"
+CLI="${PREFIX}/lib/node_modules/tscircuit/cli.mjs"
+if [[ ! -f "$CLI" ]]; then
+  echo "tscircuit is not installed at $CLI" >&2
+  echo "Install with: bin/fix-indianadell.sh --fix   (or omit SKIP_KICAD on rebuild)" >&2
+  echo "Upstream: https://github.com/tscircuit/tscircuit" >&2
+  exit 1
+fi
+# cli.mjs shebang is bun; npm's published entry is Node. Use node so bun is not required.
+exec node "$CLI" "$@"

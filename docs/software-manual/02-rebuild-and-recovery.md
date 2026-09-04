@@ -22,7 +22,7 @@ bin/install-dragonsdr               # SDR suite alone
 | `SKIP_DRAGONSDR=1` | Skip SDR suite install/verify |
 | `SKIP_HACKRF_BUILD=1` | Forwarded to DragonSDR suite (skip cmake host build) |
 | `SKIP_HAM=1` | Forwarded to DragonSDR (skip desktop ham apps) |
-| `SKIP_KICAD=1` | Skip KiCad 10 PPA + `APT_KICAD` (ngspice, gerbv, 3D libs) |
+| `SKIP_KICAD=1` | Skip KiCad 10 PPA + `APT_KICAD` + tscircuit npm (ngspice, gerbv, 3D libs) |
 | `DRAGONSDR_ROOT=…` | Override suite path (default `~/Documents/DragonSDR`) |
 
 **Phases** (from `scripts/rebuild/rebuild-machine.sh`):
@@ -31,7 +31,7 @@ bin/install-dragonsdr               # SDR suite alone
 |-------|--------|
 | 1 | `apt-get update` |
 | 2 | Install `APT_CORE` — build, Python, docs, GPU utils, flatpak, gh |
-| 2b | KiCad 10 PPA + `APT_KICAD` (unless `SKIP_KICAD=1`) |
+| 2b | KiCad 10 PPA + `APT_KICAD` + tscircuit npm (unless `SKIP_KICAD=1`) |
 | 3 | Flatpak remote + `org.telegram.desktop` (unless skipped) |
 | 4 | rustup stable if `rustc` missing |
 | 5 | DragonSDR `install-suite` (apt SDR/ham + HackRF/Mayhem/URH) unless skipped |
@@ -50,7 +50,7 @@ bin/install-dragonsdr --verify-only
 `verify_stack` checks:
 
 - Every package in `APT_CORE` via `dpkg-query`
-- Every package in `APT_KICAD` plus `kicad` / `kicad-cli` / `ngspice` and `import pcbnew` 10.* (unless `SKIP_KICAD=1`)
+- Every package in `APT_KICAD` plus `kicad` / `kicad-cli` / `ngspice` / `node` / `npm`, `import pcbnew` 10.*, and tscircuit + `@tscircuit/capacity-autorouter` (unless `SKIP_KICAD=1`)
 - Commands: `rustc`, `cargo`, `pandoc`, `xelatex`, `vkcube`
 - Launchers: `dellmerge`, `gpu-stress`, `iotest`, `apply-amdgpu`, `rebuild-machine`
 - DragonSDR suite (unless `SKIP_DRAGONSDR=1` or suite missing)

@@ -11,7 +11,7 @@
 #   SKIP_TELEGRAM=1 ./scripts/rebuild/rebuild-machine.sh
 #   SKIP_DRAGONSDR=1 ./scripts/rebuild/rebuild-machine.sh
 #   SKIP_HACKRF_BUILD=1 ./scripts/rebuild/rebuild-machine.sh   # forwarded to DragonSDR
-#   SKIP_KICAD=1 ./scripts/rebuild/rebuild-machine.sh         # skip KiCad 10 + ngspice/gerbv
+#   SKIP_KICAD=1 ./scripts/rebuild/rebuild-machine.sh         # skip KiCad 10 + tscircuit/ngspice/gerbv
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -37,6 +37,8 @@ done
 source "$(dirname "${BASH_SOURCE[0]}")/package-lists.sh"
 # shellcheck source=ensure-kicad-ppa.sh
 source "$(dirname "${BASH_SOURCE[0]}")/ensure-kicad-ppa.sh"
+# shellcheck source=install-tscircuit.sh
+source "$(dirname "${BASH_SOURCE[0]}")/install-tscircuit.sh"
 
 dragonsdr_install() {
   local suite="${DRAGONSDR_ROOT}/bin/install-suite"
@@ -65,7 +67,7 @@ verify_stack() {
         fail=1
       fi
     done
-    for c in kicad kicad-cli ngspice; do
+    for c in kicad kicad-cli ngspice node npm; do
       command -v "$c" >/dev/null || { log "MISS cmd: $c"; fail=1; }
     done
     if ! python3 -c 'import pcbnew,sys; v=pcbnew.Version(); print(v); sys.exit(0 if str(v).startswith("10.") else 1)' >/dev/null 2>&1; then
@@ -73,6 +75,12 @@ verify_stack() {
       fail=1
     else
       log "OK   pcbnew python"
+    fi
+    if tscircuit_installed; then
+      log "OK   tscircuit + @tscircuit/capacity-autorouter"
+    else
+      log "MISS tscircuit (npm: tscircuit + @tscircuit/capacity-autorouter)"
+      fail=1
     fi
   fi
   for c in rustc cargo pandoc xelatex vkcube; do
@@ -148,6 +156,8 @@ else
   log "Phase 2b: KiCad 10 PPA + packages (${#APT_KICAD[@]})"
   ensure_kicad_ppa || die "KiCad PPA failed"
   sudo apt-get install -y "${APT_KICAD[@]}"
+  log "Phase 2b: tscircuit (TypeScript → KiCad) + capacity-autorouter"
+  install_tscircuit || die "tscircuit npm install failed"
 fi
 
 if [[ "${SKIP_TELEGRAM:-0}" != 1 ]]; then

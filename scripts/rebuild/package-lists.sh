@@ -48,6 +48,8 @@ APT_KICAD=(
   kicad-gruvbox-theme
   ngspice                  # Eeschema / simulation companion
   gerbv                    # standalone Gerber viewer (optional companion)
+  nodejs                   # tscircuit CLI (TypeScript → KiCad)
+  npm
 )
 
 # Legacy name kept empty so older docs/scripts that reference APT_SDR_HAM do not expand unbound.

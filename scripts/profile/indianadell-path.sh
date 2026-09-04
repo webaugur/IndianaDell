@@ -66,4 +66,12 @@ indianadell_path_prepend() {
     export PATH="${prefix}${cleaned%:}"
 }
 
+# tscircuit (KiCad TypeScript EDA) lives under ~/.local from install-tscircuit.sh
+if [[ -d "$HOME/.local/lib/node_modules" ]]; then
+  case ":${NODE_PATH:-}:" in
+    *":$HOME/.local/lib/node_modules:"*) ;;
+    *) export NODE_PATH="$HOME/.local/lib/node_modules${NODE_PATH:+:$NODE_PATH}" ;;
+  esac
+fi
+
 indianadell_path_prepend

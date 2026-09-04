@@ -31,9 +31,11 @@
 
 Default-on for workstation rebuild. Requires `ppa:kicad/kicad-10.0-releases` (`scripts/rebuild/ensure-kicad-ppa.sh`) before install so apt does not pull universe 9.x.
 
-`kicad`, `kicad-libraries`, `kicad-symbols`, `kicad-footprints`, `kicad-packages3d`, `kicad-templates`, `kicad-demos`, `kicad-dbg`, `kicad-doc-en`, `kicad-doc-de`, `kicad-doc-fr`, `kicad-doc-es`, `kicad-doc-it`, `kicad-doc-ja`, `kicad-doc-pl`, `kicad-doc-ru`, `kicad-doc-zh`, `kicad-doc-ca`, `kicad-gruvbox-theme`, `ngspice`, `gerbv`
+`kicad`, `kicad-libraries`, `kicad-symbols`, `kicad-footprints`, `kicad-packages3d`, `kicad-templates`, `kicad-demos`, `kicad-dbg`, `kicad-doc-en`, `kicad-doc-de`, `kicad-doc-fr`, `kicad-doc-es`, `kicad-doc-it`, `kicad-doc-ja`, `kicad-doc-pl`, `kicad-doc-ru`, `kicad-doc-zh`, `kicad-doc-ca`, `kicad-gruvbox-theme`, `ngspice`, `gerbv`, `nodejs`, `npm`
 
-`kicad-doc-id` is **not** in the list (universe still 9.0.8 while the PPA is 10.x). Skip the whole set with `SKIP_KICAD=1`.
+**tscircuit** (not apt): `scripts/rebuild/install-tscircuit.sh` runs `npm install -g --prefix ~/.local tscircuit @tscircuit/capacity-autorouter typescript`. CLI is `tsci` / `tscircuit`. Export a circuit to KiCad with `tsci export circuit.tsx -f kicad_sch` (also `kicad_pcb`, `kicad_zip`). Autorouter npm name is `@tscircuit/capacity-autorouter` ([tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)).
+
+`kicad-doc-id` is **not** in the list (universe still 9.0.8 while the PPA is 10.x). Skip the whole set (including tscircuit) with `SKIP_KICAD=1`.
 
 ## Chapter 11 — Flatpak
 

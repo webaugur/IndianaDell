@@ -5,7 +5,7 @@
 #
 # Verifies and repairs (with --fix) the complete non-optional stack:
 #   - All APT_CORE packages (package-lists.sh is the source of truth)
-#   - APT_KICAD (KiCad 10 + ngspice/gerbv) unless SKIP_KICAD=1
+#   - APT_KICAD (KiCad 10 + ngspice/gerbv + tscircuit) unless SKIP_KICAD=1
 #   - All required bin/ launchers
 #   - All system configuration files under etc/ (amdgpu, grub, udev, gdm, etc.)
 #   - Environment variables, CopyQ autostart, USB dock stability
@@ -54,6 +54,8 @@ log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" | tee -a "$LOG"; }
 source "$ROOT/scripts/rebuild/package-lists.sh"
 # shellcheck source=scripts/rebuild/ensure-kicad-ppa.sh
 source "$ROOT/scripts/rebuild/ensure-kicad-ppa.sh"
+# shellcheck source=scripts/rebuild/install-tscircuit.sh
+source "$ROOT/scripts/rebuild/install-tscircuit.sh"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -174,7 +176,7 @@ check_kicad() {
   done
 
   local c
-  for c in kicad kicad-cli ngspice; do
+  for c in kicad kicad-cli ngspice node npm; do
     if command -v "$c" >/dev/null 2>&1; then
       log "OK   cmd: $c"
     else
@@ -189,6 +191,19 @@ check_kicad() {
     log "OK   pcbnew python $ver"
   else
     log "MISS/FAIL pcbnew python (need 10.*)"
+    need_fix=1
+  fi
+
+  if [[ $FIX -eq 1 ]]; then
+    install_tscircuit || {
+      log "MISS tscircuit npm install"
+      need_fix=1
+    }
+  fi
+  if tscircuit_installed; then
+    log "OK   tscircuit + @tscircuit/capacity-autorouter"
+  else
+    log "MISS tscircuit (npm: tscircuit + @tscircuit/capacity-autorouter)"
     need_fix=1
   fi
 }
@@ -269,6 +284,7 @@ for b in \
   apply-dark-mode apply-max-performance apply-fast-boot apply-fast-login \
   apply-sensor-watch indiana-sensor-watch indiana-monitor-input \
   indiana-ir-send indiana-ir-flash \
+  tsci tscircuit \
   fix-nautilus-desktop-launch sync-desktop-icons \
   themes-extract themes-install-boot themes-restore-boot \
   install-dragonsdr hackrf-env \
