@@ -123,11 +123,30 @@ indiana-ir-send hdmi2
 ```
 
 Host waits for `READY`/`OK` on the serial fd (Uno resets on port open). Group `dialout` required.
+
+## LAN remote (`samsungtv`)
+
+Tizen WebSocket CLI for the Samsung on Tower5810 (UN32M4500, `10.0.0.31`). Default-on via `pipx install samsungtvws[cli]`; opt out `SKIP_SAMSUNGTV=1`. Wrapper: `bin/samsungtv` (host `10.0.0.31`, port `8002`, token `~/.config/indianadell/samsungtv.token`).
+
+First run shows **Allow** on the TV. Then:
+
+```bash
+samsungtv device-info
+samsungtv home
+samsungtv volume-up
+samsungtv send-key KEY_HDMI
+samsungtv apps
+samsungtv app-run 111299001912   # YouTube
+```
+
+Override host: `SAMSUNGTV_HOST=… samsungtv …` or `--host`. IR (`indiana-ir-send`) still works if Smart Hub is down. `SKIP_SAMSUNGTV=1` skips install on rebuild and `fix-indianadell`.
+
+Lab probe notes, protocol comparison (WebSocket / UPnP / SmartThings), and recipes: [`docs/samsung-un32m4500.md`](../samsung-un32m4500.md) · `UN32M4500-lab-manual.pdf`.
 ---
 
 ## Lab host note — Thumper (NVIDIA)
 
-This chapter is **Tower5810 / AMD only**. The lab host **`thumper.local`** (Dell Precision T5610) runs **NVIDIA TITAN Xp** and is **not** configured with `apply-amdgpu`.
+This chapter is **Tower5810 / AMD only**. Lab topology: [`docs/lab-hosts.md`](../lab-hosts.md). The intelligence host **`thumper.local`** (Dell Precision T5610) runs **NVIDIA TITAN Xp** and is **not** configured with `apply-amdgpu`. Safar’s NVS 3100M (nvidia 340.108) is also out of scope here — `docs/safar-inventory.md`.
 
 **Full Thumper GPU doc** (inventory, dual-card plan, **power/clock locking**, LingBot-Map pointer):
 

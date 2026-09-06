@@ -12,6 +12,7 @@
 #   SKIP_DRAGONSDR=1 ./scripts/rebuild/rebuild-machine.sh
 #   SKIP_HACKRF_BUILD=1 ./scripts/rebuild/rebuild-machine.sh   # forwarded to DragonSDR
 #   SKIP_KICAD=1 ./scripts/rebuild/rebuild-machine.sh         # skip KiCad 10 + tscircuit/ngspice/gerbv
+#   SKIP_SAMSUNGTV=1 ./scripts/rebuild/rebuild-machine.sh     # skip samsungtv (samsungtvws[cli]) LAN remote
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -26,7 +27,7 @@ for arg in "$@"; do
   case "$arg" in
     --verify-only) VERIFY_ONLY=1 ;;
     -h|--help)
-      sed -n '2,14p' "$0"
+      sed -n '2,15p' "$0"
       exit 0
       ;;
     *) die "Unknown argument: $arg (try --help)" ;;
@@ -39,6 +40,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/package-lists.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/ensure-kicad-ppa.sh"
 # shellcheck source=install-tscircuit.sh
 source "$(dirname "${BASH_SOURCE[0]}")/install-tscircuit.sh"
+# shellcheck source=install-samsungtv.sh
+source "$(dirname "${BASH_SOURCE[0]}")/install-samsungtv.sh"
 
 dragonsdr_install() {
   local suite="${DRAGONSDR_ROOT}/bin/install-suite"
@@ -82,6 +85,14 @@ verify_stack() {
       log "MISS tscircuit (npm: tscircuit + @tscircuit/capacity-autorouter)"
       fail=1
     fi
+  fi
+  if [[ "${SKIP_SAMSUNGTV:-0}" == 1 ]]; then
+    log "SKIP samsungtv verification"
+  elif samsungtv_installed; then
+    log "OK   samsungtv (samsungtvws[cli])"
+  else
+    log "MISS samsungtv (pipx: samsungtvws[cli])"
+    fail=1
   fi
   for c in rustc cargo pandoc xelatex vkcube; do
     command -v "$c" >/dev/null || { log "MISS cmd: $c"; fail=1; }
@@ -158,6 +169,13 @@ else
   sudo apt-get install -y "${APT_KICAD[@]}"
   log "Phase 2b: tscircuit (TypeScript → KiCad) + capacity-autorouter"
   install_tscircuit || die "tscircuit npm install failed"
+fi
+
+if [[ "${SKIP_SAMSUNGTV:-0}" == 1 ]]; then
+  log "Phase 2c: SKIP samsungtv (SKIP_SAMSUNGTV=1)"
+else
+  log "Phase 2c: samsungtv CLI (pipx samsungtvws[cli])"
+  install_samsungtv || die "samsungtv pipx install failed"
 fi
 
 if [[ "${SKIP_TELEGRAM:-0}" != 1 ]]; then

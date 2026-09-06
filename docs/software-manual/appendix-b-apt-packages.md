@@ -5,7 +5,8 @@
 **Install SDR suite:** `bin/install-dragonsdr` → DragonSDR `bin/install-suite`.  
 **Full system snapshot:** `apt-full-manifest.txt` (after rebuild).  
 **SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.  
-**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` + tscircuit npm on rebuild and `fix-indianadell`).
+**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` + tscircuit npm on rebuild and `fix-indianadell`).  
+**samsungtv opt-out:** `SKIP_SAMSUNGTV=1` (skips pipx `samsungtvws[cli]` on rebuild and `fix-indianadell`).
 
 ## Chapter 4 — Development (IndianaDell `APT_CORE`)
 
@@ -14,6 +15,8 @@
 ## Chapter 6 — GPU and Display
 
 `vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`
+
+**samsungtv** (not apt; default-on): `scripts/rebuild/install-samsungtv.sh` runs `pipx install samsungtvws[cli]` (apt `pipx` if missing). CLI is `samsungtv`. Skip with `SKIP_SAMSUNGTV=1`.
 
 ## Chapter 8 — GNU Radio and SDR (DragonSDR `APT_SDR` + build libs)
 

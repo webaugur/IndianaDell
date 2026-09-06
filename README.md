@@ -2,6 +2,8 @@
 
 Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebuild scripts, themes, recovery utilities, and Ventoy live persistence.
 
+**Lab hosts** (see **`docs/lab-hosts.md`**): **Safar** is the field console (instruments), **Tower5810** is the human interface console to the computers, **Thumper** is intelligence and automation. Rebuild tooling in this repo is **Tower5810-owned**.
+
 **SDR / ham / HackRF** live in **[DragonSDR](https://github.com/webaugur/DragonSDR)** (`~/Documents/DragonSDR`). This repo installs that suite when needed via `bin/install-dragonsdr`.
 
 ## Layout
@@ -23,13 +25,18 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | Document | Source | PDF |
 |----------|--------|-----|
 | **Software Manual** | `docs/software-manual/` (15 chapters) | `B1GMB42-software-manual.pdf` |
-| **Hardware inventory** | `B1GMB42-slot-port-inventory.md` | `B1GMB42-slot-port-inventory.pdf` |
+| **Hardware inventory** | `B1GMB42-slot-port-inventory.md` (includes lab USB dock) | `B1GMB42-slot-port-inventory.pdf` |
 | **ZFS recovery** | `docs/B1GMB42-zfs-recovery.md` | `B1GMB42-zfs-recovery.pdf` |
 | **PERC H710 IT flash** | `docs/B1GMB42-perc-it-flash.md` | — |
 | **Software inventory stub** | `B1GMB42-software-inventory.md` | `B1GMB42-software-inventory.pdf` |
 | **Quick reference** | `docs/features-available.md` | — |
 | **KiCad 10 + tscircuit plan** | `KiCadPlan.md` | — |
+| **Lab hosts (three roles)** | `docs/lab-hosts.md` | — |
+| **Safar field console** | `docs/safar-inventory.md` | — |
 | **Thumper GPU (NVIDIA)** | `docs/thumper-gpu.md` | — |
+| **Thumper hardware inventory** | `docs/thumper-inventory.md` | — |
+| **WCH + CS202 USB audio dock** | Hardware manual USB section; live scan `docs/usb-wch-cs202-dock.md` | in inventory PDF |
+| **JMicron USB-SATA dock** | `docs/usb-dock-stability.md` | — |
 | **FactoryDocs index** | `FactoryDocs/README.md` | — |
 
 **Build all PDFs:**
@@ -44,7 +51,7 @@ Requires `pandoc` and `texlive-xetex` (installed by `bin/rebuild-machine` Phase 
 
 ## Rebuild
 
-`bin/rebuild-machine` restores workstation apt (`APT_CORE`), **KiCad 10** (`APT_KICAD` + `ppa:kicad/kicad-10.0-releases` + **tscircuit** `tsci` for TypeScript schematics), rustup, and Flatpak Telegram. KiCad is default-on; opt out with `SKIP_KICAD=1`. SDR/ham stays in DragonSDR (`SKIP_DRAGONSDR=1` to skip). See `docs/software-manual/02-rebuild-and-recovery.md`.
+`bin/rebuild-machine` restores workstation apt (`APT_CORE`), **KiCad 10** (`APT_KICAD` + `ppa:kicad/kicad-10.0-releases` + **tscircuit** `tsci` for TypeScript schematics), **samsungtv** (`pipx install samsungtvws[cli]`; opt out `SKIP_SAMSUNGTV=1`), rustup, and Flatpak Telegram. KiCad is default-on; opt out with `SKIP_KICAD=1`. SDR/ham stays in DragonSDR (`SKIP_DRAGONSDR=1` to skip). See `docs/software-manual/02-rebuild-and-recovery.md`.
 
 ## PATH (terminal defaults)
 

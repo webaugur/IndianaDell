@@ -30,6 +30,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `indiana-monitor-input` | `scripts/display/indiana-monitor-input.sh` — DDC/CI input select | 6 |
 | `indiana-ir-send` | `scripts/ir/indiana-ir-send.sh` — USB serial to Uno IR blaster | 6 |
 | `indiana-ir-flash` | `scripts/ir/indiana-ir-flash.sh` — arduino-cli compile/upload | 6 |
+| `samsungtv` | pipx `samsungtvws[cli]` — Tizen LAN remote (defaults to `10.0.0.31:8002`) | 6 |
 | `tsci` / `tscircuit` | tscircuit CLI under `~/.local` — TypeScript → KiCad export | EDA / Ch. 3 |
 | `amd-install` | `amd-radeon/install-all.sh` | 6 |
 | `amd-preflight` | `amd-radeon/00-preflight.sh` | 6 |
