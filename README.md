@@ -16,6 +16,7 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | `Themes/` | Boot/login/desktop theme mirrors and installers |
 | `FactoryDocs/` | Dell vendor CABs/PDFs (local archive; large binaries) |
 | `docs/` | Software manual chapters, feature notes, hardware figures |
+
 | `mount-rpool-recovery.sh` | ZFS `rpool` recovery mount (chroot default, `--overlay` optional) |
 
 **SDR suite (separate repo):** `~/Documents/DragonSDR` — apt packages, GNU Radio, ham apps, HackRF/Mayhem, URH.
@@ -34,6 +35,8 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | **Lab hosts (three roles)** | `docs/lab-hosts.md` | — |
 | **Safar field console** | `docs/safar-inventory.md` | — |
 | **Thumper GPU (NVIDIA)** | `docs/thumper-gpu.md` | — |
+| **Lab hosts (three roles)** | `docs/lab-hosts.md` | — |
+| **Safar field console** | `docs/safar-inventory.md` | — |
 | **Thumper hardware inventory** | `docs/thumper-inventory.md` | — |
 | **WCH + CS202 USB audio dock** | Hardware manual USB section; live scan `docs/usb-wch-cs202-dock.md` | in inventory PDF |
 | **JMicron USB-SATA dock** | `docs/usb-dock-stability.md` | — |
