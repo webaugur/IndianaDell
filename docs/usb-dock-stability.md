@@ -1,5 +1,7 @@
 # USB-SATA Dock Stability (JMicron 152d:2352)
 
+**Different device:** the 2026-09-04 WCH hub + CS202/AB13X audio dock is documented in **`docs/usb-wch-cs202-dock.md`** (`1a86:8095` + `001f:0b21`). This file is only the JMicron 2-bay SATA duplicator.
+
 **Host:** Tower5810 (and any machine using the same cheap USB dock)  
 **Dock chipset:** JMicron ATA/ATAPI Bridge (USB VID:PID `152d:2352`)  
 **Interface:** USB 2.0 High Speed (480 Mbps) — **not USB 3**  

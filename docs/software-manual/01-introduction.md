@@ -76,6 +76,7 @@ Fresh Ubuntu 26.04
 | GNU Radio, gqrx, SoapySDR | Ch. 8 |
 | fldigi, WSJT-X, CHIRP | Ch. 9 |
 | HackRF, Mayhem, URH | Ch. 10 |
+| Lab USB dock (audio + microSD) | Hardware manual USB section; `docs/usb-wch-cs202-dock.md` |
 | Telegram | Ch. 11 |
 | iotest, dellmerge | Ch. 12 |
 | Dell driver CABs | Ch. 13 |
@@ -92,7 +93,8 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 
 ## Related documents
 
-- **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF — GPUs, PERC, bays, ports
+- **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF — GPUs, PERC, bays, ports, lab USB dock
+- **Lab USB dock:** WCH hubs `1a86:8095`, CS202/AB13X audio `001f:0b21`, Genesys microSD `05e3:0751` — hardware manual + `docs/usb-wch-cs202-dock.md` (not the JMicron SATA dock)
 - **ZFS recovery:** `docs/B1GMB42-zfs-recovery.md` + PDF — live-media rpool/bpool chroot
 - **PERC IT flash:** `docs/B1GMB42-perc-it-flash.md` — H710 FreeDOS/Wiggly path
 - **Themes deep-dive:** `Themes/README.md` and per-folder READMEs

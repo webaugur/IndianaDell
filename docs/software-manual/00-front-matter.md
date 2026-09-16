@@ -1,7 +1,7 @@
 ---
 title: "B1GMB42 Software Manual"
 author: "IndianaDell workspace"
-date: "2026-07-09"
+date: "2026-09-04"
 header-includes:
   - \setlength{\parskip}{0.4em}
 ---
@@ -13,7 +13,8 @@ header-includes:
 **OS:** Ubuntu 26.04 LTS (resolute)  
 **Workspace:** `~/Documents/IndianaDell`
 
-**Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)  
+**Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports, lab USB dock)  
+**Lab USB dock (WCH + CS202 audio + Genesys microSD):** hardware manual USB section + `docs/usb-wch-cs202-dock.md`  
 **Lab host Thumper (NVIDIA GPUs, power/clock locks):** `docs/thumper-gpu.md`  
 **Lab host Thumper (ZFS / disks / boot reconstruction):** `docs/thumper-storage.md`
 

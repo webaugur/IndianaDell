@@ -428,11 +428,11 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 | Status | **FAULT** — `FW in FAULT state, Fault code:0x40000` |
 | Disks exposed | **None** |
 
-### USB-attached storage
+### USB-attached storage (2026-09-04)
 
 | OS dev | Size | Model | Notes |
 |--------|------|-------|-------|
-| sdd | 30 GB | PNY USB (Ventoy) | Install/recovery stick — not production storage |
+| `sdd` (`usb-Generic_STORAGE_DEVICE-0:0`) | 7.4 GiB | Genesys `05e3:0751` microSD | Dock reader; FAT32 **HackRF** (`300C-16B0`) mounted at `/run/media/user/HackRF`. Name `sdd` is ephemeral. See `docs/usb-wch-cs202-dock.md`. |
 
 ---
 
@@ -446,16 +446,56 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 | `00:1d.0` EHCI | USB 2.0 | Rear/front USB2 |
 | `00:1a.0` EHCI | USB 2.0 | Internal headers / front |
 
-### Attached devices (current)
+### Attached devices (2026-09-04 rescan)
 
-| Device | Notes |
-|--------|-------|
-| Realtek RTS5182 | Front-panel card reader (empty slots) |
-| CSR Bluetooth | Onboard BT dongle |
-| C-Media USB audio | USB sound |
-| Dell keyboard / wireless mouse | Input |
+| Device | USB ID | Notes |
+|--------|--------|-------|
+| Broadcom Bluetooth 3.0 | `0a5c:2198` | Onboard / internal (`usb1-5`) |
+| NEC 7-port hub | `0409:0050` | Existing USB 2 hub on `usb1-14` (keyboard, mouse, C-Media) |
+| C-Media USB audio | `0d8c:0012` | Existing dongle on NEC hub port 2 |
+| Dell Keyboard SK-8115 | `413c:2003` | NEC hub port 4 |
+| 2.4G Wireless Mouse | `3938:1191` | NEC hub port 6 |
+| **WCH / QinHeng 4-port hub ×2** | **`1a86:8095`** | **New dock** (cascaded, USB 2 HS). See `docs/usb-wch-cs202-dock.md` |
+| **Generic CS202 / AB13X audio** | **`001f:0b21`** | **New dock 3.5 mm codec**, serial `20210726905926` |
+| **Genesys Logic microSD reader** | **`05e3:0751`** | **New dock**; appears only with a card in (`usb-storage`). |
 
-**Removed since pre-crash inventory:** JMicron USB 2×2TB WD enclosures (were `sdg`/`sdh`, caused I/O errors — powered off).
+USB 3 SuperSpeed root hub (`usb2`, 6 ports) was **empty** in this capture — the dock is on the USB 2 NEC hub. The card reader still enumerated at HS 480 Mbps once media was inserted.
+
+**Removed since pre-crash inventory:** JMicron USB 2×2TB WD enclosures (were `sdg`/`sdh`, caused I/O errors — powered off). Front-panel Realtek RTS5182 card reader from the 2026-07-03 scan was **not** present on 2026-09-04.
+
+### Lab USB dock (WCH + CS202 + Genesys)
+
+Shared lab dock captured **2026-09-04** on Tower5810. Linux prints **no retail name**. Identify by USB IDs. Live-scan notes: `docs/usb-wch-cs202-dock.md`. **Not** the JMicron USB-SATA duplicator (`152d:2352`, `docs/usb-dock-stability.md`).
+
+| Function | USB ID | Linux name | Speed | Driver |
+|----------|--------|------------|-------|--------|
+| Dual 4-port hubs (cascaded) | `1a86:8095` | QinHeng `USB Hub`, `bcdDevice` 13.10 | HS 480 Mbps | `hub` |
+| 3.5 mm headset jack | `001f:0b21` | `Generic` / **CS202**, serial **`20210726905926`**; `usb.ids` **Walmart AB13X Headset Adapter** | FS 12 Mbps | `snd-usb-audio` + `usbhid` |
+| microSD reader | `05e3:0751` | Genesys Logic; SCSI `Generic STORAGE DEVICE` rev 1404 | HS 480 Mbps | `usb-storage` (BOT) |
+
+**Topology this capture** (dock daisy-chained on the existing NEC 7-port USB 2 hub, not on a native USB 3 port):
+
+```text
+xhci 0000:00:14.0  Bus 001 Port 14
+  NEC 7-port hub  0409:0050
+    Port 3  WCH hub  1a86:8095
+              Port 4  WCH hub  1a86:8095
+                        Port 1  Genesys microSD  05e3:0751  (only with card in)
+                        Port 2  CS202 / AB13X    001f:0b21
+```
+
+**Audio:** ALSA card id `CS202` (USB Audio Class 1). Playback S16_LE stereo 8/48 kHz; capture 48 kHz; mixer PCM + Mic. PipeWire: **AB13X Headset Adapter**. No extra driver. Codec volume-range descriptors are bogus; use PipeWire/ALSA volume. Headset / TRRS, not a studio interface.
+
+**Card reader:** does **not** enumerate with an empty slot. With media: `/dev/disk/by-id/usb-Generic_STORAGE_DEVICE-0:0` (kernel name `sdd` is ephemeral). This capture: FAT32 **HackRF** UUID `300C-16B0` (PortaPack Mayhem tree) auto-mounted at `/run/media/user/HackRF`. Kernel reported a dirty FAT volume and a brief `device offline` on write, then re-enumerated — USB 2 daisy-chain. Run `fsck.vfat` before putting that card back in a PortaPack. Prefer a **native USB 3 host port** for the dock.
+
+**Lab hosts:** Tower5810 (this scan); Thumper and other IndianaDell machines — same IDs. Do not apply JMicron `usbcore.quirks=152d:2352:g` or `bin/99-usb-dock.rules` to these VID:PIDs.
+
+```bash
+lsusb -d 1a86:8095
+lsusb -d 001f:0b21
+lsusb -d 05e3:0751
+cat /proc/asound/cards    # CS202
+```
 
 ---
 
@@ -475,7 +515,8 @@ Single harness carries: power switch, power LED, HDD activity LED, and front USB
 |--------|--------|--------|
 | Motherboard | Intel C610 HD Audio `00:1b.0` | Onboard analog jacks |
 | GPU ×3 | AMD HDMI audio on each FirePro | On display outputs |
-| USB | C-Media USB audio | Attached |
+| USB | C-Media USB audio `0d8c:0012` | Attached (NEC hub) |
+| USB | **CS202 / AB13X** `001f:0b21` | **New dock** 3.5 mm headset codec (`hw:CS202`) |
 
 ---
 
@@ -613,6 +654,8 @@ IndianaDell/
 ├── B1GMB42-software-manual.pdf      # software manual (bin/build-software-manual)
 ├── B1GMB42-zfs-recovery.pdf         # rpool/bpool live-CD recovery
 ├── docs/B1GMB42-zfs-recovery.md     # ZFS recovery (also DOSBOOT/IndianaDell/recovery/)
+├── docs/usb-wch-cs202-dock.md       # WCH + CS202 + Genesys lab USB dock (live scan)
+├── docs/usb-dock-stability.md       # JMicron USB-SATA duplicator (different device)
 ├── docs/software-manual/            # software manual chapters
 ├── B1GMB42-software-inventory.md    # stub → software manual
 ├── b1gmb42.report / B1GMB42.ioperf  # live inventory + disk benchmark
@@ -652,6 +695,7 @@ See `Themes/README.md`. Boot splash: Dell logo = UEFI BGRT; Ubuntu text = Plymou
 5. **Do not re-enable ZFS encryption** until TPM + recovery strategy is documented.
 6. **Keep `ZPOOL_IMPORT_OPTS="-f"`** in `/etc/default/zfs` (force import at boot).
 7. **FactoryDocs:** Re-grab any drivers that failed mid-download (GPU, audio, encryption zips).
+8. **Lab USB dock:** Plug the WCH/CS202/Genesys dock into a native USB 3 port (not the NEC 7-port USB 2 hub).
 
 ---
 
@@ -671,4 +715,4 @@ sudo dmesg | grep -iE 'megaraid|amdgpu|fault'
 
 ---
 
-*IndianaDell workstation toolkit. Last updated: 2026-07-09 (ZFS force import; Wiggly casper .dat; sdc8 = ISO-STASH).*
+*IndianaDell workstation toolkit. Last updated: 2026-09-04 (lab USB dock: WCH `1a86:8095` + CS202 `001f:0b21` + Genesys microSD `05e3:0751`).*

@@ -75,6 +75,7 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | **Telegram** | Flatpak `org.telegram.desktop` 6.9.3 |
 | **Dell inventory** | `bin/dellmerge` → `scripts/dell/` |
 | **Themes** | `Themes/` — boot/login/desktop READMEs; `bin/themes-*`, `bin/apply-dark-mode` |
+| **USB audio dock (WCH + CS202)** | Plugged 2026-09-04: `1a86:8095` hubs + `001f:0b21` AB13X/`CS202` 3.5 mm + Genesys `05e3:0751` microSD (enumerates with card) — `docs/usb-wch-cs202-dock.md` |
 
 ---
 

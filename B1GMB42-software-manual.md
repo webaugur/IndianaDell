@@ -5,7 +5,8 @@
 **OS:** Ubuntu 26.04 LTS (resolute)\
 **Workspace:** `~/Documents/IndianaDell`
 
-**Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports)\
+**Companion hardware manual:** `B1GMB42-slot-port-inventory.md` (slots, GPUs, storage, PERC, ports, lab USB dock)\
+**Lab USB dock (WCH + CS202 audio + Genesys microSD):** hardware manual USB section + `docs/usb-wch-cs202-dock.md`\
 **Lab host Thumper (NVIDIA GPUs, power/clock locks):** `docs/thumper-gpu.md`\
 **Lab host Thumper (ZFS / disks / boot reconstruction):** `docs/thumper-storage.md`
 
@@ -122,6 +123,8 @@ Software arrives in three layers. Understanding the order prevents skipped steps
 
   HackRF, Mayhem, URH                                                         Ch. 10
 
+  Lab USB dock (audio + microSD)                                              Hardware manual USB section; `docs/usb-wch-cs202-dock.md`
+
   Telegram                                                                    Ch. 11
 
   iotest, dellmerge                                                           Ch. 12
@@ -147,7 +150,8 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 
 ## Related documents
 
-- **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF --- GPUs, PERC, bays, ports
+- **Hardware:** `B1GMB42-slot-port-inventory.md` + PDF --- GPUs, PERC, bays, ports, lab USB dock
+- **Lab USB dock:** WCH hubs `1a86:8095`, CS202/AB13X audio `001f:0b21`, Genesys microSD `05e3:0751` --- hardware manual + `docs/usb-wch-cs202-dock.md` (not the JMicron SATA dock)
 - **ZFS recovery:** `docs/B1GMB42-zfs-recovery.md` + PDF --- live-media rpool/bpool chroot
 - **PERC IT flash:** `docs/B1GMB42-perc-it-flash.md` --- H710 FreeDOS/Wiggly path
 - **Themes deep-dive:** `Themes/README.md` and per-folder READMEs
@@ -1212,6 +1216,14 @@ hackrf_info
 ls ~/Documents/DragonSDR/hackrf/sd-card/mayhem-v2.4.0/APPS | wc -l
 bin/urh --version
 ```
+
+## Host card reader (lab USB dock)
+
+IndianaDell machines share a USB 2 dock with a **Genesys Logic `05e3:0751`** microSD slot (enumerates only with a card in). On 2026-09-04 a PortaPack Mayhem card (FAT32 label **HackRF**, UUID `300C-16B0`) auto-mounted at `/run/media/user/HackRF`.
+
+Use `/dev/disk/by-id/usb-Generic_STORAGE_DEVICE-0:0`, not `sdd`. The reader sat on a USB 2 daisy-chain; the kernel logged a dirty FAT volume and a brief disconnect on write. Run `fsck.vfat` before putting that card back in a PortaPack. Dock IDs, audio jack, and topology are in the **hardware manual** USB section (`B1GMB42-slot-port-inventory.md`) and `docs/usb-wch-cs202-dock.md`.
+
+`bin/hackrf-prepare-sdcard` still writes a prepared tree; this dock is just the host slot to mount or image that card.
 
 # Chapter 11 --- Flatpak Applications
 

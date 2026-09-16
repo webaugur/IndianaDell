@@ -79,3 +79,11 @@ hackrf_info
 ls ~/Documents/DragonSDR/hackrf/sd-card/mayhem-v2.4.0/APPS | wc -l
 bin/urh --version
 ```
+
+## Host card reader (lab USB dock)
+
+IndianaDell machines share a USB 2 dock with a **Genesys Logic `05e3:0751`** microSD slot (enumerates only with a card in). On 2026-09-04 a PortaPack Mayhem card (FAT32 label **HackRF**, UUID `300C-16B0`) auto-mounted at `/run/media/user/HackRF`.
+
+Use `/dev/disk/by-id/usb-Generic_STORAGE_DEVICE-0:0`, not `sdd`. The reader sat on a USB 2 daisy-chain; the kernel logged a dirty FAT volume and a brief disconnect on write. Run `fsck.vfat` before putting that card back in a PortaPack. Dock IDs, audio jack, and topology are in the **hardware manual** USB section (`B1GMB42-slot-port-inventory.md`) and `docs/usb-wch-cs202-dock.md`.
+
+`bin/hackrf-prepare-sdcard` still writes a prepared tree; this dock is just the host slot to mount or image that card.

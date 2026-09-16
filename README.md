@@ -23,13 +23,15 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | Document | Source | PDF |
 |----------|--------|-----|
 | **Software Manual** | `docs/software-manual/` (15 chapters) | `B1GMB42-software-manual.pdf` |
-| **Hardware inventory** | `B1GMB42-slot-port-inventory.md` | `B1GMB42-slot-port-inventory.pdf` |
+| **Hardware inventory** | `B1GMB42-slot-port-inventory.md` (includes lab USB dock) | `B1GMB42-slot-port-inventory.pdf` |
 | **ZFS recovery** | `docs/B1GMB42-zfs-recovery.md` | `B1GMB42-zfs-recovery.pdf` |
 | **PERC H710 IT flash** | `docs/B1GMB42-perc-it-flash.md` | — |
 | **Software inventory stub** | `B1GMB42-software-inventory.md` | `B1GMB42-software-inventory.pdf` |
 | **Quick reference** | `docs/features-available.md` | — |
 | **KiCad 10 + tscircuit plan** | `KiCadPlan.md` | — |
 | **Thumper GPU (NVIDIA)** | `docs/thumper-gpu.md` | — |
+| **WCH + CS202 USB audio dock** | Hardware manual USB section; live scan `docs/usb-wch-cs202-dock.md` | in inventory PDF |
+| **JMicron USB-SATA dock** | `docs/usb-dock-stability.md` | — |
 | **FactoryDocs index** | `FactoryDocs/README.md` | — |
 
 **Build all PDFs:**

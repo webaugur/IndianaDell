@@ -104,6 +104,7 @@ convert_one() {
   local -a cmd=(
     ffmpeg -hide_banner -loglevel warning -stats
     -i "$src"
+    -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2"
     -map 0:v:0
     -c:v libx264 -preset "$PRESET" -crf "$CRF" -pix_fmt yuv420p
   )
