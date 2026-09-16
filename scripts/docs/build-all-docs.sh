@@ -30,6 +30,10 @@ pandoc B1GMB42-software-inventory.md -o B1GMB42-software-inventory.pdf \
 log "Building B1GMB42-zfs-recovery.pdf"
 "$ROOT/scripts/docs/build-zfs-recovery-doc.sh"
 
+log "Building UN32M4500-lab-manual.pdf"
+python3 "$ROOT/scripts/docs/build-samsung-tv-manual.py"
+
 log "Done. PDF outputs:"
 ls -lh B1GMB42-software-manual.pdf B1GMB42-slot-port-inventory.pdf \
-    B1GMB42-software-inventory.pdf B1GMB42-zfs-recovery.pdf
+    B1GMB42-software-inventory.pdf B1GMB42-zfs-recovery.pdf \
+    UN32M4500-lab-manual.pdf

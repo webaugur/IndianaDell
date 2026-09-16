@@ -4,6 +4,8 @@ Snapshot of what is installed and ready on this system as of 2026-09-04.
 
 Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell`)
 
+**Lab hosts:** Safar = field console, Tower5810 = human interface console, Thumper = intelligence. See [`docs/lab-hosts.md`](lab-hosts.md).
+
 **PATH:** IndianaDell `bin/` and `scripts/` override system — `~/.config/indianadell/path.sh`
 
 ---
@@ -21,6 +23,7 @@ Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell
 | **Chrome** | `google-chrome-stable` |
 | **Grok** | `~/.grok/bin/grok` — autostart on Ventoy persistence boot |
 | **KiCad 10** | PPA `kicad/kicad-10.0-releases` — schematic/PCB, 3D models, `ngspice` sim, `gerbv`; opt out `SKIP_KICAD=1` |
+| **samsungtv** | pipx `samsungtvws[cli]` — Tizen LAN remote for UN32M4500 (`10.0.0.31`); opt out `SKIP_SAMSUNGTV=1` |
 | **tscircuit** | `tsci` — TypeScript/React circuits → `kicad_sch` / `kicad_pcb`; autorouter `@tscircuit/capacity-autorouter` |
 
 Package manifests: `apt-hamradio-dev-manifest.txt` (178 SDR/ham), `apt-full-manifest.txt` (full dpkg list).  
@@ -99,23 +102,7 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | `bin/gpu-stress` | 3-GPU Vulkan/EGL stress test |
 | `bin/iotest` | Block-device IO benchmark |
 | `bin/apply-amdgpu` | Install multi-GPU `etc/` configs (sudo) |
-
-### Lab host — Thumper (`thumper.local`)
-
-Not managed by `rebuild-machine`. NVIDIA TITAN Xp (12 GB); optional second card needs **power/clock locks** if the cooler is weak.
-
-| Doc | Contents |
-|-----|----------|
-| [`docs/thumper-gpu.md`](thumper-gpu.md) | Inventory, `nvidia-smi -pl` / `-lgc`, dual-GPU policy, LingBot-Map paths |
-| [`docs/thumper-storage.md`](thumper-storage.md) | Disk by-id, ZFS GUIDs/asize, GPT reconstruction, bootloader repair |
-| [`docs/thumper-inventory.md`](thumper-inventory.md) | Full hardware inventory (CPU/RAM/GPU/disks/net) post–Ubuntu 26.04 |
-| DragonSDR `tools/lingbot-map/README.md` | Install/serve 3D recon viewer on Thumper |
-
-```bash
-ssh user@thumper.local
-# heavy jobs → good cooler (index 0):  CUDA_VISIBLE_DEVICES=0
-# weak second card → cap:  sudo nvidia-smi -i 1 -pl 125 && sudo nvidia-smi -i 1 -lgc 500,1200
-```
+| `bin/samsungtv` | Tizen LAN remote for UN32M4500 (`10.0.0.31:8002`) |
 | `bin/amd-install` | Full AMD ROCm driver install |
 | `bin/amd-preflight` / `bin/amd-verify` / `bin/amd-uninstall` | AMD driver steps |
 | `bin/install-dragonsdr` | Install full DragonSDR suite |
@@ -142,6 +129,40 @@ ssh user@thumper.local
 | `bin/build-all-docs` | Rebuild software, hardware, inventory, ZFS PDFs |
 
 PATH is automatic via `~/.config/indianadell/path.sh` (see `README.md`).
+
+### Lab host — Safar (`safar.local`) — field console
+
+Not managed by `rebuild-machine`. Dell Latitude E6410, Ubuntu **22.04.5**, NVIDIA NVS 3100M (driver **340.108**). Stay on 22.04. Instruments attach here (USB 2.0, shared WCH/CS202 dock, SD, FireWire).
+
+| Doc | Contents |
+|-----|----------|
+| [`docs/lab-hosts.md`](lab-hosts.md) | Three-role topology |
+| [`docs/safar-inventory.md`](safar-inventory.md) | Full hardware inventory (CPU/RAM/GPU/disks/net/dock) |
+| [`docs/usb-wch-cs202-dock.md`](usb-wch-cs202-dock.md) | Lab USB audio dock (live on Safar 2026-09-05) |
+
+```bash
+# on safar
+ssh user@thumper.local
+ssh user@tower5810.local
+# do not: bin/rebuild-machine  bin/apply-amdgpu
+```
+
+### Lab host — Thumper (`thumper.local`) — intelligence and automation
+
+Not managed by `rebuild-machine`. NVIDIA TITAN Xp (12 GB); optional second card needs **power/clock locks** if the cooler is weak.
+
+| Doc | Contents |
+|-----|----------|
+| [`docs/thumper-gpu.md`](thumper-gpu.md) | Inventory, `nvidia-smi -pl` / `-lgc`, dual-GPU policy, LingBot-Map paths |
+| [`docs/thumper-storage.md`](thumper-storage.md) | Disk by-id, ZFS GUIDs/asize, GPT reconstruction, bootloader repair |
+| [`docs/thumper-inventory.md`](thumper-inventory.md) | Full hardware inventory (CPU/RAM/GPU/disks/net) post–Ubuntu 26.04 |
+| DragonSDR `tools/lingbot-map/README.md` | Install/serve 3D recon viewer on Thumper |
+
+```bash
+ssh user@thumper.local
+# heavy jobs → good cooler (index 0):  CUDA_VISIBLE_DEVICES=0
+# weak second card → cap:  sudo nvidia-smi -i 1 -pl 125 && sudo nvidia-smi -i 1 -lgc 500,1200
+```
 
 ## Quick start commands
 

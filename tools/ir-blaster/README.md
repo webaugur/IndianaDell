@@ -58,7 +58,8 @@ D7       *    0    #    D
 | Key | Tap | Hold (500 ms) |
 |-----|-----|----------------|
 | 0–9 | digit | 2/1/3 UP · 8/7/9 DOWN · 4 LEFT · 6 RIGHT · 5 OK |
-| `*` | DOT | same |
+| `*` | DOT | factory mode (standby: MUTE 1 8 2 POWER ON) |
+| `0` | 0 | 3SPEED (extended factory; TV already in service menu) |
 | `#` | POWER ON | POWER OFF |
 | A | VOL+ | HDMI1 |
 | B | MUTE | HDMI2 |

@@ -6,6 +6,7 @@
 # Verifies and repairs (with --fix) the complete non-optional stack:
 #   - All APT_CORE packages (package-lists.sh is the source of truth)
 #   - APT_KICAD (KiCad 10 + ngspice/gerbv + tscircuit) unless SKIP_KICAD=1
+#   - samsungtv (pipx samsungtvws[cli]) unless SKIP_SAMSUNGTV=1
 #   - All required bin/ launchers
 #   - All system configuration files under etc/ (amdgpu, grub, udev, gdm, etc.)
 #   - Environment variables, CopyQ autostart, USB dock stability
@@ -56,6 +57,8 @@ source "$ROOT/scripts/rebuild/package-lists.sh"
 source "$ROOT/scripts/rebuild/ensure-kicad-ppa.sh"
 # shellcheck source=scripts/rebuild/install-tscircuit.sh
 source "$ROOT/scripts/rebuild/install-tscircuit.sh"
+# shellcheck source=scripts/rebuild/install-samsungtv.sh
+source "$ROOT/scripts/rebuild/install-samsungtv.sh"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -208,6 +211,26 @@ check_kicad() {
   fi
 }
 
+check_samsungtv() {
+  if [[ "${SKIP_SAMSUNGTV:-0}" == 1 ]]; then
+    log "SKIP samsungtv (SKIP_SAMSUNGTV=1)"
+    return 0
+  fi
+
+  if [[ $FIX -eq 1 ]]; then
+    install_samsungtv || {
+      log "MISS samsungtv pipx install"
+      need_fix=1
+    }
+  fi
+  if samsungtv_installed; then
+    log "OK   samsungtv (samsungtvws[cli]) at $(samsungtv_cli_path)"
+  else
+    log "MISS samsungtv (pipx: samsungtvws[cli])"
+    need_fix=1
+  fi
+}
+
 # Soft-fail Docker / Docker Compose (non-optional for some lab workflows
 # but must never break the overall IndianaDell verification).
 check_docker_compose() {
@@ -277,13 +300,14 @@ for p in "${APT_CORE[@]}"; do
   check_pkg "$p"
 done
 check_kicad
+check_samsungtv
 
 # 2. Required bin/ launchers (non-optional for a working IndianaDell machine)
 for b in \
   dellmerge gpu-stress iotest apply-amdgpu rebuild-machine \
   apply-dark-mode apply-max-performance apply-fast-boot apply-fast-login \
   apply-sensor-watch indiana-sensor-watch indiana-monitor-input \
-  indiana-ir-send indiana-ir-flash \
+  indiana-ir-send indiana-ir-flash samsungtv \
   tsci tscircuit \
   fix-nautilus-desktop-launch sync-desktop-icons \
   themes-extract themes-install-boot themes-restore-boot \

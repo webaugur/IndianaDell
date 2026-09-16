@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# samsungtv — Tizen WebSocket remote (samsungtvws[cli] via pipx).
+# Defaults: Tower5810 Samsung UN32M4500 at 10.0.0.31, port 8002, token file.
+# Override: SAMSUNGTV_HOST / SAMSUNGTV_PORT / SAMSUNGTV_TOKEN_FILE / --host …
+set -euo pipefail
+
+HERE="$(dirname "$(readlink -f "$0")")"
+ROOT="$(cd "$HERE/.." && pwd)"
+# shellcheck source=scripts/rebuild/install-samsungtv.sh
+source "$ROOT/scripts/rebuild/install-samsungtv.sh"
+
+REAL=""
+if REAL="$(samsungtv_cli_path)"; then
+  :
+else
+  echo "samsungtv is not installed (pipx package samsungtvws[cli])." >&2
+  echo "Install with: bin/fix-indianadell.sh --fix   (or omit SKIP_SAMSUNGTV on rebuild)" >&2
+  echo "Upstream: https://github.com/xchwarze/samsung-tv-ws-api" >&2
+  exit 1
+fi
+
+# Do not exec our own wrapper if PATH pointed at this file.
+if [[ "$(realpath "$REAL")" == "$(readlink -f "$0")" ]]; then
+  echo "samsungtv wrapper found itself — pipx binary missing." >&2
+  echo "Install with: bin/fix-indianadell.sh --fix" >&2
+  exit 1
+fi
+
+HOST="${SAMSUNGTV_HOST:-10.0.0.31}"
+PORT="${SAMSUNGTV_PORT:-8002}"
+TOKEN_FILE="${SAMSUNGTV_TOKEN_FILE:-$HOME/.config/indianadell/samsungtv.token}"
+
+has_host=0
+has_port=0
+has_token=0
+arg=""
+for arg in "$@"; do
+  case "$arg" in
+    --host|--host=*) has_host=1 ;;
+    --port|--port=*) has_port=1 ;;
+    --token|--token=*|--token-file|--token-file=*) has_token=1 ;;
+  esac
+done
+
+extra=()
+[[ "$has_host" -eq 0 ]] && extra+=(--host "$HOST")
+[[ "$has_port" -eq 0 ]] && extra+=(--port "$PORT")
+if [[ "$has_token" -eq 0 ]]; then
+  mkdir -p "$(dirname "$TOKEN_FILE")"
+  extra+=(--token-file "$TOKEN_FILE")
+fi
+
+exec "$REAL" "${extra[@]}" "$@"

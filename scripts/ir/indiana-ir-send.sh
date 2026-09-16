@@ -11,6 +11,8 @@ usage() {
 indiana-ir-send detect
 indiana-ir-send hdmi1|hdmi2|hdmi3|hdmi4|source
 indiana-ir-send poweron|poweroff|mute|unmute|volup|voldown|home
+indiana-ir-send factory
+indiana-ir-send factorykey|3speed
 indiana-ir-send up|down|left|right|ok|dot
 indiana-ir-send 0-9
 indiana-ir-send send E0E043BC
@@ -23,7 +25,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --port) PORT=${2:?}; shift 2 ;;
     -h|--help) usage ;;
-    detect|hdmi1|hdmi2|hdmi3|hdmi4|source|send|help|poweron|poweroff|mute|unmute|volup|voldown|home|up|down|left|right|ok|dot|[0-9])
+    detect|hdmi1|hdmi2|hdmi3|hdmi4|source|send|help|poweron|poweroff|mute|unmute|volup|voldown|home|up|down|left|right|ok|dot|factory|factorykey|3speed|[0-9])
       CMD=$1
       shift
       break
@@ -110,6 +112,9 @@ cmd_line() {
     right) echo RIGHT ;;
     ok) echo OK ;;
     dot) echo DOT ;;
+    factory) echo FACTORY ;;
+    factorykey) echo FACTORYKEY ;;
+    3speed) echo 3SPEED ;;
     [0-9]) echo "$1" ;;
     help) echo HELP ;;
     send)

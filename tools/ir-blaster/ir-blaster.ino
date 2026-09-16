@@ -25,6 +25,8 @@ const uint8_t ENC_VOL_STEPS_REV = 10;
 const uint16_t CARRIER_HALF_US = 13;
 const uint8_t SEND_REPEATS = 3;
 const uint16_t HOLD_MS = 500;
+// Gap between codes in the NTSC factory burst (MUTE 1 8 2 POWERON).
+const uint16_t FACTORY_GAP_MS = 300;
 const uint16_t RGB_RED_MS = 500;     // red while/after IR, kills green/blue
 const uint16_t RGB_STATUS_MS = 2500; // tap = green, hold = blue
 
@@ -70,6 +72,9 @@ const char KEYMAP[4][4] = {
 #define C_7 0xE0E030CFUL
 #define C_8 0xE0E0B04FUL
 #define C_9 0xE0E0708FUL
+// Factory remote extras (SamyGO / AA59 service): FACTORY + 3SPEED.
+#define C_FACTORYKEY 0xE0E0DC23UL
+#define C_3SPEED 0xE0E03CC3UL
 
 struct Preset {
   const char *name;
@@ -105,6 +110,8 @@ static const Preset PRESETS[] = {
     {"7", C_7},
     {"8", C_8},
     {"9", C_9},
+    {"FACTORYKEY", C_FACTORYKEY},
+    {"3SPEED", C_3SPEED},
 };
 
 static void carrier_mark(uint16_t usec) {
@@ -244,12 +251,34 @@ static void fire_preset(const char *name) {
   Serial.println(F("ERR unknown"));
 }
 
+// US / NTSC service mode (SM §4-3-2): standby, then MUTE 1 8 2 POWER ON.
+static void fire_factory() {
+  static const uint32_t seq[] = {C_MUTE, C_1, C_8, C_2, C_POWERON};
+  rgb_note_hold();
+  for (uint8_t i = 0; i < 5; i++) {
+    send_samsung(seq[i]);
+    delay(40);
+    send_samsung(seq[i]);
+    delay(40);
+    send_samsung(seq[i]);
+    if (i + 1 < 5)
+      delay(FACTORY_GAP_MS);
+  }
+  rgb_note_tx();
+  rgb_set(true, false, false);
+  Serial.println(F("OK FACTORY"));
+}
+
 static void handle_line(char *line) {
   trim_inplace(line);
   if (line[0] == 0)
     return;
   if (strcmp(line, "HELP") == 0) {
-    Serial.println(F("OK HDMI1-4 SOURCE POWERON POWEROFF MUTE UNMUTE VOLUP VOLDOWN HOME UP DOWN LEFT RIGHT OK DOT 0-9 SEND <hex>"));
+    Serial.println(F("OK HDMI1-4 SOURCE POWERON POWEROFF MUTE UNMUTE VOLUP VOLDOWN HOME UP DOWN LEFT RIGHT OK DOT 0-9 FACTORY FACTORYKEY 3SPEED SEND <hex>"));
+    return;
+  }
+  if (strcmp(line, "FACTORY") == 0) {
+    fire_factory();
     return;
   }
   if (strncmp(line, "SEND ", 5) == 0) {
@@ -307,6 +336,9 @@ static void keypad_event(char key, bool held) {
         case '5':
           fire_preset("OK");
           break;
+        case '0':
+          fire_preset("3SPEED");
+          break;
         default:
           break;
       }
@@ -318,7 +350,10 @@ static void keypad_event(char key, bool held) {
   }
   switch (key) {
     case '*':
-      fire_preset("DOT");
+      if (held)
+        fire_factory();
+      else
+        fire_preset("DOT");
       break;
     case '#':
       fire_preset(held ? "POWEROFF" : "POWERON");

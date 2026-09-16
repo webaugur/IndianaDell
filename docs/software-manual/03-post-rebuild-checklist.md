@@ -89,6 +89,15 @@ command -v ngspice gerbv gerbview tsci
 tsci --help | head
 ```
 
+## 5b. samsungtv (workstation default)
+
+Installed by `bin/rebuild-machine` Phase 2c unless `SKIP_SAMSUNGTV=1`. LAN remote for the Tower5810 Samsung (UN32M4500, `10.0.0.31`). First run: Allow the client on the TV.
+
+```bash
+samsungtv device-info
+samsungtv home
+```
+
 TypeScript → KiCad:
 
 ```bash
