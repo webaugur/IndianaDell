@@ -4,6 +4,9 @@
 # GNOME's screencast app typically writes VP8 in WebM, often without audio.
 # Players and upload sites are happier with H.264 MP4.
 #
+# A trim, an audio swap, or MP4↔WebM on one file belongs in bin/clip-video.
+# This script stays the batch Screencasts converter.
+#
 # Usage:
 #   bin/webm-to-mp4                         # all *.webm in ~/Screencasts
 #   bin/webm-to-mp4 ~/Screencasts           # directory
@@ -22,7 +25,7 @@ DRY_RUN=0
 DEFAULT_DIR="${SCREENCASTS_DIR:-$HOME/Screencasts}"
 
 usage() {
-  sed -n '2,16p' "$0"
+  awk 'NR>=2 && /^set -euo pipefail$/ { exit } NR>=2 { print }' "$0"
   exit 2
 }
 

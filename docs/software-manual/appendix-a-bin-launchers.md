@@ -50,6 +50,8 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `hackrf-prepare-sdcard` | `DragonSDR/bin/hackrf-prepare-sdcard` | 10 |
 | `hackrf-flash-mayhem` | `DragonSDR/bin/hackrf-flash-mayhem` | 10 |
 | `hackrf-build-mayhem` | `DragonSDR/bin/hackrf-build-mayhem` | 10 |
+| `webm-to-mp4` | `scripts/media/webm-to-mp4.sh` — VP8 WebM → H.264 MP4 | — |
+| `clip-video` | `scripts/media/clip-video.sh` — trim `--video-start`/`--video-end` (`--start`/`--end`) to `.mp4` (H.264/AAC) or `.webm` (VP9/Opus); `--audio` replaces the clip audio | — |
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
