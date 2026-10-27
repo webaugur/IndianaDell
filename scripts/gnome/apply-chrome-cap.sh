@@ -11,9 +11,11 @@ while [[ $# -gt 0 ]]; do case "$1" in
 APPS="$HOME/.local/share/applications"; UNITDIR="$HOME/.config/systemd/user"; BK="$HOME/Backups/chrome-cap"
 WRAP="$HOME/bin/chrome-capped"
 mkdir -p "$APPS" "$UNITDIR" "$BK" "$HOME/bin"
+ALIASES="$HOME/.bash_aliases"; MARK_BEGIN="# >>> indianadell chrome-cap >>>"; MARK_END="# <<< indianadell chrome-cap <<<"
+strip_aliases() { [[ -f $ALIASES ]] && sed -i "/^${MARK_BEGIN//\//\\/}\$/,/^${MARK_END//\//\\/}\$/d" "$ALIASES" || true; }
 
 if [[ $REVERT -eq 1 ]]; then
-  rm -f "$UNITDIR/chrome.slice" "$WRAP"
+  rm -f "$UNITDIR/chrome.slice" "$WRAP"; strip_aliases
   for f in "$BK"/*.desktop; do [[ -e $f ]] || continue; cp -f "$f" "$APPS/$(basename "$f")"; done
   for n in google-chrome com.google.Chrome; do [[ -e $BK/$n.desktop.system ]] && rm -f "$APPS/$n.desktop"; done
   systemctl --user daemon-reload; update-desktop-database "$APPS" 2>/dev/null || true
@@ -46,6 +48,15 @@ for f in "$APPS"/chrome-*.desktop; do
   sed -i "s#^Exec=/opt/google/chrome/google-chrome#Exec=$WRAP#" "$f"
 done
 update-desktop-database "$APPS" 2>/dev/null || true
+# Terminal aliases (~/.bashrc sources ~/.bash_aliases on Ubuntu).
+strip_aliases
+cat >> "$ALIASES" <<ALIAS
+$MARK_BEGIN
+alias google-chrome='$WRAP'
+alias google-chrome-stable='$WRAP'
+alias chrome='$WRAP'
+$MARK_END
+ALIAS
 echo "Chrome slice: MemoryHigh=$HIGH MemoryMax=$MAX"
 systemctl --user cat chrome.slice | sed -n '1,12p'
 echo "Wrapper: $WRAP   (close all Chrome windows, then relaunch from the app grid)"

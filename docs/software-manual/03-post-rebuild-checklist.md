@@ -185,6 +185,7 @@ bin/urh --version
 | KiCad 10 + tscircuit | `kicad-cli version`; `tsci export … -f kicad_sch` | No |
 | ROCm (optional) | `bin/amd-install` | Yes |
 | All doc PDFs | `bin/build-all-docs` | No |
+| Disk IO tuning + capped Chrome | `sudo bin/apply-io-tuning`; `bin/apply-chrome-cap` (Ch. 18) | No |
 | ZFS SMB `/home` | `sudo bin/apply-zfs-smb`; `sudo smbpasswd -a user` | No |
 | ZFS force import | check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` | If initramfs updated |
 | Ventoy persistence seed | `~/bin/seed-ventoy-persistence.sh` | No |

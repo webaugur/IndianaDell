@@ -76,5 +76,27 @@ bin/apply-chrome-cap --revert
 - Past `MemoryHigh` the kernel reclaims Chrome's pages into zram swap (Chrome slows, the desktop does not). At `MemoryMax` only Chrome is OOM-killed.
 - `~/bin/chrome-capped` (from `scripts/gnome/chrome-capped.sh`) starts Chrome with `systemd-run --user --scope --slice=chrome.slice` plus `--renderer-process-limit=8` and `--js-flags=--max-old-space-size=3072`. Extra flags: `CHROME_CAPPED_FLAGS`.
 - The installer points the system launchers (copied to `~/.local/share/applications`) and the Chrome-made PWA launchers at the wrapper. Originals are in `~/Backups/chrome-cap`. Chrome rewrites its PWA launchers on update, so re-run `bin/apply-chrome-cap` afterward.
-- Terminal: `~/.bash_aliases` aliases `google-chrome`, `google-chrome-stable`, `chrome` to the wrapper.
+- Terminal: the installer writes a marker-delimited block (`# >>> indianadell chrome-cap >>>`) to `~/.bash_aliases` that aliases `google-chrome`, `google-chrome-stable` and `chrome` to the wrapper. Re-running replaces the block; `--revert` removes it. Open a new terminal (or `source ~/.bash_aliases`) to pick it up.
 - Also useful, in Chrome: Settings → Performance → Memory Saver.
+
+## Repeat from scratch (one block)
+
+Everything in this chapter is scripted and idempotent. On a fresh or rebuilt Tower5810, from `~/Documents/IndianaDell`:
+
+```bash
+# 1. Root-level IO tuning: zram swap, ZFS ARC cap, BFQ, idle IO for background jobs
+sudo bin/apply-io-tuning
+sudo swapoff /dev/zd0 2>/dev/null || true      # finish emptying the old ZFS swap volume if step 4 skipped it
+# 2. User-level, no sudo: capped Chrome + launchers + terminal aliases
+bin/apply-chrome-cap                           # --high 5G --max 6G are the defaults
+source ~/.bash_aliases
+# 3. Make the new commands available in $PATH
+bin/install-to-bin
+# 4. Verify
+swapon --show                                  # only /dev/zramN
+cat /sys/block/sdb/queue/scheduler             # [bfq]
+systemctl --user show chrome.slice -p MemoryHigh -p MemoryMax
+type chrome                                    # aliased to ~/bin/chrome-capped
+```
+
+Undo: `sudo bin/revert-io-tuning` and `bin/apply-chrome-cap --revert`.
