@@ -30,6 +30,7 @@ Fresh Ubuntu 26.04
 | apply-zfs-smb (Samba /home)|
 | apply-dark-mode            |
 | apply-max-performance      |
+| apply-io-tuning (zram, BFQ)|
 | fix-nautilus-desktop-launch|
 | sync-desktop-icons         |
 | themes-extract / install   |

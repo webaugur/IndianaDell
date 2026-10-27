@@ -49,6 +49,7 @@ This manual documents every **host-facing install** the IndianaDell workspace pr
 - 15 Ventoy live session
 - 16 QEMU
 - 17 ZFS SMB share (`/home`)
+- 18 Disk IO tuning (UI responsiveness)
 - Appendix A — Bin launchers
 - Appendix B — Apt packages
 

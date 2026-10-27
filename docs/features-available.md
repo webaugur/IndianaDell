@@ -27,7 +27,7 @@ Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell
 | **tscircuit** | `tsci` — TypeScript/React circuits → `kicad_sch` / `kicad_pcb`; autorouter `@tscircuit/capacity-autorouter` |
 
 Package manifests: `apt-hamradio-dev-manifest.txt` (178 SDR/ham), `apt-full-manifest.txt` (full dpkg list).  
-**Software manual:** `docs/software-manual/` (17 chapters) — `bin/build-all-docs` → `B1GMB42-software-manual.pdf` + hardware/inventory PDFs.  
+**Software manual:** `docs/software-manual/` (18 chapters) — `bin/build-all-docs` → `B1GMB42-software-manual.pdf` + hardware/inventory PDFs.  
 Rebuild: `bin/rebuild-machine`. Legacy stub: `B1GMB42-software-inventory.md`.
 
 ---
@@ -75,6 +75,7 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | **AMD driver install** | `bin/amd-install`, `bin/amd-verify` → `amd-radeon/` |
 | **Storage tests** | `bin/iotest` → `scripts/storage/` |
 | **ZFS SMB `/home`** | `sudo bin/apply-zfs-smb` — `\\\\10.0.0.113\\home`; `smbpasswd -a user` |
+| **Disk IO tuning** | `sudo bin/apply-io-tuning` — zram swap, ZFS ARC cap, BFQ; undo `sudo bin/revert-io-tuning`; `bin/run-in-background <cmd>` — `docs/software-manual/18-io-tuning.md` |
 | **Dell docs** | `FactoryDocs/` (19/101 packages), `B1GMB42-slot-port-inventory.md` + PDF |
 | **Telegram** | Flatpak `org.telegram.desktop` 6.9.3 |
 | **Dell inventory** | `bin/dellmerge` → `scripts/dell/` |
@@ -116,6 +117,8 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
 | `bin/apply-fast-login` | GRUB menu 0s, GDM autologin, greeter face |
+| `bin/apply-io-tuning` / `bin/revert-io-tuning` | zram swap + ARC cap + BFQ so disk IO never freezes the UI |
+| `bin/run-in-background` | Run a command at idle IO / lowest CPU priority |
 | `bin/apply-fast-boot` | Strip crashkernel, mask NM-wait-online, defer lab daemons |
 | `bin/fix-nautilus-desktop-launch` | Nautilus 50+: launch `.desktop` on double-click |
 | `bin/sync-desktop-icons` | Nautilus 50+: custom-icon from `Icon=`; rename chrome-*.desktop → `Name=` |
