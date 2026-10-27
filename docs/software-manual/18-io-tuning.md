@@ -61,3 +61,20 @@ Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns th
 - Device names (`sdb`, `sdc`) are not hard-coded: BFQ is applied to every rotational `sd*` disk.
 - The real fix for the root cause is more free SSD: moving `rpool`'s data vdev to SSD, or adding a mirror/L2ARC/SLOG on a non-special SSD, would help more than any tuning. Not done here.
 - Swapping out a large zvol swap needs free RAM; if step 4 reports "not enough free RAM", close apps and re-run or reboot.
+
+## Capping Chrome's memory
+
+Chrome was one of the largest RAM users on 16 GB. Spoofing the RAM size is not practical, so Chrome runs inside a kernel memory budget instead:
+
+```bash
+bin/apply-chrome-cap                 # no sudo; defaults MemoryHigh=5G MemoryMax=6G
+bin/apply-chrome-cap --high 4G --max 5G
+bin/apply-chrome-cap --revert
+```
+
+- `~/.config/systemd/user/chrome.slice` holds the budget (also `CPUWeight=80`, `IOWeight=50`). All Chrome windows and PWAs share it.
+- Past `MemoryHigh` the kernel reclaims Chrome's pages into zram swap (Chrome slows, the desktop does not). At `MemoryMax` only Chrome is OOM-killed.
+- `~/bin/chrome-capped` (from `scripts/gnome/chrome-capped.sh`) starts Chrome with `systemd-run --user --scope --slice=chrome.slice` plus `--renderer-process-limit=8` and `--js-flags=--max-old-space-size=3072`. Extra flags: `CHROME_CAPPED_FLAGS`.
+- The installer points the system launchers (copied to `~/.local/share/applications`) and the Chrome-made PWA launchers at the wrapper. Originals are in `~/Backups/chrome-cap`. Chrome rewrites its PWA launchers on update, so re-run `bin/apply-chrome-cap` afterward.
+- Terminal: `~/.bash_aliases` aliases `google-chrome`, `google-chrome-stable`, `chrome` to the wrapper.
+- Also useful, in Chrome: Settings → Performance → Memory Saver.

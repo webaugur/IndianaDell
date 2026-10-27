@@ -26,6 +26,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `iotest` | `scripts/storage/iotest.sh` | 12 |
 | `apply-io-tuning` | `scripts/storage/apply-io-tuning.sh` — zram swap, ARC cap, BFQ (run with sudo) | 18 |
 | `revert-io-tuning` | `scripts/storage/revert-io-tuning.sh` — undo the above | 18 |
+| `apply-chrome-cap` | `scripts/gnome/apply-chrome-cap.sh` — memory-capped Chrome slice + launcher wrapper | 18 |
 | `run-in-background` | `scripts/storage/run-in-background.sh` — `ionice -c3 nice -n 19 <cmd>` | 18 |
 | `apply-amdgpu` | `etc/apply.sh` | 6 |
 | `apply-zfs-smb` | `scripts/samba/apply-zfs-smb.sh` — Samba + `sharesmb` for `/home` | 17 |
