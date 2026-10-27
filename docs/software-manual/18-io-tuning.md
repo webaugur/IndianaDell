@@ -79,6 +79,19 @@ bin/apply-chrome-cap --revert
 - Terminal: the installer writes a marker-delimited block (`# >>> indianadell chrome-cap >>>`) to `~/.bash_aliases` that aliases `google-chrome`, `google-chrome-stable` and `chrome` to the wrapper. Re-running replaces the block; `--revert` removes it. Open a new terminal (or `source ~/.bash_aliases`) to pick it up.
 - Also useful, in Chrome: Settings → Performance → Memory Saver.
 
+### What the cap covers (and doesn't)
+
+Chrome moves its own main browser process (about 250-300 MB) into a separate per-app group that GNOME creates (`app-com.google.Chrome-<pid>.scope`), so that process is **not** inside `chrome.slice`. This is deliberate and left alone: the renderers, GPU, network and extension helper processes are the ones that balloon, and they all start inside the capped group and share its MemoryHigh/MemoryMax budget. Capping the main process too would risk the kernel killing the whole browser instead of only its helpers.
+
+Check where each process lives:
+
+```bash
+for p in $(pgrep -f /opt/google/chrome/chrome); do echo "$(cut -d/ -f6- /proc/$p/cgroup)"; done | sort | uniq -c
+systemctl --user show chrome.slice -p MemoryCurrent -p MemoryHigh -p MemoryMax
+```
+
+`MemoryCurrent` therefore reads lower than Chrome's own task manager (Shift+Esc) by roughly the main process's size.
+
 ### Automatic re-check after updates
 
 `bin/apply-chrome-cap` also installs three user units (no sudo): `chrome-cap-check.timer` (3 minutes after login, then hourly; it catches the nightly `apt-daily-upgrade`, which runs around 06:00), `chrome-cap-check.path` (fires when Chrome rewrites a launcher in `~/.local/share/applications`), and `chrome-cap-check.service`, which runs `scripts/gnome/check-chrome-cap.sh`. The script does nothing when every Chrome launcher still starts the wrapper. If an update reset one, or the wrapper or slice file is gone, it re-runs `bin/apply-chrome-cap` with your existing limits and sends a desktop notification.
