@@ -48,6 +48,7 @@ This manual documents every **host-facing install** the IndianaDell workspace pr
 - 14 Gaps and limits
 - 15 Ventoy live session
 - 16 QEMU
+- 18 Disk IO tuning (UI responsiveness)
 - Appendix A — Bin launchers
 - Appendix B — Apt packages
 

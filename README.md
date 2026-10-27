@@ -30,6 +30,7 @@ Dell Precision T5810 (B1GMB42) workstation project — hardware inventory, rebui
 | **ZFS recovery** | `docs/B1GMB42-zfs-recovery.md` | `B1GMB42-zfs-recovery.pdf` |
 | **PERC H710 IT flash** | `docs/B1GMB42-perc-it-flash.md` | — |
 | **Software inventory stub** | `B1GMB42-software-inventory.md` | `B1GMB42-software-inventory.pdf` |
+| **Disk IO tuning (UI freezes)** | `docs/software-manual/18-io-tuning.md` | — |
 | **Quick reference** | `docs/features-available.md` | — |
 | **KiCad 10 + tscircuit plan** | `KiCadPlan.md` | — |
 | **Lab hosts (three roles)** | `docs/lab-hosts.md` | — |

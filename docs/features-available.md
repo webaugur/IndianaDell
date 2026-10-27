@@ -74,6 +74,7 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | **EFI timing baseline** | `sudo bin/efi-timing-suite` → `B1GMB42.timing` (before/after BIOS changes) |
 | **AMD driver install** | `bin/amd-install`, `bin/amd-verify` → `amd-radeon/` |
 | **Storage tests** | `bin/iotest` → `scripts/storage/` |
+| **Disk IO tuning** | `sudo bin/apply-io-tuning` — zram swap, ZFS ARC cap, BFQ; undo `sudo bin/revert-io-tuning`; `bin/run-in-background <cmd>` — `docs/software-manual/18-io-tuning.md` |
 | **Dell docs** | `FactoryDocs/` (19/101 packages), `B1GMB42-slot-port-inventory.md` + PDF |
 | **Telegram** | Flatpak `org.telegram.desktop` 6.9.3 |
 | **Dell inventory** | `bin/dellmerge` → `scripts/dell/` |
@@ -115,6 +116,8 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | `bin/apply-dark-mode` | GNOME + GDM dark |
 | `bin/apply-max-performance` | No power saving / dimming |
 | `bin/apply-fast-login` | GRUB menu 0s, GDM autologin, greeter face |
+| `bin/apply-io-tuning` / `bin/revert-io-tuning` | zram swap + ARC cap + BFQ so disk IO never freezes the UI |
+| `bin/run-in-background` | Run a command at idle IO / lowest CPU priority |
 | `bin/apply-fast-boot` | Strip crashkernel, mask NM-wait-online, defer lab daemons |
 | `bin/fix-nautilus-desktop-launch` | Nautilus 50+: launch `.desktop` on double-click |
 | `bin/sync-desktop-icons` | Nautilus 50+: custom-icon from `Icon=`; rename chrome-*.desktop → `Name=` |
