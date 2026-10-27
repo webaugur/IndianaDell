@@ -27,7 +27,7 @@ Workspace root: `~/Documents/IndianaDell` (also on GitHub: `webaugur/IndianaDell
 | **tscircuit** | `tsci` — TypeScript/React circuits → `kicad_sch` / `kicad_pcb`; autorouter `@tscircuit/capacity-autorouter` |
 
 Package manifests: `apt-hamradio-dev-manifest.txt` (178 SDR/ham), `apt-full-manifest.txt` (full dpkg list).  
-**Software manual:** `docs/software-manual/` (15 chapters) — `bin/build-all-docs` → `B1GMB42-software-manual.pdf` + hardware/inventory PDFs.  
+**Software manual:** `docs/software-manual/` (17 chapters) — `bin/build-all-docs` → `B1GMB42-software-manual.pdf` + hardware/inventory PDFs.  
 Rebuild: `bin/rebuild-machine`. Legacy stub: `B1GMB42-software-inventory.md`.
 
 ---
@@ -74,6 +74,7 @@ USB udev rules: `~/Documents/DragonSDR/hackrf/scripts/99-hackrf.rules` (installe
 | **EFI timing baseline** | `sudo bin/efi-timing-suite` → `B1GMB42.timing` (before/after BIOS changes) |
 | **AMD driver install** | `bin/amd-install`, `bin/amd-verify` → `amd-radeon/` |
 | **Storage tests** | `bin/iotest` → `scripts/storage/` |
+| **ZFS SMB `/home`** | `sudo bin/apply-zfs-smb` — `\\\\10.0.0.113\\home`; `smbpasswd -a user` |
 | **Dell docs** | `FactoryDocs/` (19/101 packages), `B1GMB42-slot-port-inventory.md` + PDF |
 | **Telegram** | Flatpak `org.telegram.desktop` 6.9.3 |
 | **Dell inventory** | `bin/dellmerge` → `scripts/dell/` |

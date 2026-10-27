@@ -97,7 +97,7 @@ verify_stack() {
   for c in rustc cargo pandoc xelatex vkcube; do
     command -v "$c" >/dev/null || { log "MISS cmd: $c"; fail=1; }
   done
-  for b in dellmerge gpu-stress iotest apply-amdgpu rebuild-machine; do
+  for b in dellmerge gpu-stress iotest apply-amdgpu apply-zfs-smb rebuild-machine; do
     [[ -x "${ROOT}/bin/$b" ]] || { log "MISS bin: $b"; fail=1; }
   done
 

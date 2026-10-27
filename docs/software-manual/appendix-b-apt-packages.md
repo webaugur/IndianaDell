@@ -10,11 +10,11 @@
 
 ## Chapter 4 — Development (IndianaDell `APT_CORE`)
 
-`build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`, `gh`
+`build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`, `gh`, `samba`, `smbclient`
 
 ## Chapter 6 — GPU and Display
 
-`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`
+`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`, `ffmpeg`
 
 **samsungtv** (not apt; default-on): `scripts/rebuild/install-samsungtv.sh` runs `pipx install samsungtvws[cli]` (apt `pipx` if missing). CLI is `samsungtv`. Skip with `SKIP_SAMSUNGTV=1`.
 
@@ -39,6 +39,10 @@ Default-on for workstation rebuild. Requires `ppa:kicad/kicad-10.0-releases` (`s
 **tscircuit** (not apt): `scripts/rebuild/install-tscircuit.sh` runs `npm install -g --prefix ~/.local tscircuit @tscircuit/capacity-autorouter typescript`. CLI is `tsci` / `tscircuit`. Export a circuit to KiCad with `tsci export circuit.tsx -f kicad_sch` (also `kicad_pcb`, `kicad_zip`). Autorouter npm name is `@tscircuit/capacity-autorouter` ([tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)).
 
 `kicad-doc-id` is **not** in the list (universe still 9.0.8 while the PPA is 10.x). Skip the whole set (including tscircuit) with `SKIP_KICAD=1`.
+
+## Chapter 17 — ZFS SMB
+
+`samba` (provides `smbd` and `net` for `zfs share` SMB), `smbclient`. Config: `sudo bin/apply-zfs-smb` (not applied automatically by rebuild).
 
 ## Chapter 11 — Flatpak
 

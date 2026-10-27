@@ -132,7 +132,20 @@ Only 19 of 101 pre-crash Dell packages are on disk. Re-download per `FactoryDocs
 
 See Chapter 13.
 
-## 9. ZFS force import (required on this host)
+## 9. ZFS SMB share (`/home`)
+
+Samba is in `APT_CORE`. After rebuild, bind it to the LAN and publish the home dataset (not `/root`):
+
+```bash
+sudo bin/apply-zfs-smb
+sudo smbpasswd -a user
+zfs get -r sharesmb rpool/USERDATA   # only home_ulmkkv on
+ss -lnt | grep ':445'                # 10.0.0.113 and 127.0.0.1
+```
+
+See Chapter 17. Do not leave Ubuntu’s inherited `sharesmb=on` on `rpool/USERDATA` — that would export `/root`.
+
+## 10. ZFS force import (required on this host)
 
 After any reinstall or recovery chroot, confirm the installed system will force-import pools at boot:
 
@@ -151,6 +164,7 @@ bin/rebuild-machine --verify-only
 kicad-cli version                             # expect 10.0.*
 tsci --help >/dev/null && echo OK tscircuit   # TypeScript → KiCad
 grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
+zfs get -H -o name,value sharesmb rpool/USERDATA/home_ulmkkv  # on
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
 gnuradio-config-info --version
@@ -171,5 +185,6 @@ bin/urh --version
 | KiCad 10 + tscircuit | `kicad-cli version`; `tsci export … -f kicad_sch` | No |
 | ROCm (optional) | `bin/amd-install` | Yes |
 | All doc PDFs | `bin/build-all-docs` | No |
+| ZFS SMB `/home` | `sudo bin/apply-zfs-smb`; `sudo smbpasswd -a user` | No |
 | ZFS force import | check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"` | If initramfs updated |
 | Ventoy persistence seed | `~/bin/seed-ventoy-persistence.sh` | No |

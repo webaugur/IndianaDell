@@ -17,7 +17,8 @@ APT_CORE=(
   libboost-dev libboost-program-options-dev
   pandoc texlive-latex-recommended texlive-fonts-recommended texlive-xetex
   vulkan-tools mesa-utils mesa-utils-bin clinfo x11-apps flatpak gh
-  smartmontools ddcutil arduino-cli
+  smartmontools ddcutil arduino-cli ffmpeg
+  samba smbclient
   # Wayland clipboard + Qt/GNOME theming (see bin/fix-desktop-integration.sh)
   wl-clipboard copyq adwaita-qt adwaita-qt6 qt6-gtk-platformtheme qt5-gtk-platformtheme
 )

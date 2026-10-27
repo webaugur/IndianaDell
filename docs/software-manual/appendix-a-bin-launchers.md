@@ -25,6 +25,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |
 | `apply-amdgpu` | `etc/apply.sh` | 6 |
+| `apply-zfs-smb` | `scripts/samba/apply-zfs-smb.sh` — Samba + `sharesmb` for `/home` | 17 |
 | `apply-sensor-watch` | `bin/apply-sensor-watch` — install thermal/fan watchdog unit | 6 |
 | `indiana-sensor-watch` | `scripts/sensors/indiana-sensor-watch.sh` — `--once` / daemon | 6 |
 | `indiana-monitor-input` | `scripts/display/indiana-monitor-input.sh` — DDC/CI input select | 6 |

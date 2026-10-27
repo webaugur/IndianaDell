@@ -27,6 +27,7 @@ Fresh Ubuntu 26.04
 +---------------------------+
 | Manual post-rebuild        |
 | apply-amdgpu (GPU configs) |
+| apply-zfs-smb (Samba /home)|
 | apply-dark-mode            |
 | apply-max-performance      |
 | fix-nautilus-desktop-launch|
