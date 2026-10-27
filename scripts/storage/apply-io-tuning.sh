@@ -6,7 +6,7 @@
 # (sync=always). Any swap-out becomes a synchronous HDD write, which stalls the
 # GNOME session. This script:
 #   1. caps the ZFS ARC (default 4 GiB; ZFS may otherwise take all RAM)
-#   2. creates an 8 GiB zstd zram swap (priority 100, no disk IO)
+#   2. creates a 13 GiB zstd zram swap (priority 100, no disk IO)
 #   3. sets vm.swappiness=100, vm.page-cluster=0 (right for zram)
 #   4. swaps off every disk-backed swap and comments it out of /etc/fstab
 #   5. puts rotational disks on the BFQ IO scheduler (persistent udev rule)
@@ -14,14 +14,14 @@
 #   7. moves running builds/background daemons to the idle IO class
 #
 # Usage:  sudo bin/apply-io-tuning
-# Env:    ARC_MAX_GIB=4  ZRAM_SIZE=8G  BG_PROCS="cargo rustc dsd-fme commander"
+# Env:    ARC_MAX_GIB=4  ZRAM_SIZE=13G  BG_PROCS="cargo rustc dsd-fme commander"
 # Undo:   sudo bin/revert-io-tuning
 #
 set -u
 [[ $EUID -eq 0 ]] || { echo "Run with sudo." >&2; exit 1; }
 
 ARC_MAX_GIB="${ARC_MAX_GIB:-4}"
-ZRAM_SIZE="${ZRAM_SIZE:-8G}"
+ZRAM_SIZE="${ZRAM_SIZE:-13G}"
 BG_PROCS="${BG_PROCS:-cargo rustc dsd-fme commander}"
 BK=/root/io-tuning-backup
 mkdir -p "$BK"

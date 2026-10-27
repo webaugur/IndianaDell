@@ -17,11 +17,11 @@
 
 ```bash
 sudo bin/apply-io-tuning
-# options (environment): ARC_MAX_GIB=4  ZRAM_SIZE=8G  BG_PROCS="cargo rustc dsd-fme commander"
+# options (environment): ARC_MAX_GIB=4  ZRAM_SIZE=13G  BG_PROCS="cargo rustc dsd-fme commander"
 ```
 
 1. **ZFS ARC cap** — 4 GiB live (`/sys/module/zfs/parameters/zfs_arc_max`) and persistent in `/etc/modprobe.d/zfs-arc.conf`.
-2. **zram swap** — `zram-swap.service`: 8 GiB, zstd, priority 100. Swap lives in compressed RAM, zero disk IO.
+2. **zram swap** — `zram-swap.service`: 13 GiB (was 8 GiB; resize live with `sudo bin/resize-zram-swap 13G`), zstd, priority 100. Swap lives in compressed RAM, zero disk IO.
 3. **sysctl** — `/etc/sysctl.d/60-zram.conf`: `vm.swappiness=100`, `vm.page-cluster=0` (the right values when swap is zram; high swappiness is cheap there).
 4. **Disk swap off** — each non-zram entry in `/proc/swaps` is `swapoff`'d only if its used pages fit in `MemAvailable` minus 1.5 GB; matching `/etc/fstab` lines are commented with `#disabled-by-io-tuning#`. Original fstab is saved at `/root/io-tuning-backup/fstab.orig`.
 5. **BFQ scheduler** — `modprobe bfq`, loaded at boot, plus `/etc/udev/rules.d/60-hdd-bfq.rules` for every rotational `sd*` disk. BFQ gives interactive/latency-sensitive IO priority over bulk writers.
@@ -61,6 +61,18 @@ Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns th
 - Device names (`sdb`, `sdc`) are not hard-coded: BFQ is applied to every rotational `sd*` disk.
 - The real fix for the root cause is more free SSD: moving `rpool`'s data vdev to SSD, or adding a mirror/L2ARC/SLOG on a non-special SSD, would help more than any tuning. Not done here.
 - Swapping out a large zvol swap needs free RAM; if step 4 reports "not enough free RAM", close apps and re-run or reboot.
+
+### Resizing the zram swap
+
+zram uses RAM only for pages actually stored (about 3.5:1 compression on this machine), so a larger device costs nothing until it fills. To change the size live and persistently:
+
+```bash
+sudo bin/resize-zram-swap 13G      # or 16G; edits zram-swap.service, then swapoff/reset/swapon
+swapon --show                      # confirm the new size
+zramctl --bytes                    # DATA = stored, TOTAL = RAM actually used
+```
+
+The script refuses to swap off if the stored pages would not fit in free RAM; it still saves the size for the next boot.
 
 ## Capping Chrome's memory
 
