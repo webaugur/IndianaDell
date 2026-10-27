@@ -11,6 +11,10 @@ FactoryDocs/_incoming/
 scripts/rebuild/last-run.log
 testdisk.log
 
+# Local video drops (clip with bin/clip-video; do not commit)
+atlantis.mp4
+atlantis-clip.mp4
+
 # EFI timing reports (local baselines)
 *.timing
 B1GMB42.timing
