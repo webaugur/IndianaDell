@@ -15,7 +15,8 @@ ALIASES="$HOME/.bash_aliases"; MARK_BEGIN="# >>> indianadell chrome-cap >>>"; MA
 strip_aliases() { [[ -f $ALIASES ]] && sed -i "/^${MARK_BEGIN//\//\\/}\$/,/^${MARK_END//\//\\/}\$/d" "$ALIASES" || true; }
 
 if [[ $REVERT -eq 1 ]]; then
-  rm -f "$UNITDIR/chrome.slice" "$WRAP"; strip_aliases
+  systemctl --user disable --now chrome-cap-check.timer chrome-cap-check.path 2>/dev/null || true
+  rm -f "$UNITDIR/chrome.slice" "$WRAP" "$UNITDIR"/chrome-cap-check.* "$HOME/.config/chrome-cap/root"; strip_aliases
   for f in "$BK"/*.desktop; do [[ -e $f ]] || continue; cp -f "$f" "$APPS/$(basename "$f")"; done
   for n in google-chrome com.google.Chrome; do [[ -e $BK/$n.desktop.system ]] && rm -f "$APPS/$n.desktop"; done
   systemctl --user daemon-reload; update-desktop-database "$APPS" 2>/dev/null || true
@@ -48,6 +49,38 @@ for f in "$APPS"/chrome-*.desktop; do
   sed -i "s#^Exec=/opt/google/chrome/google-chrome#Exec=$WRAP#" "$f"
 done
 update-desktop-database "$APPS" 2>/dev/null || true
+# Watchdog: re-check after automatic updates (hourly timer, boot, and whenever the launcher dir changes).
+mkdir -p "$HOME/.config/chrome-cap"; echo "$ROOT" > "$HOME/.config/chrome-cap/root"
+cat > "$UNITDIR/chrome-cap-check.service" <<UNIT
+[Unit]
+Description=Re-apply the Chrome memory cap if an update undid it
+[Service]
+Type=oneshot
+ExecStart=$ROOT/scripts/gnome/check-chrome-cap.sh
+Nice=19
+UNIT
+cat > "$UNITDIR/chrome-cap-check.timer" <<UNIT
+[Unit]
+Description=Hourly check of the Chrome memory cap (apt-daily-upgrade runs ~06:00)
+[Timer]
+OnBootSec=3min
+OnCalendar=hourly
+Persistent=true
+[Install]
+WantedBy=timers.target
+UNIT
+cat > "$UNITDIR/chrome-cap-check.path" <<UNIT
+[Unit]
+Description=Check the Chrome cap when Chrome rewrites its launchers
+[Path]
+PathChanged=$APPS
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=3
+[Install]
+WantedBy=default.target
+UNIT
+systemctl --user daemon-reload
+systemctl --user enable --now chrome-cap-check.timer chrome-cap-check.path >/dev/null 2>&1
 # Terminal aliases (~/.bashrc sources ~/.bash_aliases on Ubuntu).
 strip_aliases
 cat >> "$ALIASES" <<ALIAS

@@ -79,6 +79,18 @@ bin/apply-chrome-cap --revert
 - Terminal: the installer writes a marker-delimited block (`# >>> indianadell chrome-cap >>>`) to `~/.bash_aliases` that aliases `google-chrome`, `google-chrome-stable` and `chrome` to the wrapper. Re-running replaces the block; `--revert` removes it. Open a new terminal (or `source ~/.bash_aliases`) to pick it up.
 - Also useful, in Chrome: Settings → Performance → Memory Saver.
 
+### Automatic re-check after updates
+
+`bin/apply-chrome-cap` also installs three user units (no sudo): `chrome-cap-check.timer` (3 minutes after login, then hourly; it catches the nightly `apt-daily-upgrade`, which runs around 06:00), `chrome-cap-check.path` (fires when Chrome rewrites a launcher in `~/.local/share/applications`), and `chrome-cap-check.service`, which runs `scripts/gnome/check-chrome-cap.sh`. The script does nothing when every Chrome launcher still starts the wrapper. If an update reset one, or the wrapper or slice file is gone, it re-runs `bin/apply-chrome-cap` with your existing limits and sends a desktop notification.
+
+```bash
+systemctl --user list-timers chrome-cap-check.timer    # next run
+journalctl --user -u chrome-cap-check -n 20            # history: "intact" or "re-applied"
+systemctl --user start chrome-cap-check.service        # run the check now
+```
+
+`bin/apply-chrome-cap --revert` removes the units as well. The check re-applies launchers only; a Chrome window already running keeps its old cgroup until you restart it.
+
 ## Repeat from scratch (one block)
 
 Everything in this chapter is scripted and idempotent. On a fresh or rebuilt Tower5810, from `~/Documents/IndianaDell`:
