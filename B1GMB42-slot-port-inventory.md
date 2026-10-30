@@ -235,6 +235,16 @@ Manual allows up to **two** full-height full-length PCIe x16 cards at 225 W each
 
 Serial PCIe add-in card (if installed): valid slots **1, 3, 4, 5** per Dell Serial PCIe Setup Guide.
 
+### Slot speeds, board picture labels, and PERC plan (confirmed 2026-10-30)
+
+Live links on this unit (`/sys/bus/pci/devices/*/current_link_width`): Slot1 runs PCIe 3.0 **x8**, Slot2 and Slot4 run PCIe 3.0 **x16**. Slot3 is PCIe 2.0 **x1**, Slot5 is PCIe 2.0 x4.
+
+Labels on the system board picture (`docs/images/figure-04-system-board-detail.jpg`), confirmed by the owner: label 1 = Slot6 (legacy PCI), label 2 = Slot5, label 3 = Slot4 (x16), label 4 = Slot3 (x1), label 5 = Slot2 (x16, the **blue** slot), label 6 = Slot1 (x8).
+
+Fastest slots are **Slot2 and Slot4** (x16). If a FirePro W5000 is pulled for Thumper, pull it from Slot1, which has the slower x8 link.
+
+**Plan only (may change):** if the PERC is used, it would sit in an external chassis. A PCIe extender cable (USB-style cable that carries the PCIe bus, not real USB) would connect it to a slot, most likely Slot3 (x1). A PERC H710 normally wants x8, so an x1 link would limit its bandwidth.
+
 ---
 
 ## Every external cable / port (outside the chassis)
