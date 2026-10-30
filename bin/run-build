@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# run-build: run a build/test command at the lowest CPU and disk priority and
+# with a memory cap, so the desktop UI keeps responding on Tower5810.
+#
+# Usage:  run-build [-m MEM] [-j JOBS] -- command args...
+#   e.g.  run-build -- cargo test
+#         run-build -m 6G -j 2 -- make -j2
+# Defaults: MEM=6G (hard cap on RAM+zram swap), JOBS=2 (exported as
+# CARGO_BUILD_JOBS and MAKEFLAGS=-jN when not already set).
+set -euo pipefail
+MEM=6G; JOBS=2
+while getopts "m:j:h" o; do
+  case $o in m) MEM=$OPTARG;; j) JOBS=$OPTARG;; h|*) sed -n 2,10p "$0"; exit 2;; esac
+done
+shift $((OPTIND-1)); [ "${1:-}" = "--" ] && shift
+[ $# -gt 0 ] || { echo "run-build: no command given (use: run-build -- cargo test)" >&2; exit 2; }
+export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$JOBS}"
+export MAKEFLAGS="${MAKEFLAGS:--j$JOBS}"
+base=(nice -n 19 ionice -c3)
+if systemd-run --user --scope --quiet -p MemoryMax=1M true 2>/dev/null || systemd-run --user --scope --quiet true 2>/dev/null; then
+  exec systemd-run --user --scope --quiet --collect \
+    -p MemoryHigh="$MEM" -p MemoryMax="$MEM" -p MemorySwapMax="$MEM" \
+    -p IOWeight=10 -p CPUWeight=10 "${base[@]}" "$@"
+fi
+echo "run-build: no user systemd scope available; using nice/ionice only" >&2
+exec "${base[@]}" "$@"
