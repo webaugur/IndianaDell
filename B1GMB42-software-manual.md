@@ -22,7 +22,7 @@ This manual documents every **host-facing install** the IndianaDell workspace pr
 
 **Quick reference:** `docs/features-available.md` (cheat sheet, not a replacement for this manual).
 
-**Chapter index (this manual):** - 00 Front matter - 01 Introduction - 02 Rebuild and recovery - 03 Post-rebuild checklist - 04 Development - 05 Themes - 06 GPU and display - 07 GNOME session - 08 GNU Radio / SDR - 09 Ham radio - 10 HackRF Mayhem - 11 Flatpak apps - 12 Machine utilities - 13 Factory docs - 14 Gaps and limits - 15 Ventoy live session - 16 QEMU - Appendix A --- Bin launchers - Appendix B --- Apt packages
+**Chapter index (this manual):** - 00 Front matter - 01 Introduction - 02 Rebuild and recovery - 03 Post-rebuild checklist - 04 Development - 05 Themes - 06 GPU and display - 07 GNOME session - 08 GNU Radio / SDR - 09 Ham radio - 10 HackRF Mayhem - 11 Flatpak apps - 12 Machine utilities - 13 Factory docs - 14 Gaps and limits - 15 Ventoy live session - 16 QEMU - 17 ZFS SMB share (`/home`) - 18 Disk IO tuning (UI responsiveness) - Appendix A --- Bin launchers - Appendix B --- Apt packages
 
 **GitHub:** https://github.com/webaugur/IndianaDell (private)
 
@@ -56,8 +56,10 @@ Software arrives in three layers. Understanding the order prevents skipped steps
     +---------------------------+
     | Manual post-rebuild        |
     | apply-amdgpu (GPU configs) |
+    | apply-zfs-smb (Samba /home)|
     | apply-dark-mode            |
     | apply-max-performance      |
+    | apply-io-tuning (zram, BFQ)|
     | fix-nautilus-desktop-launch|
     | sync-desktop-icons         |
     | themes-extract / install   |
@@ -163,7 +165,7 @@ IndianaDell `bin/` and `scripts/` directories are prepended to `PATH` via `~/.co
 
 ## What gets installed
 
-`bin/rebuild-machine` restores the **workstation** software stack (core apt, **KiCad 10**, rustup, Flatpak Telegram). The **SDR / ham / HackRF** stack is installed from **DragonSDR** when `~/Documents/DragonSDR` is present (`bin/install-dragonsdr`).
+`bin/rebuild-machine` restores the **workstation** software stack (core apt, **KiCad 10**, **samsungtv** LAN remote, rustup, Flatpak Telegram). The **SDR / ham / HackRF** stack is installed from **DragonSDR** when `~/Documents/DragonSDR` is present (`bin/install-dragonsdr`).
 
 ## How it is installed
 
@@ -190,6 +192,8 @@ bin/install-dragonsdr               # SDR suite alone
 
   `SKIP_KICAD=1`                          Skip KiCad 10 PPA + `APT_KICAD` + tscircuit npm (ngspice, gerbv, 3D libs)
 
+  `SKIP_SAMSUNGTV=1`                      Skip `samsungtv` CLI (`pipx install samsungtvws[cli]`)
+
   `DRAGONSDR_ROOT=…`                      Override suite path (default `~/Documents/DragonSDR`)
   -------------------------------------------------------------------------------------------------------------------
 
@@ -203,6 +207,8 @@ bin/install-dragonsdr               # SDR suite alone
   2                                 Install `APT_CORE` --- build, Python, docs, GPU utils, flatpak, gh
 
   2b                                KiCad 10 PPA + `APT_KICAD` + tscircuit npm (unless `SKIP_KICAD=1`)
+
+  2c                                `samsungtv` via pipx `samsungtvws[cli]` (unless `SKIP_SAMSUNGTV=1`)
 
   3                                 Flatpak remote + `org.telegram.desktop` (unless skipped)
 
@@ -228,6 +234,7 @@ bin/install-dragonsdr --verify-only
 
 - Every package in `APT_CORE` via `dpkg-query`
 - Every package in `APT_KICAD` plus `kicad` / `kicad-cli` / `ngspice` / `node` / `npm`, `import pcbnew` 10.\*, and tscircuit + `@tscircuit/capacity-autorouter` (unless `SKIP_KICAD=1`)
+- `samsungtv` pipx package `samsungtvws[cli]` (unless `SKIP_SAMSUNGTV=1`)
 - Commands: `rustc`, `cargo`, `pandoc`, `xelatex`, `vkcube`
 - Launchers: `dellmerge`, `gpu-stress`, `iotest`, `apply-amdgpu`, `rebuild-machine`
 - DragonSDR suite (unless `SKIP_DRAGONSDR=1` or suite missing)
@@ -244,21 +251,23 @@ Exit code 0 means all checks passed.
 
 ## What rebuild does / does not do
 
-  -------------------------------------------------------------------------------------------------------
-  Rebuild **does**                                                Rebuild **does not**
-  --------------------------------------------------------------- ---------------------------------------
-  apt install `APT_CORE` + `APT_KICAD` (KiCad 10 PPA)             Partition disks or ZFS
+  -----------------------------------------------------------------------------------------------------------------
+  Rebuild **does**                                                          Rebuild **does not**
+  ------------------------------------------------------------------------- ---------------------------------------
+  apt install `APT_CORE` + `APT_KICAD` (KiCad 10 PPA)                       Partition disks or ZFS
 
-  tscircuit + `@tscircuit/capacity-autorouter` under `~/.local`   `sudo bin/apply-amdgpu`
+  tscircuit + `@tscircuit/capacity-autorouter` under `~/.local`             `sudo bin/apply-amdgpu`
 
-  rustup; DragonSDR suite when present                            GNOME prefs / themes by default
+  `samsungtv` (`pipx install samsungtvws[cli]`) unless `SKIP_SAMSUNGTV=1`   Pair the TV (on-screen Allow)
 
-  Flatpak Telegram                                                Flash HackRF / PortaPack firmware
+  rustup; DragonSDR suite when present                                      GNOME prefs / themes by default
 
-  Regenerate apt manifests                                        `bin/amd-install` (ROCm)
+  Flatpak Telegram                                                          Flash HackRF / PortaPack firmware
 
-  chmod workspace scripts                                         Install FactoryDocs CABs to Windows
-  -------------------------------------------------------------------------------------------------------
+  Regenerate apt manifests                                                  `bin/amd-install` (ROCm)
+
+  chmod workspace scripts                                                   Install FactoryDocs CABs to Windows
+  -----------------------------------------------------------------------------------------------------------------
 
 After a successful rebuild, continue with **Chapter 3 --- Post-Rebuild Checklist**.
 
@@ -375,6 +384,15 @@ command -v ngspice gerbv gerbview tsci
 tsci --help | head
 ```
 
+## 5b. samsungtv (workstation default)
+
+Installed by `bin/rebuild-machine` Phase 2c unless `SKIP_SAMSUNGTV=1`. LAN remote for the Tower5810 Samsung (UN32M4500, `10.0.0.31`). First run: Allow the client on the TV.
+
+``` bash
+samsungtv device-info
+samsungtv home
+```
+
 TypeScript → KiCad:
 
 ``` bash
@@ -409,7 +427,20 @@ Only 19 of 101 pre-crash Dell packages are on disk. Re-download per `FactoryDocs
 
 See Chapter 13.
 
-## 9. ZFS force import (required on this host)
+## 9. ZFS SMB share (`/home`)
+
+Samba is in `APT_CORE`. After rebuild, bind it to the LAN and publish the home dataset (not `/root`):
+
+``` bash
+sudo bin/apply-zfs-smb
+sudo smbpasswd -a user
+zfs get -r sharesmb rpool/USERDATA   # only home_ulmkkv on
+ss -lnt | grep ':445'                # 10.0.0.113 and 127.0.0.1
+```
+
+See Chapter 17. Do not leave Ubuntu's inherited `sharesmb=on` on `rpool/USERDATA` --- that would export `/root`.
+
+## 10. ZFS force import (required on this host)
 
 After any reinstall or recovery chroot, confirm the installed system will force-import pools at boot:
 
@@ -428,6 +459,7 @@ bin/rebuild-machine --verify-only
 kicad-cli version                             # expect 10.0.*
 tsci --help >/dev/null && echo OK tscircuit   # TypeScript → KiCad
 grep '^ZPOOL_IMPORT_OPTS' /etc/default/zfs    # expect "-f"
+zfs get -H -o name,value sharesmb rpool/USERDATA/home_ulmkkv  # on
 source bin/hackrf-env
 . ~/.cargo/env && rustc --version
 gnuradio-config-info --version
@@ -436,33 +468,37 @@ bin/urh --version
 
 ## Summary table
 
-  --------------------------------------------------------------------------------------------------------------
-  Step                          Command                                               Reboot?
-  ----------------------------- ----------------------------------------------------- --------------------------
-  GPU configs                   `sudo bin/apply-amdgpu`                               Yes
+  -------------------------------------------------------------------------------------------------------------------------
+  Step                             Command                                                       Reboot?
+  -------------------------------- ------------------------------------------------------------- --------------------------
+  GPU configs                      `sudo bin/apply-amdgpu`                                       Yes
 
-  Dark mode                     `bin/apply-dark-mode`                                 No
+  Dark mode                        `bin/apply-dark-mode`                                         No
 
-  Max performance               `bin/apply-max-performance`                           No
+  Max performance                  `bin/apply-max-performance`                                   No
 
-  Nautilus 50 .desktop launch   `bin/fix-nautilus-desktop-launch`                     No
+  Nautilus 50 .desktop launch      `bin/fix-nautilus-desktop-launch`                             No
 
-  Nautilus 50 .desktop icons    `bin/sync-desktop-icons`                              No
+  Nautilus 50 .desktop icons       `bin/sync-desktop-icons`                                      No
 
-  Custom boot                   `sudo bin/themes-install-boot`                        Yes
+  Custom boot                      `sudo bin/themes-install-boot`                                Yes
 
-  HackRF flash                  `bin/hackrf-flash-mayhem` + DFU                       Maybe
+  HackRF flash                     `bin/hackrf-flash-mayhem` + DFU                               Maybe
 
-  KiCad 10 + tscircuit          `kicad-cli version`; `tsci export … -f kicad_sch`     No
+  KiCad 10 + tscircuit             `kicad-cli version`; `tsci export … -f kicad_sch`             No
 
-  ROCm (optional)               `bin/amd-install`                                     Yes
+  ROCm (optional)                  `bin/amd-install`                                             Yes
 
-  All doc PDFs                  `bin/build-all-docs`                                  No
+  All doc PDFs                     `bin/build-all-docs`                                          No
 
-  ZFS force import              check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"`   If initramfs updated
+  Disk IO tuning + capped Chrome   `sudo bin/apply-io-tuning`; `bin/apply-chrome-cap` (Ch. 18)   No
 
-  Ventoy persistence seed       `~/bin/seed-ventoy-persistence.sh`                    No
-  --------------------------------------------------------------------------------------------------------------
+  ZFS SMB `/home`                  `sudo bin/apply-zfs-smb`; `sudo smbpasswd -a user`            No
+
+  ZFS force import                 check `/etc/default/zfs` → `ZPOOL_IMPORT_OPTS="-f"`           If initramfs updated
+
+  Ventoy persistence seed          `~/bin/seed-ventoy-persistence.sh`                            No
+  -------------------------------------------------------------------------------------------------------------------------
 
 # Chapter 4 --- Development Toolchain
 
@@ -766,11 +802,30 @@ indiana-ir-flash                 # arduino-cli; no IDE
 indiana-ir-send hdmi2
 ```
 
-## Host waits for `READY`/`OK` on the serial fd (Uno resets on port open). Group `dialout` required.
+Host waits for `READY`/`OK` on the serial fd (Uno resets on port open). Group `dialout` required.
+
+## LAN remote (`samsungtv`)
+
+Tizen WebSocket CLI for the Samsung on Tower5810 (UN32M4500, `10.0.0.31`). Default-on via `pipx install samsungtvws[cli]`; opt out `SKIP_SAMSUNGTV=1`. Wrapper: `bin/samsungtv` (host `10.0.0.31`, port `8002`, token `~/.config/indianadell/samsungtv.token`).
+
+First run shows **Allow** on the TV. Then:
+
+``` bash
+samsungtv device-info
+samsungtv home
+samsungtv volume-up
+samsungtv send-key KEY_HDMI
+samsungtv apps
+samsungtv app-run 111299001912   # YouTube
+```
+
+Override host: `SAMSUNGTV_HOST=… samsungtv …` or `--host`. IR (`indiana-ir-send`) still works if Smart Hub is down. `SKIP_SAMSUNGTV=1` skips install on rebuild and `fix-indianadell`.
+
+## Lab probe notes, protocol comparison (WebSocket / UPnP / SmartThings), and recipes: [`docs/samsung-un32m4500.md`](../samsung-un32m4500.md) · `UN32M4500-lab-manual.pdf`.
 
 ## Lab host note --- Thumper (NVIDIA)
 
-This chapter is **Tower5810 / AMD only**. The lab host **`thumper.local`** (Dell Precision T5610) runs **NVIDIA TITAN Xp** and is **not** configured with `apply-amdgpu`.
+This chapter is **Tower5810 / AMD only**. Lab topology: [`docs/lab-hosts.md`](../lab-hosts.md). The intelligence host **`thumper.local`** (Dell Precision T5610) runs **NVIDIA TITAN Xp** and is **not** configured with `apply-amdgpu`. Safar's NVS 3100M (nvidia 340.108) is also out of scope here --- `docs/safar-inventory.md`.
 
 **Full Thumper GPU doc** (inventory, dual-card plan, **power/clock locking**, LingBot-Map pointer):
 
@@ -1463,6 +1518,7 @@ Use `bin/amd-preflight` before `bin/amd-install`; expect warnings for these GPUs
 These remain **manual** by design (see Chapter 3):
 
 - `sudo bin/apply-amdgpu`
+- `sudo bin/apply-zfs-smb` then `sudo smbpasswd -a user` (Samba /home share; Ch. 17)
 - `bin/apply-dark-mode`, `bin/apply-max-performance`, `bin/fix-nautilus-desktop-launch`, `bin/sync-desktop-icons`
 - `bin/themes-extract`, `sudo bin/themes-install-boot`
 - `bin/hackrf-flash-mayhem` (DFU with hardware)
@@ -2125,103 +2181,398 @@ See the script and its pinned commit for the exact feature set.
 
 For the absolute latest and most detailed information, always consult the `docs/` directory inside the QEMU source tree you are building. The structure described above is stable across recent QEMU releases.
 
+# Chapter 17 --- ZFS SMB share (`/home`)
+
+On Linux, OpenZFS `sharesmb` is **not** a kernel SMB server. It registers a Samba **usershare** (`net usershare`) and expects **`smbd`** to listen on TCP 445. Tower5810 shares the existing dataset `rpool/USERDATA/home_ulmkkv` (`mountpoint=/home`), which contains both `user` and `ubuntu`. `/root` is not shared.
+
+## What gets installed
+
+  -------------------------------------------------------------------------------------------------------
+  Piece                                  Role
+  -------------------------------------- ----------------------------------------------------------------
+  apt `samba`                            `smbd` + `net` (required for `zfs share` SMB)
+
+  apt `smbclient`                        local smoke tests
+
+  `etc/samba/indianadell.conf`           LAN bind, no guest, `[home]` alias
+
+  `sharesmb=on`                          only `rpool/USERDATA/home_ulmkkv`
+
+  `sharesmb=off`                         `rpool/USERDATA` (no inherit) and `rpool/USERDATA/root_ulmkkv`
+  -------------------------------------------------------------------------------------------------------
+
+Clients: `\\10.0.0.113\home`, `\\10.0.0.113\Documents` (`/home/user/Documents`), and the ZFS usershare `rpool_USERDATA_home_ulmkkv`.
+
+**iPad / iOS Files:** needs `vfs objects = catia fruit streams_xattr`. Without fruit, Files.app lists the tree and opens directories `RDONLY` (see `smbstatus`) so writes to `user/Documents` fail even though `[home]` is `read only = no`.
+
+**Do not** set `usershare template share = home`. Samba 4.23.6 `load_usershare_service` **SIGSEGV** on iPad TCON to the ZFS usershare (`/var/log/samba/log.mobile`). Template is the unavailable share `zfs-usershare-template` (`available = no`, `read only = no`). After a config change, delete the Files.app server and add it again (reboot alone can reuse a stale TCON).
+
+## How it is installed
+
+After Samba is on disk (rebuild Phase 2 installs `samba` + `smbclient`):
+
+``` bash
+sudo bin/apply-zfs-smb
+sudo smbpasswd -a user    # SMB password is a separate database
+```
+
+`apply-zfs-smb` copies the drop-in, inserts `include = /etc/samba/indianadell.conf` into **`[global]`** of `/etc/samba/smb.conf` (not after `[print$]` --- that would leave usershares disabled), sets the three `sharesmb` properties, restarts `smbd`, then `zfs share -a smb`.
+
+Do **not** install Samba and skip `apply-zfs-smb`. Ubuntu's installer left `sharesmb=on` on `rpool/USERDATA`, which would inherit onto **`/root`**.
+
+## How to verify
+
+``` bash
+zfs get -r sharesmb rpool/USERDATA
+# home_ulmkkv on (local); USERDATA and root_ulmkkv off
+sudo net usershare list
+# rpool_USERDATA_home_ulmkkv
+ss -lnt | grep ':445'
+# 10.0.0.113 and 127.0.0.1 only — not docker0/virbr0, not global IPv6
+smbclient -L //10.0.0.113 -U user
+smbclient //10.0.0.113/home -U user -c 'ls'
+smbclient //10.0.0.113/Documents -U user -c 'ls'
+```
+
+Anonymous tree connect to `[home]` must be `NT_STATUS_ACCESS_DENIED`.
+
+## How to customize
+
+- LAN address: `interfaces` in `etc/samba/indianadell.conf` (today `10.0.0.113`). Re-run `sudo bin/apply-zfs-smb` after edits.
+- Share name: `[home]` in that file. The ZFS usershare name follows the dataset.
+- Narrower share (Documents only, or `/home/user` without `ubuntu`): smb.conf `path =`, not `sharesmb` --- `sharesmb` can only export a **dataset**.
+- UFW is inactive on this host. If you enable it, allow TCP 445 from `10.0.0.0/24` only.
+
+## What rebuild does / does not do
+
+  -----------------------------------------------------------------------------------------------------
+  Does                                               Does not
+  -------------------------------------------------- --------------------------------------------------
+  apt-install `samba` and `smbclient` (`APT_CORE`)   Run `apply-zfs-smb`
+
+                                                     Set `smbpasswd`
+
+                                                     Change ZFS `sharesmb` (survives reboot once set)
+  -----------------------------------------------------------------------------------------------------
+
+Post-rebuild: `sudo bin/apply-zfs-smb` then `sudo smbpasswd -a user`.
+
+# Chapter 18 --- Disk IO tuning (UI responsiveness)
+
+**Symptom:** the GNOME desktop freezes whenever the disks are saturated (builds, `dsd-fme` decoders, swap-out, ZFS txg flushes).
+
+**Cause (Tower5810, measured 2026-10-27):**
+
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Finding                               Detail
+  ------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Root pool on a spinning disk          `rpool` data vdev is the 1.4 TB Hitachi HDS723015BLA642 (`sdb4`, rotational).
+
+  SSD is not free space                 The TEAM T253X6256G (`sda`, 238 GB) is a **ZFS `special` vdev** (metadata + blocks ≤ 32K). It cannot be carved into a non-ZFS swap partition without removing it from the pool.
+
+  Swap on a ZFS zvol                    `rpool/swap` (`/dev/zd0`, 33 GB, `sync=always`, `volblocksize=8K`). Every swap-out is a synchronous HDD write. A second 4 GB swap partition sat on the same HDD (`sdb3`).
+
+  Unbounded ARC                         `zfs_arc_max=0` → ARC allowed up to all 16 GB RAM, competing with apps and pushing them into that swap.
+
+  Pressure stall info                   `/proc/pressure/io` full avg300 ≈ 10 % while CPU pressure was ≈ 2 %: the stalls were disk, not CPU.
+
+  IO scheduler                          `mq-deadline` on all disks; no per-process fairness, so one writer (`cargo`, \~40 MB/s) starves the desktop.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Any IndianaDell machine: `bin/apply-tuning`
+
+The same scripts now work on every similar-era Dell (Safar, Tower5810, the others), not only Tower5810. They detect the hardware and choose sizes from it. There is one entry point:
+
+``` bash
+bin/apply-tuning report            # no root: detected hardware, live status, and the plan. Paste this.
+bin/apply-tuning status            # no root: each step ok / DIFFERS / skip
+bin/apply-tuning apply --dry-run   # no root: exact actions, changes nothing
+sudo bin/apply-tuning apply        # root steps
+bin/apply-tuning apply             # user steps (chrome-cap, max-performance), no sudo
+sudo bin/apply-tuning revert       # undo the IO steps
+# --only zram,sysctl   --skip fast-boot   --config FILE
+```
+
+Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login` (root) and `chrome-cap max-performance` (user). Running a root step without sudo prints the exact `sudo` command instead. Every step is idempotent: a file is rewritten only when its content differs.
+
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  What is detected                    How it is used
+  ----------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  RAM (`MemTotal`)                    zram = **75 % of RAM, rounded to GiB, clamped 2G..32G** (16 GB → 12G, 8 GB → 6G, 32 GB → 24G). ZFS ARC = **25 % of RAM, clamped 1..16 GiB**. Chrome MemoryMax = 37.5 % of RAM (min 2G), MemoryHigh = max − 1G.
+
+  ZFS module loaded                   ARC cap and the initramfs rebuild only when ZFS is present; otherwise skipped. Swap zvols are noted, never destroyed.
+
+  Root fs, initramfs tool             `update-initramfs -u` or `dracut -f`, only when the ARC file changed.
+
+  Disks (`lsblk` ROTA/TRAN)           BFQ for rotational SATA/SAS disks only. SSD, NVMe and eMMC keep their default. USB disks are left alone (flash sticks report rotational=1).
+
+  Disk-backed swap                    `swapoff` only if its used pages fit in MemAvailable − 1.5 GB. Active fstab lines whose type field is `swap` are commented `#disabled-by-io-tuning#`, after a timestamped backup in `/root/io-tuning-backup/`.
+
+  Other zram managers                 zram-generator, zram-config or zramswap: our zram step is skipped (no double zram) unless `ZRAM_TAKEOVER=1`.
+
+  GRUB, NetworkManager, kdump         fast-boot skips what is missing. The cmdline is built from the machine's own `GRUB_CMDLINE_LINUX_DEFAULT` with `crashkernel=` removed and `quiet splash` kept, so options such as Tower5810's `usbcore.quirks=` survive.
+
+  Display manager, session            fast-login (GDM auto-login) is **opt-in** (`ENABLE_FAST_LOGIN=1`) and GDM-only. max-performance needs GNOME.
+
+  Laptop (DMI chassis or battery)     max-performance is skipped unless `FORCE_DESKTOP_POWER=1`.
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Configuration** (later wins): computed defaults \< `etc/indianadell/hosts/<hostname>.conf` in the repo \< `/etc/indianadell/tuning.conf` \< `--config FILE` \< environment variables. The keys are listed in `etc/indianadell/tuning.conf.example`. `etc/indianadell/hosts/Tower5810.conf` pins Tower5810 to what was tuned there: 13G zram, 4 GiB ARC, Chrome 5G/6G, and auto-login for `user`. A new machine needs no file. To pin it, copy the example to `/etc/indianadell/tuning.conf`, or add `hosts/<name>.conf` to the repo.
+
+### New machine (e.g. Safar)
+
+``` bash
+cd ~/Documents/IndianaDell && git pull
+bin/apply-tuning report > /tmp/tuning-$(hostname).txt; cat /tmp/tuning-$(hostname).txt   # review / paste
+sudo bin/apply-tuning apply            # root steps
+bin/apply-tuning apply                 # Chrome cap + GNOME max performance (as yourself)
+bin/apply-tuning status                # everything ok; reboot, then systemd-analyze
+```
+
+The older launchers still work and call the same code. `sudo bin/apply-io-tuning` runs the IO steps only, and `bin/apply-io-tuning --report` reports them. `sudo bin/resize-zram-swap` without a size uses the configured size. `bin/apply-fast-boot --dry-run` needs no sudo.
+
+## What `apply-io-tuning` changes (Tower5810 history)
+
+``` bash
+sudo bin/apply-io-tuning
+# options (environment): ARC_MAX_GIB=4  ZRAM_SIZE=13G  BG_PROCS="cargo rustc dsd-fme commander"
+```
+
+1.  **ZFS ARC cap** --- 4 GiB live (`/sys/module/zfs/parameters/zfs_arc_max`) and persistent in `/etc/modprobe.d/zfs-arc.conf`.
+2.  **zram swap** --- `zram-swap.service`: 13 GiB (was 8 GiB; resize live with `sudo bin/resize-zram-swap 13G`), zstd, priority 100. Swap lives in compressed RAM, zero disk IO.
+3.  **sysctl** --- `/etc/sysctl.d/60-zram.conf`: `vm.swappiness=100`, `vm.page-cluster=0` (the right values when swap is zram; high swappiness is cheap there).
+4.  **Disk swap off** --- each non-zram entry in `/proc/swaps` is `swapoff`'d only if its used pages fit in `MemAvailable` minus 1.5 GB; matching `/etc/fstab` lines are commented with `#disabled-by-io-tuning#`. Original fstab is saved at `/root/io-tuning-backup/fstab.orig`.
+5.  **BFQ scheduler** --- `modprobe bfq`, loaded at boot, plus `/etc/udev/rules.d/60-hdd-bfq.rules` for every rotational `sd*` disk (USB disks are skipped by the live step). BFQ gives interactive/latency-sensitive IO priority over bulk writers.
+6.  **initramfs** --- `update-initramfs -u` so the ARC cap applies from boot (ZFS root).
+7.  **Idle IO class** for running `cargo`, `rustc`, `dsd-fme`, `commander`.
+
+The `rpool/swap` zvol is **left in place**. Once you are happy, reclaim the space with `sudo zfs destroy rpool/swap`.
+
+## Running heavy jobs without freezing the desktop
+
+``` bash
+bin/run-in-background cargo build --release     # ionice -c3 + nice -n 19
+```
+
+`ionice -c3` (idle class) is honoured by BFQ; it is **not** enforced under `mq-deadline`, which is why step 5 matters.
+
+## Verify
+
+``` bash
+swapon --show                     # only /dev/zramN
+cat /sys/block/sdb/queue/scheduler  # [bfq]
+grep -E '^(size|c_max) ' /proc/spl/kstat/zfs/arcstats
+cat /proc/pressure/io             # watch 'full' under load
+```
+
+## Undo
+
+``` bash
+sudo bin/revert-io-tuning
+```
+
+Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns the disks to `mq-deadline`.
+
+## Notes and limits
+
+- `sudo` is **not available** to the Grok Bot assistant on Tower5810 (its shell runs with `no_new_privs`). Run these scripts yourself from a terminal.
+- Device names (`sdb`, `sdc`) are not hard-coded: BFQ is applied to every rotational `sd*` disk.
+- The real fix for the root cause is more free SSD: moving `rpool`'s data vdev to SSD, or adding a mirror/L2ARC/SLOG on a non-special SSD, would help more than any tuning. Not done here.
+- Swapping out a large zvol swap needs free RAM; if step 4 reports "not enough free RAM", close apps and re-run or reboot.
+
+### Resizing the zram swap
+
+zram uses RAM only for pages actually stored (about 3.5:1 compression on this machine), so a larger device costs nothing until it fills. To change the size live and persistently:
+
+``` bash
+sudo bin/resize-zram-swap 13G      # or 16G; edits zram-swap.service, then swapoff/reset/swapon
+swapon --show                      # confirm the new size
+zramctl --bytes                    # DATA = stored, TOTAL = RAM actually used
+```
+
+The script refuses to swap off if the stored pages would not fit in free RAM; it still saves the size for the next boot.
+
+## Capping Chrome's memory
+
+Chrome was one of the largest RAM users on 16 GB. Spoofing the RAM size is not practical, so Chrome runs inside a kernel memory budget instead:
+
+``` bash
+bin/apply-chrome-cap                 # no sudo; defaults MemoryHigh=5G MemoryMax=6G
+bin/apply-chrome-cap --high 4G --max 5G
+bin/apply-chrome-cap --revert
+```
+
+- `~/.config/systemd/user/chrome.slice` holds the budget (also `CPUWeight=80`, `IOWeight=50`). All Chrome windows and PWAs share it.
+- Past `MemoryHigh` the kernel reclaims Chrome's pages into zram swap (Chrome slows, the desktop does not). At `MemoryMax` only Chrome is OOM-killed.
+- `~/bin/chrome-capped` (from `scripts/gnome/chrome-capped.sh`) starts Chrome with `systemd-run --user --scope --slice=chrome.slice` plus `--renderer-process-limit=8` and `--js-flags=--max-old-space-size=3072`. Extra flags: `CHROME_CAPPED_FLAGS`.
+- The installer points the system launchers (copied to `~/.local/share/applications`) and the Chrome-made PWA launchers at the wrapper. Originals are in `~/Backups/chrome-cap`. Chrome rewrites its PWA launchers on update, so re-run `bin/apply-chrome-cap` afterward.
+- Terminal: the installer writes a marker-delimited block (`# >>> indianadell chrome-cap >>>`) to `~/.bash_aliases` that aliases `google-chrome`, `google-chrome-stable` and `chrome` to the wrapper. Re-running replaces the block; `--revert` removes it. Open a new terminal (or `source ~/.bash_aliases`) to pick it up.
+- Also useful, in Chrome: Settings → Performance → Memory Saver.
+
+### What the cap covers (and doesn't)
+
+Chrome moves its own main browser process (about 250-300 MB) into a separate per-app group that GNOME creates (`app-com.google.Chrome-<pid>.scope`), so that process is **not** inside `chrome.slice`. This is deliberate and left alone: the renderers, GPU, network and extension helper processes are the ones that balloon, and they all start inside the capped group and share its MemoryHigh/MemoryMax budget. Capping the main process too would risk the kernel killing the whole browser instead of only its helpers.
+
+Check where each process lives:
+
+``` bash
+for p in $(pgrep -f /opt/google/chrome/chrome); do echo "$(cut -d/ -f6- /proc/$p/cgroup)"; done | sort | uniq -c
+systemctl --user show chrome.slice -p MemoryCurrent -p MemoryHigh -p MemoryMax
+```
+
+`MemoryCurrent` therefore reads lower than Chrome's own task manager (Shift+Esc) by roughly the main process's size.
+
+### Automatic re-check after updates
+
+`bin/apply-chrome-cap` also installs three user units (no sudo): `chrome-cap-check.timer` (3 minutes after login, then hourly; it catches the nightly `apt-daily-upgrade`, which runs around 06:00), `chrome-cap-check.path` (fires when Chrome rewrites a launcher in `~/.local/share/applications`), and `chrome-cap-check.service`, which runs `scripts/gnome/check-chrome-cap.sh`. The script does nothing when every Chrome launcher still starts the wrapper. If an update reset one, or the wrapper or slice file is gone, it re-runs `bin/apply-chrome-cap` with your existing limits and sends a desktop notification.
+
+``` bash
+systemctl --user list-timers chrome-cap-check.timer    # next run
+journalctl --user -u chrome-cap-check -n 20            # history: "intact" or "re-applied"
+systemctl --user start chrome-cap-check.service        # run the check now
+```
+
+`bin/apply-chrome-cap --revert` removes the units as well. The check re-applies launchers only; a Chrome window already running keeps its old cgroup until you restart it.
+
+## Repeat from scratch (one block)
+
+Everything in this chapter is scripted and idempotent. On a fresh or rebuilt Tower5810, from `~/Documents/IndianaDell`:
+
+``` bash
+# 1. Root-level IO tuning: zram swap, ZFS ARC cap, BFQ, idle IO for background jobs
+sudo bin/apply-io-tuning
+sudo swapoff /dev/zd0 2>/dev/null || true      # finish emptying the old ZFS swap volume if step 4 skipped it
+# 2. User-level, no sudo: capped Chrome + launchers + terminal aliases
+bin/apply-chrome-cap                           # --high 5G --max 6G are the defaults
+source ~/.bash_aliases
+# 3. Make the new commands available in $PATH
+bin/install-to-bin
+# 4. Verify
+swapon --show                                  # only /dev/zramN
+cat /sys/block/sdb/queue/scheduler             # [bfq]
+systemctl --user show chrome.slice -p MemoryHigh -p MemoryMax
+type chrome                                    # aliased to ~/bin/chrome-capped
+```
+
+Undo: `sudo bin/revert-io-tuning` and `bin/apply-chrome-cap --revert`.
+
 # Appendix A --- bin/ Launchers
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------
-  Launcher                        Runs                                                                                     Chapter
-  ------------------------------- ---------------------------------------------------------------------------------------- ----------------------------
-  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                                     2
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Launcher                        Runs                                                                                                                                                                         Chapter
+  ------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------
+  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                                                                                                                         2
 
-  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                                  1
+  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                                                                                                                      1
 
-  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                                         1, 3
+  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                                                                                                                             1, 3
 
-  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + LFS (`--dragonsdr` optional)              15
+  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + LFS (`--dragonsdr` optional)                                                                                                  15
 
-  `install-dragonsdr`             `~/Documents/DragonSDR/bin/install-suite` --- full SDR suite                             8--10
+  `install-dragonsdr`             `~/Documents/DragonSDR/bin/install-suite` --- full SDR suite                                                                                                                 8--10
 
-  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)                            15
+  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)                                                                                                                15
 
-  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat   15
+  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat                                                                                       15
 
-  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Uncle Wiggly              hardware / PERC doc
+  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Uncle Wiggly                                                                                                  hardware / PERC doc
 
-  `boot-uncle-wiggly-vm`          `scripts/ventoy/boot-uncle-wiggly-vm.sh` --- QEMU live+persistence test                  15
+  `boot-uncle-wiggly-vm`          `scripts/ventoy/boot-uncle-wiggly-vm.sh` --- QEMU live+persistence test                                                                                                      15
 
-  `boxes-import-wiggly-isos`      `scripts/ventoy/boxes-import-wiggly-isos.sh` --- Boxes VM per ISO on Wiggly              15
+  `boxes-import-wiggly-isos`      `scripts/ventoy/boxes-import-wiggly-isos.sh` --- Boxes VM per ISO on Wiggly                                                                                                  15
 
-  `themes-preview-boot`           `Themes/scripts/plymouth-preview.py` --- safe Plymouth window                            5
+  `themes-preview-boot`           `Themes/scripts/plymouth-preview.py` --- safe Plymouth window                                                                                                                5
 
-  `apply-fast-login`              `scripts/gnome/apply-fast-login.sh` --- GRUB 0s + GDM autologin + face                   5, 7
+  `apply-fast-login`              `scripts/gnome/apply-fast-login.sh` --- GRUB 0s + GDM autologin + face                                                                                                       5, 7
 
-  `apply-fast-boot`               `scripts/gnome/apply-fast-boot.sh` --- strip crashkernel, defer daemons                  5, 7 / `docs/fast-boot.md`
+  `apply-fast-boot`               `scripts/gnome/apply-fast-boot.sh` --- strip crashkernel, defer daemons                                                                                                      5, 7 / `docs/fast-boot.md`
 
-  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                                 2, 15
+  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                                                                                                                     2, 15
 
-  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                                           ---
+  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                                                                                                                               ---
 
-  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                                  2, 15
+  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                                                                                                                      2, 15
 
-  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                                        6, 12
+  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                                                                                                                            6, 12
 
-  `dellmerge`                     `scripts/dell/dellmerge.sh`                                                              12
+  `dellmerge`                     `scripts/dell/dellmerge.sh`                                                                                                                                                  12
 
-  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                                              6, 12
+  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                                                                                                                                  6, 12
 
-  `iotest`                        `scripts/storage/iotest.sh`                                                              12
+  `iotest`                        `scripts/storage/iotest.sh`                                                                                                                                                  12
 
-  `apply-amdgpu`                  `etc/apply.sh`                                                                           6
+  `apply-tuning`                  `scripts/tuning/indianadell-tuning.sh` --- hardware-adaptive tuning for any IndianaDell Dell: `report` / `status` (no sudo), `apply [--dry-run] [--only/--skip]`, `revert`   18
 
-  `apply-sensor-watch`            `bin/apply-sensor-watch` --- install thermal/fan watchdog unit                           6
+  `apply-io-tuning`               `scripts/storage/apply-io-tuning.sh` --- zram swap, ARC cap, BFQ (run with sudo)                                                                                             18
 
-  `indiana-sensor-watch`          `scripts/sensors/indiana-sensor-watch.sh` --- `--once` / daemon                          6
+  `revert-io-tuning`              `scripts/storage/revert-io-tuning.sh` --- undo the above                                                                                                                     18
 
-  `indiana-monitor-input`         `scripts/display/indiana-monitor-input.sh` --- DDC/CI input select                       6
+  `apply-chrome-cap`              `scripts/gnome/apply-chrome-cap.sh` --- memory-capped Chrome slice + launcher wrapper                                                                                        18
 
-  `indiana-ir-send`               `scripts/ir/indiana-ir-send.sh` --- USB serial to Uno IR blaster                         6
+  `resize-zram-swap`              `scripts/storage/resize-zram-swap.sh` --- resize the zram swap live (`sudo bin/resize-zram-swap 13G`)                                                                        18
 
-  `indiana-ir-flash`              `scripts/ir/indiana-ir-flash.sh` --- arduino-cli compile/upload                          6
+  `run-in-background`             `scripts/storage/run-in-background.sh` --- `ionice -c3 nice -n 19 <cmd>`                                                                                                     18
 
-  `tsci` / `tscircuit`            tscircuit CLI under `~/.local` --- TypeScript → KiCad export                             EDA / Ch. 3
+  `apply-amdgpu`                  `etc/apply.sh`                                                                                                                                                               6
 
-  `amd-install`                   `amd-radeon/install-all.sh`                                                              6
+  `apply-zfs-smb`                 `scripts/samba/apply-zfs-smb.sh` --- Samba + `sharesmb` for `/home`                                                                                                          17
 
-  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                                             6
+  `apply-sensor-watch`            `bin/apply-sensor-watch` --- install thermal/fan watchdog unit                                                                                                               6
 
-  `amd-verify`                    `amd-radeon/04-verify.sh`                                                                6
+  `indiana-sensor-watch`          `scripts/sensors/indiana-sensor-watch.sh` --- `--once` / daemon                                                                                                              6
 
-  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                                                6
+  `indiana-monitor-input`         `scripts/display/indiana-monitor-input.sh` --- DDC/CI input select                                                                                                           6
 
-  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                                       5, 7
+  `indiana-ir-send`               `scripts/ir/indiana-ir-send.sh` --- USB serial to Uno IR blaster                                                                                                             6
 
-  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                                 7
+  `indiana-ir-flash`              `scripts/ir/indiana-ir-flash.sh` --- arduino-cli compile/upload                                                                                                              6
 
-  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                                           3, 7
+  `samsungtv`                     pipx `samsungtvws[cli]` --- Tizen LAN remote (defaults to `10.0.0.31:8002`)                                                                                                  6
 
-  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                                    3, 7
+  `tsci` / `tscircuit`            tscircuit CLI under `~/.local` --- TypeScript → KiCad export                                                                                                                 EDA / Ch. 3
 
-  `themes-extract`                `Themes/scripts/extract-all.sh`                                                          5
+  `amd-install`                   `amd-radeon/install-all.sh`                                                                                                                                                  6
 
-  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                                   5
+  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                                                                                                                                 6
 
-  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                                   5
+  `amd-verify`                    `amd-radeon/04-verify.sh`                                                                                                                                                    6
 
-  `hackrf-env`                    sources `DragonSDR/hackrf/scripts/env.sh`                                                10
+  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                                                                                                                                    6
 
-  `urh`                           `DragonSDR/bin/urh`                                                                      10
+  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                                                                                                                           5, 7
 
-  `hackrf-setup-udev`             `DragonSDR/bin/hackrf-setup-udev`                                                        10
+  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                                                                                                                     7
 
-  `hackrf-download-mayhem`        `DragonSDR/bin/hackrf-download-mayhem`                                                   10
+  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                                                                                                                               3, 7
 
-  `hackrf-prepare-sdcard`         `DragonSDR/bin/hackrf-prepare-sdcard`                                                    10
+  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                                                                                                                        3, 7
 
-  `hackrf-flash-mayhem`           `DragonSDR/bin/hackrf-flash-mayhem`                                                      10
+  `themes-extract`                `Themes/scripts/extract-all.sh`                                                                                                                                              5
 
-  `hackrf-build-mayhem`           `DragonSDR/bin/hackrf-build-mayhem`                                                      10
-  -----------------------------------------------------------------------------------------------------------------------------------------------------
+  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                                                                                                                       5
+
+  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                                                                                                                       5
+
+  `hackrf-env`                    sources `DragonSDR/hackrf/scripts/env.sh`                                                                                                                                    10
+
+  `urh`                           `DragonSDR/bin/urh`                                                                                                                                                          10
+
+  `hackrf-setup-udev`             `DragonSDR/bin/hackrf-setup-udev`                                                                                                                                            10
+
+  `hackrf-download-mayhem`        `DragonSDR/bin/hackrf-download-mayhem`                                                                                                                                       10
+
+  `hackrf-prepare-sdcard`         `DragonSDR/bin/hackrf-prepare-sdcard`                                                                                                                                        10
+
+  `hackrf-flash-mayhem`           `DragonSDR/bin/hackrf-flash-mayhem`                                                                                                                                          10
+
+  `hackrf-build-mayhem`           `DragonSDR/bin/hackrf-build-mayhem`                                                                                                                                          10
+
+  `webm-to-mp4`                   `scripts/media/webm-to-mp4.sh` --- VP8 WebM → H.264 MP4                                                                                                                      ---
+
+  `clip-video`                    `scripts/media/clip-video.sh` --- trim `--video-start`/`--video-end` (`--start`/`--end`) to `.mp4` (H.264/AAC) or `.webm` (VP9/Opus); `--audio` replaces the clip audio      ---
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 
@@ -2245,7 +2596,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
-**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `hackrf-setup-udev` (udev install), `amd-install`, `efi-timing-suite`, `mount-rpool-recovery.sh`, `mount-bpool-recovery.sh`
+**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `apply-tuning apply` (root steps), `apply-io-tuning`, `revert-io-tuning`, `resize-zram-swap`, `hackrf-setup-udev` (udev install), `amd-install`, `efi-timing-suite`, `mount-rpool-recovery.sh`, `mount-bpool-recovery.sh`
 
 # Appendix B --- Apt Packages by Chapter
 
@@ -2254,15 +2605,18 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 **Install SDR suite:** `bin/install-dragonsdr` → DragonSDR `bin/install-suite`.\
 **Full system snapshot:** `apt-full-manifest.txt` (after rebuild).\
 **SDR/ham filter snapshot:** `apt-hamradio-dev-manifest.txt`.\
-**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` + tscircuit npm on rebuild and `fix-indianadell`).
+**KiCad opt-out:** `SKIP_KICAD=1` (skips PPA + `APT_KICAD` + tscircuit npm on rebuild and `fix-indianadell`).\
+**samsungtv opt-out:** `SKIP_SAMSUNGTV=1` (skips pipx `samsungtvws[cli]` on rebuild and `fix-indianadell`).
 
 ## Chapter 4 --- Development (IndianaDell `APT_CORE`)
 
-`build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`, `gh`
+`build-essential`, `cmake`, `pkg-config`, `git`, `curl`, `wget`, `unzip`, `python3-pip`, `python3-venv`, `python3-dev`, `python3-numpy`, `python3-scipy`, `python3-matplotlib`, `python3-yaml`, `python3-requests`, `python3-pyqt5`, `python3-psutil`, `libssl-dev`, `clang`, `llvm-dev`, `libclang-dev`, `libusb-1.0-0-dev`, `libfftw3-dev`, `libvolk-dev`, `portaudio19-dev`, `libsndfile1-dev`, `libboost-dev`, `libboost-program-options-dev`, `pandoc`, `texlive-latex-recommended`, `texlive-fonts-recommended`, `texlive-xetex`, `gh`, `samba`, `smbclient`
 
 ## Chapter 6 --- GPU and Display
 
-`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`
+`vulkan-tools`, `mesa-utils`, `mesa-utils-bin`, `clinfo`, `x11-apps`, `smartmontools`, `ddcutil`, `arduino-cli`, `ffmpeg`
+
+**samsungtv** (not apt; default-on): `scripts/rebuild/install-samsungtv.sh` runs `pipx install samsungtvws[cli]` (apt `pipx` if missing). CLI is `samsungtv`. Skip with `SKIP_SAMSUNGTV=1`.
 
 ## Chapter 8 --- GNU Radio and SDR (DragonSDR `APT_SDR` + build libs)
 
@@ -2285,6 +2639,10 @@ Default-on for workstation rebuild. Requires `ppa:kicad/kicad-10.0-releases` (`s
 **tscircuit** (not apt): `scripts/rebuild/install-tscircuit.sh` runs `npm install -g --prefix ~/.local tscircuit @tscircuit/capacity-autorouter typescript`. CLI is `tsci` / `tscircuit`. Export a circuit to KiCad with `tsci export circuit.tsx -f kicad_sch` (also `kicad_pcb`, `kicad_zip`). Autorouter npm name is `@tscircuit/capacity-autorouter` ([tscircuit-autorouter](https://github.com/tscircuit/tscircuit-autorouter)).
 
 `kicad-doc-id` is **not** in the list (universe still 9.0.8 while the PPA is 10.x). Skip the whole set (including tscircuit) with `SKIP_KICAD=1`.
+
+## Chapter 17 --- ZFS SMB
+
+`samba` (provides `smbd` and `net` for `zfs share` SMB), `smbclient`. Config: `sudo bin/apply-zfs-smb` (not applied automatically by rebuild).
 
 ## Chapter 11 --- Flatpak
 
