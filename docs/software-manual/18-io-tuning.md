@@ -180,3 +180,13 @@ type chrome                                    # aliased to ~/bin/chrome-capped
 ```
 
 Undo: `sudo bin/revert-io-tuning` and `bin/apply-chrome-cap --revert`.
+
+## Safar: DataStore1 auto-unlock and module-bay swap
+
+`scripts/storage/setup-datastore1-automount.sh` (run once: `sudo bash scripts/storage/setup-datastore1-automount.sh`) makes Safar's encrypted DataStore1 disk (the drive in the E6410 module bay, LUKS UUID `e65a9ecc-36de-468f-9953-761421991865`, hard-coded at the top of the script; edit it for other machines) unlock and mount at boot without a prompt:
+
+- Creates a random 64-byte keyfile `/etc/cryptsetup-keys.d/datastore1.key` (root-only) on the encrypted root disk, which is already unlocked at power-on, and adds it as an extra LUKS key. You type the existing DataStore1 passphrase once; it keeps working as the backup.
+- Adds `datastore1` to `/etc/crypttab` and `/media/user/DataStore1` to `/etc/fstab`, both with `nofail,x-systemd.device-timeout=5s`, so boot continues normally if the disk is missing or a DVD drive is in the bay.
+- Installs `/usr/local/sbin/datastore1 eject|mount|status`. `sudo datastore1 eject` unmounts, locks and detaches the disk before swapping the bay to a DVD drive (it reports "Busy" if files are open there); `sudo datastore1 mount` rescans and brings it back.
+
+Undo: copy `/etc/crypttab.pre-datastore1` and `/etc/fstab.pre-datastore1` back over `/etc/crypttab` and `/etc/fstab`. Limit: hot-swapping the E6410 bay while powered on is unverified; if the swapped drive doesn't appear, shut down, swap, and boot.
