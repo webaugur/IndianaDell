@@ -208,7 +208,7 @@ step_diskswap() {
   elif (( STATUS )); then say "  fstab: DIFFERS — $n active swap line(s)"
   elif (( DRY )); then say "  would comment out in /etc/fstab (backup first):"; awk '$1!~/^#/ && $3=="swap"' /etc/fstab | sed 's/^/      | /'
   else
-    install -d -m 700 /root/io-tuning-backup; cp --update=none /etc/fstab /root/io-tuning-backup/fstab.orig
+    install -d -m 700 /root/io-tuning-backup; [[ -e /root/io-tuning-backup/fstab.orig ]] || cp /etc/fstab /root/io-tuning-backup/fstab.orig
     cp /etc/fstab "/root/io-tuning-backup/fstab.$(date +%Y%m%d-%H%M%S)"
     awk '($1!~/^#/ && $3=="swap"){print "#disabled-by-io-tuning# " $0; next}{print}' /etc/fstab > /etc/fstab.indianadell.tmp && mv /etc/fstab.indianadell.tmp /etc/fstab
     say "  commented $n fstab swap line(s); backups in /root/io-tuning-backup/"; NEED_DAEMON_RELOAD=1
