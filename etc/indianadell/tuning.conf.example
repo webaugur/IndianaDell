@@ -14,5 +14,6 @@
 #LOGIN_USER=user          # default: $SUDO_USER, else the uid-1000 user
 #ZRAM_TAKEOVER=0          # 1 = disable zram-generator/zram-config/zramswap and use ours
 #FORCE_DESKTOP_POWER=0    # 1 = apply max-performance even on a laptop
+#GPU_MANAGER_MASK=auto   # auto = mask gpu-manager.service only if 1 GPU, not hybrid, no /etc/prime-discrete; 1 = always; 0 = never
 #SKIP="fast-boot"         # steps to always skip (comma list)
 #ONLY=""                 # restrict to these steps

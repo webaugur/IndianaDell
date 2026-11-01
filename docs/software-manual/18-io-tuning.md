@@ -27,7 +27,7 @@ sudo bin/apply-tuning revert       # undo the IO steps
 # --only zram,sysctl   --skip fast-boot   --config FILE
 ```
 
-Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login` (root) and `chrome-cap max-performance` (user). Running a root step without sudo prints the exact `sudo` command instead. Every step is idempotent: a file is rewritten only when its content differs.
+Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login gpu-manager` (root) and `chrome-cap max-performance` (user). Running a root step without sudo prints the exact `sudo` command instead. Every step is idempotent: a file is rewritten only when its content differs.
 
 | What is detected | How it is used |
 |---|---|
@@ -39,6 +39,7 @@ Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login` (roo
 | Other zram managers | zram-generator, zram-config or zramswap: our zram step is skipped (no double zram) unless `ZRAM_TAKEOVER=1`. |
 | GRUB, NetworkManager, kdump | fast-boot skips what is missing. The cmdline is built from the machine's own `GRUB_CMDLINE_LINUX_DEFAULT` with `crashkernel=` removed and `quiet splash` kept, so options such as Tower5810's `usbcore.quirks=` survive. |
 | Display manager, session | fast-login (GDM auto-login) is **opt-in** (`ENABLE_FAST_LOGIN=1`) and GDM-only. max-performance needs GNOME. |
+| GPUs (`lspci -n` class 03xx), `gpu-manager.service`, `/etc/prime-discrete` | gpu-manager step: `systemctl mask gpu-manager.service` (saves about 10 s of boot) only when the unit exists, there is **exactly one** display-class GPU (VGA 0300, 3D 0302 or display 0380, so no hybrid/Optimus/PRIME) and `/etc/prime-discrete` is absent. `GPU_MANAGER_MASK=auto` (default), `1` = mask whenever the unit exists, `0` = never. Safar (one NVS 3100M) masks it; Tower5810 (three FirePro cards) skips it. |
 | Laptop (DMI chassis or battery) | max-performance is skipped unless `FORCE_DESKTOP_POWER=1`. |
 
 **Configuration** (later wins): computed defaults < `etc/indianadell/hosts/<hostname>.conf` in the repo < `/etc/indianadell/tuning.conf` < `--config FILE` < environment variables. The keys are listed in `etc/indianadell/tuning.conf.example`. `etc/indianadell/hosts/Tower5810.conf` pins Tower5810 to what was tuned there: 13G zram, 4 GiB ARC, Chrome 5G/6G, and auto-login for `user`. A new machine needs no file. To pin it, copy the example to `/etc/indianadell/tuning.conf`, or add `hosts/<name>.conf` to the repo.
@@ -95,7 +96,7 @@ cat /proc/pressure/io             # watch 'full' under load
 sudo bin/revert-io-tuning
 ```
 
-Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns the disks to `mq-deadline`.
+Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns the disks to `mq-deadline`. `sudo bin/apply-tuning revert` also runs `systemctl unmask gpu-manager.service` when it is masked (`--skip gpu-manager` keeps it masked). By hand: `sudo systemctl unmask gpu-manager.service`.
 
 ## Notes and limits
 
