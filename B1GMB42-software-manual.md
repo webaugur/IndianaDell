@@ -2293,29 +2293,31 @@ sudo bin/apply-tuning revert       # undo the IO steps
 # --only zram,sysctl   --skip fast-boot   --config FILE
 ```
 
-Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login` (root) and `chrome-cap max-performance` (user). Running a root step without sudo prints the exact `sudo` command instead. Every step is idempotent: a file is rewritten only when its content differs.
+Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login gpu-manager` (root) and `chrome-cap max-performance` (user). Running a root step without sudo prints the exact `sudo` command instead. Every step is idempotent: a file is rewritten only when its content differs.
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  What is detected                    How it is used
-  ----------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  RAM (`MemTotal`)                    zram = **75 % of RAM, rounded to GiB, clamped 2G..32G** (16 GB → 12G, 8 GB → 6G, 32 GB → 24G). ZFS ARC = **25 % of RAM, clamped 1..16 GiB**. Chrome MemoryMax = 37.5 % of RAM (min 2G), MemoryHigh = max − 1G.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  What is detected                                                             How it is used
+  ---------------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  RAM (`MemTotal`)                                                             zram = **75 % of RAM, rounded to GiB, clamped 2G..32G** (16 GB → 12G, 8 GB → 6G, 32 GB → 24G). ZFS ARC = **25 % of RAM, clamped 1..16 GiB**. Chrome MemoryMax = 37.5 % of RAM (min 2G), MemoryHigh = max − 1G.
 
-  ZFS module loaded                   ARC cap and the initramfs rebuild only when ZFS is present; otherwise skipped. Swap zvols are noted, never destroyed.
+  ZFS module loaded                                                            ARC cap and the initramfs rebuild only when ZFS is present; otherwise skipped. Swap zvols are noted, never destroyed.
 
-  Root fs, initramfs tool             `update-initramfs -u` or `dracut -f`, only when the ARC file changed.
+  Root fs, initramfs tool                                                      `update-initramfs -u` or `dracut -f`, only when the ARC file changed.
 
-  Disks (`lsblk` ROTA/TRAN)           BFQ for rotational SATA/SAS disks only. SSD, NVMe and eMMC keep their default. USB disks are left alone (flash sticks report rotational=1).
+  Disks (`lsblk` ROTA/TRAN)                                                    BFQ for rotational SATA/SAS disks only. SSD, NVMe and eMMC keep their default. USB disks are left alone (flash sticks report rotational=1).
 
-  Disk-backed swap                    `swapoff` only if its used pages fit in MemAvailable − 1.5 GB. Active fstab lines whose type field is `swap` are commented `#disabled-by-io-tuning#`, after a timestamped backup in `/root/io-tuning-backup/`.
+  Disk-backed swap                                                             `swapoff` only if its used pages fit in MemAvailable − 1.5 GB. Active fstab lines whose type field is `swap` are commented `#disabled-by-io-tuning#`, after a timestamped backup in `/root/io-tuning-backup/`.
 
-  Other zram managers                 zram-generator, zram-config or zramswap: our zram step is skipped (no double zram) unless `ZRAM_TAKEOVER=1`.
+  Other zram managers                                                          zram-generator, zram-config or zramswap: our zram step is skipped (no double zram) unless `ZRAM_TAKEOVER=1`.
 
-  GRUB, NetworkManager, kdump         fast-boot skips what is missing. The cmdline is built from the machine's own `GRUB_CMDLINE_LINUX_DEFAULT` with `crashkernel=` removed and `quiet splash` kept, so options such as Tower5810's `usbcore.quirks=` survive.
+  GRUB, NetworkManager, kdump                                                  fast-boot skips what is missing. The cmdline is built from the machine's own `GRUB_CMDLINE_LINUX_DEFAULT` with `crashkernel=` removed and `quiet splash` kept, so options such as Tower5810's `usbcore.quirks=` survive.
 
-  Display manager, session            fast-login (GDM auto-login) is **opt-in** (`ENABLE_FAST_LOGIN=1`) and GDM-only. max-performance needs GNOME.
+  Display manager, session                                                     fast-login (GDM auto-login) is **opt-in** (`ENABLE_FAST_LOGIN=1`) and GDM-only. max-performance needs GNOME.
 
-  Laptop (DMI chassis or battery)     max-performance is skipped unless `FORCE_DESKTOP_POWER=1`.
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  GPUs (`lspci -n` class 03xx), `gpu-manager.service`, `/etc/prime-discrete`   gpu-manager step: `systemctl mask gpu-manager.service` (saves about 10 s of boot) only when the unit exists, there is **exactly one** display-class GPU (VGA 0300, 3D 0302 or display 0380, so no hybrid/Optimus/PRIME) and `/etc/prime-discrete` is absent. `GPU_MANAGER_MASK=auto` (default), `1` = mask whenever the unit exists, `0` = never. Safar (one NVS 3100M) masks it; Tower5810 (three FirePro cards) skips it.
+
+  Laptop (DMI chassis or battery)                                              max-performance is skipped unless `FORCE_DESKTOP_POWER=1`.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Configuration** (later wins): computed defaults \< `etc/indianadell/hosts/<hostname>.conf` in the repo \< `/etc/indianadell/tuning.conf` \< `--config FILE` \< environment variables. The keys are listed in `etc/indianadell/tuning.conf.example`. `etc/indianadell/hosts/Tower5810.conf` pins Tower5810 to what was tuned there: 13G zram, 4 GiB ARC, Chrome 5G/6G, and auto-login for `user`. A new machine needs no file. To pin it, copy the example to `/etc/indianadell/tuning.conf`, or add `hosts/<name>.conf` to the repo.
 
@@ -2371,7 +2373,7 @@ cat /proc/pressure/io             # watch 'full' under load
 sudo bin/revert-io-tuning
 ```
 
-Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns the disks to `mq-deadline`.
+Removes the zram unit, ARC cap, sysctl, BFQ rule, restores fstab, and returns the disks to `mq-deadline`. `sudo bin/apply-tuning revert` also runs `systemctl unmask gpu-manager.service` when it is masked (`--skip gpu-manager` keeps it masked). By hand: `sudo systemctl unmask gpu-manager.service`.
 
 ## Notes and limits
 
@@ -2460,119 +2462,119 @@ Undo: `sudo bin/revert-io-tuning` and `bin/apply-chrome-cap --revert`.
 
 All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatically via `~/.config/indianadell/path.sh` (IndianaDell tools override system binaries).
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Launcher                        Runs                                                                                                                                                                         Chapter
-  ------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------
-  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                                                                                                                         2
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Launcher                        Runs                                                                                                                                                                                                                                                         Chapter
+  ------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ----------------------------
+  `rebuild-machine`               `scripts/rebuild/rebuild-machine.sh`                                                                                                                                                                                                                         2
 
-  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                                                                                                                      1
+  `build-software-manual`         `scripts/docs/build-software-manual.sh`                                                                                                                                                                                                                      1
 
-  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                                                                                                                             1, 3
+  `build-all-docs`                `scripts/docs/build-all-docs.sh`                                                                                                                                                                                                                             1, 3
 
-  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + LFS (`--dragonsdr` optional)                                                                                                  15
+  `pull-repo`                     `scripts/github/pull-all.sh` --- IndianaDell + LFS (`--dragonsdr` optional)                                                                                                                                                                                  15
 
-  `install-dragonsdr`             `~/Documents/DragonSDR/bin/install-suite` --- full SDR suite                                                                                                                 8--10
+  `install-dragonsdr`             `~/Documents/DragonSDR/bin/install-suite` --- full SDR suite                                                                                                                                                                                                 8--10
 
-  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)                                                                                                                15
+  `push-repo`                     `bin/push-repo` → GitHub `webaugur/IndianaDell` (SSH default)                                                                                                                                                                                                15
 
-  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat                                                                                       15
+  `setup-wiggly-ventoy`           `scripts/ventoy/setup-wiggly-ventoy.sh` --- Uncle Wiggly 🥕🐰 ISO + ventoy.json + .dat                                                                                                                                                                       15
 
-  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Uncle Wiggly                                                                                                  hardware / PERC doc
+  `setup-perc-ventoy`             `scripts/perc/setup-perc-ventoy.sh` --- H710 FreeDOS/IT kit on Uncle Wiggly                                                                                                                                                                                  hardware / PERC doc
 
-  `boot-uncle-wiggly-vm`          `scripts/ventoy/boot-uncle-wiggly-vm.sh` --- QEMU live+persistence test                                                                                                      15
+  `boot-uncle-wiggly-vm`          `scripts/ventoy/boot-uncle-wiggly-vm.sh` --- QEMU live+persistence test                                                                                                                                                                                      15
 
-  `boxes-import-wiggly-isos`      `scripts/ventoy/boxes-import-wiggly-isos.sh` --- Boxes VM per ISO on Wiggly                                                                                                  15
+  `boxes-import-wiggly-isos`      `scripts/ventoy/boxes-import-wiggly-isos.sh` --- Boxes VM per ISO on Wiggly                                                                                                                                                                                  15
 
-  `themes-preview-boot`           `Themes/scripts/plymouth-preview.py` --- safe Plymouth window                                                                                                                5
+  `themes-preview-boot`           `Themes/scripts/plymouth-preview.py` --- safe Plymouth window                                                                                                                                                                                                5
 
-  `apply-fast-login`              `scripts/gnome/apply-fast-login.sh` --- GRUB 0s + GDM autologin + face                                                                                                       5, 7
+  `apply-fast-login`              `scripts/gnome/apply-fast-login.sh` --- GRUB 0s + GDM autologin + face                                                                                                                                                                                       5, 7
 
-  `apply-fast-boot`               `scripts/gnome/apply-fast-boot.sh` --- strip crashkernel, defer daemons                                                                                                      5, 7 / `docs/fast-boot.md`
+  `apply-fast-boot`               `scripts/gnome/apply-fast-boot.sh` --- strip crashkernel, defer daemons                                                                                                                                                                                      5, 7 / `docs/fast-boot.md`
 
-  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                                                                                                                     2, 15
+  `build-zfs-recovery-doc`        `scripts/docs/build-zfs-recovery-doc.sh`                                                                                                                                                                                                                     2, 15
 
-  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                                                                                                                               ---
+  `build-trifold-slick`           `docs/sales/B1GMB42-trifold.html` → sales PDFs                                                                                                                                                                                                               ---
 
-  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                                                                                                                      2, 15
+  `deploy-dosboot-recovery`       `scripts/recovery/deploy-to-dosboot.sh`                                                                                                                                                                                                                      2, 15
 
-  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                                                                                                                            6, 12
+  `efi-timing-suite`              `scripts/efi/efi-timing-suite.sh`                                                                                                                                                                                                                            6, 12
 
-  `dellmerge`                     `scripts/dell/dellmerge.sh`                                                                                                                                                  12
+  `dellmerge`                     `scripts/dell/dellmerge.sh`                                                                                                                                                                                                                                  12
 
-  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                                                                                                                                  6, 12
+  `gpu-stress`                    `scripts/gpu/gpu-stress.sh`                                                                                                                                                                                                                                  6, 12
 
-  `iotest`                        `scripts/storage/iotest.sh`                                                                                                                                                  12
+  `iotest`                        `scripts/storage/iotest.sh`                                                                                                                                                                                                                                  12
 
-  `apply-tuning`                  `scripts/tuning/indianadell-tuning.sh` --- hardware-adaptive tuning for any IndianaDell Dell: `report` / `status` (no sudo), `apply [--dry-run] [--only/--skip]`, `revert`   18
+  `apply-tuning`                  `scripts/tuning/indianadell-tuning.sh` --- hardware-adaptive tuning for any IndianaDell Dell: `report` / `status` (no sudo), `apply [--dry-run] [--only/--skip]`, `revert`; steps include `gpu-manager` (masks gpu-manager.service on single-GPU machines)   18
 
-  `apply-io-tuning`               `scripts/storage/apply-io-tuning.sh` --- zram swap, ARC cap, BFQ (run with sudo)                                                                                             18
+  `apply-io-tuning`               `scripts/storage/apply-io-tuning.sh` --- zram swap, ARC cap, BFQ (run with sudo)                                                                                                                                                                             18
 
-  `revert-io-tuning`              `scripts/storage/revert-io-tuning.sh` --- undo the above                                                                                                                     18
+  `revert-io-tuning`              `scripts/storage/revert-io-tuning.sh` --- undo the above                                                                                                                                                                                                     18
 
-  `apply-chrome-cap`              `scripts/gnome/apply-chrome-cap.sh` --- memory-capped Chrome slice + launcher wrapper                                                                                        18
+  `apply-chrome-cap`              `scripts/gnome/apply-chrome-cap.sh` --- memory-capped Chrome slice + launcher wrapper                                                                                                                                                                        18
 
-  `resize-zram-swap`              `scripts/storage/resize-zram-swap.sh` --- resize the zram swap live (`sudo bin/resize-zram-swap 13G`)                                                                        18
+  `resize-zram-swap`              `scripts/storage/resize-zram-swap.sh` --- resize the zram swap live (`sudo bin/resize-zram-swap 13G`)                                                                                                                                                        18
 
-  `run-in-background`             `scripts/storage/run-in-background.sh` --- `ionice -c3 nice -n 19 <cmd>`                                                                                                     18
+  `run-in-background`             `scripts/storage/run-in-background.sh` --- `ionice -c3 nice -n 19 <cmd>`                                                                                                                                                                                     18
 
-  `apply-amdgpu`                  `etc/apply.sh`                                                                                                                                                               6
+  `apply-amdgpu`                  `etc/apply.sh`                                                                                                                                                                                                                                               6
 
-  `apply-zfs-smb`                 `scripts/samba/apply-zfs-smb.sh` --- Samba + `sharesmb` for `/home`                                                                                                          17
+  `apply-zfs-smb`                 `scripts/samba/apply-zfs-smb.sh` --- Samba + `sharesmb` for `/home`                                                                                                                                                                                          17
 
-  `apply-sensor-watch`            `bin/apply-sensor-watch` --- install thermal/fan watchdog unit                                                                                                               6
+  `apply-sensor-watch`            `bin/apply-sensor-watch` --- install thermal/fan watchdog unit                                                                                                                                                                                               6
 
-  `indiana-sensor-watch`          `scripts/sensors/indiana-sensor-watch.sh` --- `--once` / daemon                                                                                                              6
+  `indiana-sensor-watch`          `scripts/sensors/indiana-sensor-watch.sh` --- `--once` / daemon                                                                                                                                                                                              6
 
-  `indiana-monitor-input`         `scripts/display/indiana-monitor-input.sh` --- DDC/CI input select                                                                                                           6
+  `indiana-monitor-input`         `scripts/display/indiana-monitor-input.sh` --- DDC/CI input select                                                                                                                                                                                           6
 
-  `indiana-ir-send`               `scripts/ir/indiana-ir-send.sh` --- USB serial to Uno IR blaster                                                                                                             6
+  `indiana-ir-send`               `scripts/ir/indiana-ir-send.sh` --- USB serial to Uno IR blaster                                                                                                                                                                                             6
 
-  `indiana-ir-flash`              `scripts/ir/indiana-ir-flash.sh` --- arduino-cli compile/upload                                                                                                              6
+  `indiana-ir-flash`              `scripts/ir/indiana-ir-flash.sh` --- arduino-cli compile/upload                                                                                                                                                                                              6
 
-  `samsungtv`                     pipx `samsungtvws[cli]` --- Tizen LAN remote (defaults to `10.0.0.31:8002`)                                                                                                  6
+  `samsungtv`                     pipx `samsungtvws[cli]` --- Tizen LAN remote (defaults to `10.0.0.31:8002`)                                                                                                                                                                                  6
 
-  `tsci` / `tscircuit`            tscircuit CLI under `~/.local` --- TypeScript → KiCad export                                                                                                                 EDA / Ch. 3
+  `tsci` / `tscircuit`            tscircuit CLI under `~/.local` --- TypeScript → KiCad export                                                                                                                                                                                                 EDA / Ch. 3
 
-  `amd-install`                   `amd-radeon/install-all.sh`                                                                                                                                                  6
+  `amd-install`                   `amd-radeon/install-all.sh`                                                                                                                                                                                                                                  6
 
-  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                                                                                                                                 6
+  `amd-preflight`                 `amd-radeon/00-preflight.sh`                                                                                                                                                                                                                                 6
 
-  `amd-verify`                    `amd-radeon/04-verify.sh`                                                                                                                                                    6
+  `amd-verify`                    `amd-radeon/04-verify.sh`                                                                                                                                                                                                                                    6
 
-  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                                                                                                                                    6
+  `amd-uninstall`                 `amd-radeon/uninstall.sh`                                                                                                                                                                                                                                    6
 
-  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                                                                                                                           5, 7
+  `apply-dark-mode`               `scripts/gnome/apply-dark-mode.sh`                                                                                                                                                                                                                           5, 7
 
-  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                                                                                                                     7
+  `apply-max-performance`         `scripts/gnome/apply-max-performance.sh`                                                                                                                                                                                                                     7
 
-  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                                                                                                                               3, 7
+  `fix-nautilus-desktop-launch`   `scripts/gnome/fix-nautilus-desktop-launch.sh`                                                                                                                                                                                                               3, 7
 
-  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                                                                                                                        3, 7
+  `sync-desktop-icons`            `scripts/gnome/sync-desktop-icons.sh`                                                                                                                                                                                                                        3, 7
 
-  `themes-extract`                `Themes/scripts/extract-all.sh`                                                                                                                                              5
+  `themes-extract`                `Themes/scripts/extract-all.sh`                                                                                                                                                                                                                              5
 
-  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                                                                                                                       5
+  `themes-install-boot`           `Themes/scripts/install-boot-theme.sh`                                                                                                                                                                                                                       5
 
-  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                                                                                                                       5
+  `themes-restore-boot`           `Themes/scripts/install-boot-theme.sh --restore-stock`                                                                                                                                                                                                       5
 
-  `hackrf-env`                    sources `DragonSDR/hackrf/scripts/env.sh`                                                                                                                                    10
+  `hackrf-env`                    sources `DragonSDR/hackrf/scripts/env.sh`                                                                                                                                                                                                                    10
 
-  `urh`                           `DragonSDR/bin/urh`                                                                                                                                                          10
+  `urh`                           `DragonSDR/bin/urh`                                                                                                                                                                                                                                          10
 
-  `hackrf-setup-udev`             `DragonSDR/bin/hackrf-setup-udev`                                                                                                                                            10
+  `hackrf-setup-udev`             `DragonSDR/bin/hackrf-setup-udev`                                                                                                                                                                                                                            10
 
-  `hackrf-download-mayhem`        `DragonSDR/bin/hackrf-download-mayhem`                                                                                                                                       10
+  `hackrf-download-mayhem`        `DragonSDR/bin/hackrf-download-mayhem`                                                                                                                                                                                                                       10
 
-  `hackrf-prepare-sdcard`         `DragonSDR/bin/hackrf-prepare-sdcard`                                                                                                                                        10
+  `hackrf-prepare-sdcard`         `DragonSDR/bin/hackrf-prepare-sdcard`                                                                                                                                                                                                                        10
 
-  `hackrf-flash-mayhem`           `DragonSDR/bin/hackrf-flash-mayhem`                                                                                                                                          10
+  `hackrf-flash-mayhem`           `DragonSDR/bin/hackrf-flash-mayhem`                                                                                                                                                                                                                          10
 
-  `hackrf-build-mayhem`           `DragonSDR/bin/hackrf-build-mayhem`                                                                                                                                          10
+  `hackrf-build-mayhem`           `DragonSDR/bin/hackrf-build-mayhem`                                                                                                                                                                                                                          10
 
-  `webm-to-mp4`                   `scripts/media/webm-to-mp4.sh` --- VP8 WebM → H.264 MP4                                                                                                                      ---
+  `webm-to-mp4`                   `scripts/media/webm-to-mp4.sh` --- VP8 WebM → H.264 MP4                                                                                                                                                                                                      ---
 
-  `clip-video`                    `scripts/media/clip-video.sh` --- trim `--video-start`/`--video-end` (`--start`/`--end`) to `.mp4` (H.264/AAC) or `.webm` (VP9/Opus); `--audio` replaces the clip audio      ---
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  `clip-video`                    `scripts/media/clip-video.sh` --- trim `--video-start`/`--video-end` (`--start`/`--end`) to `.mp4` (H.264/AAC) or `.webm` (VP9/Opus); `--audio` replaces the clip audio                                                                                      ---
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 **Ventoy session (`scripts/ventoy/` → `~/bin` via `install-ventoy-session.sh`):**
 

@@ -7,24 +7,24 @@
 #   bin/apply-tuning report                 # no root: detected hardware + plan (paste this)
 #   bin/apply-tuning status                 # no root: each step ok / differs / skipped
 #   bin/apply-tuning apply --dry-run        # no root: exact actions, changes nothing
-#   sudo bin/apply-tuning apply             # root steps (arc zram sysctl diskswap bfq initramfs ionice fast-boot [fast-login])
+#   sudo bin/apply-tuning apply             # root steps (arc zram sysctl diskswap bfq initramfs ionice fast-boot [fast-login] gpu-manager)
 #   bin/apply-tuning apply                  # as your user: user steps (chrome-cap max-performance)
-#   sudo bin/apply-tuning revert            # undo the root io steps (bin/revert-io-tuning)
+#   sudo bin/apply-tuning revert            # undo the root io steps (bin/revert-io-tuning) + unmask gpu-manager
 # Options:
 #   --only a,b    run only these steps        --skip a,b   skip these steps
 #   --dry-run     print actions, change nothing
 #   --config F    extra config file (after host profile and /etc/indianadell/tuning.conf)
-# Steps: arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login chrome-cap max-performance
+# Steps: arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login gpu-manager chrome-cap max-performance
 # Config precedence (later wins): computed defaults < etc/indianadell/hosts/<hostname>.conf (repo)
 #   < /etc/indianadell/tuning.conf < --config FILE < environment variables.
 #
 set -uo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../.." && pwd)"
-ROOT_STEPS=(arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login)
+ROOT_STEPS=(arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login gpu-manager)
 USER_STEPS=(chrome-cap max-performance)
 ALL_STEPS=("${ROOT_STEPS[@]}" "${USER_STEPS[@]}")
 CFG_VARS=(ZRAM_SIZE ZRAM_ALGO ZRAM_PRIO ARC_MAX_GIB SWAPPINESS PAGE_CLUSTER BG_PROCS CHROME_HIGH CHROME_MAX
-          ENABLE_FAST_LOGIN ENABLE_FAST_BOOT LOGIN_USER ZRAM_TAKEOVER FORCE_DESKTOP_POWER SKIP ONLY SWAPOFF_MARGIN_KB)
+          ENABLE_FAST_LOGIN ENABLE_FAST_BOOT LOGIN_USER ZRAM_TAKEOVER FORCE_DESKTOP_POWER SKIP ONLY SWAPOFF_MARGIN_KB GPU_MANAGER_MASK)
 
 CMD="${1:-report}"; [[ $# -gt 0 ]] && shift
 DRY=0; OPT_ONLY=""; OPT_SKIP=""; EXTRA_CFG=""
@@ -65,6 +65,10 @@ HAS_GRUB=0; command -v update-grub >/dev/null && [[ -f /etc/default/grub ]] && H
 HAS_NM=0; systemctl cat NetworkManager.service >/dev/null 2>&1 && HAS_NM=1
 HAS_CHROME=0; { [[ -e /usr/share/applications/google-chrome.desktop ]] || command -v google-chrome-stable >/dev/null; } && HAS_CHROME=1
 HAS_GSETTINGS=0; command -v gsettings >/dev/null && HAS_GSETTINGS=1
+# Display-class PCI devices (class 03xx: VGA 0300, 3D 0302, other display 0380); >1 => hybrid/PRIME.
+GPU_COUNT=0; command -v lspci >/dev/null && GPU_COUNT=$(lspci -n 2>/dev/null | awk '$2 ~ /^03[0-9a-f][0-9a-f]:$/' | wc -l)
+GPU_LIST=$(lspci 2>/dev/null | grep -E ' (VGA compatible|3D|Display) controller' | sed 's/^[^ ]* [^:]*: //' | paste -sd';' -)
+GPUMGR_STATE=$(systemctl list-unit-files gpu-manager.service --no-legend 2>/dev/null | awk '{print $2}')
 INITRAMFS_TOOL=none; command -v update-initramfs >/dev/null && INITRAMFS_TOOL=update-initramfs
 [[ $INITRAMFS_TOOL == none ]] && command -v dracut >/dev/null && INITRAMFS_TOOL=dracut
 
@@ -92,7 +96,7 @@ ZRAM_SIZE="${D_ZRAM_GIB}G"; ZRAM_ALGO=zstd; ZRAM_PRIO=100; ARC_MAX_GIB=$D_ARC_GI
 SWAPPINESS=100; PAGE_CLUSTER=0; BG_PROCS="cargo rustc dsd-fme commander"
 CHROME_MAX="${D_CHROME_MAX}G"; CHROME_HIGH="$((D_CHROME_MAX>2 ? D_CHROME_MAX-1 : 1))G"
 ENABLE_FAST_LOGIN=0; ENABLE_FAST_BOOT=1; LOGIN_USER="${SUDO_USER:-}"; ZRAM_TAKEOVER=0
-FORCE_DESKTOP_POWER=0; SKIP=""; ONLY=""; SWAPOFF_MARGIN_KB=1500000
+FORCE_DESKTOP_POWER=0; GPU_MANAGER_MASK=auto; SKIP=""; ONLY=""; SWAPOFF_MARGIN_KB=1500000
 [[ -z $LOGIN_USER && $IS_ROOT -eq 0 ]] && LOGIN_USER=$(id -un)
 [[ -z $LOGIN_USER ]] && LOGIN_USER=$(getent passwd 1000 | cut -d: -f1)
 CFG_FILES=()
@@ -260,6 +264,28 @@ step_fast_login() {
   local a=(--user "$LOGIN_USER"); (( HAS_GRUB )) || a+=(--no-grub)
   "$ROOT/scripts/gnome/apply-fast-login.sh" "${a[@]}"
 }
+# gpu-manager.service (ubuntu-drivers-common) only matters on hybrid graphics; ~10 s at boot otherwise.
+gpu_manager_reason() {   # prints why not to mask; empty = OK to mask
+  case $GPU_MANAGER_MASK in 0) echo "GPU_MANAGER_MASK=0"; return ;; 1) return ;; auto) ;; *) echo "GPU_MANAGER_MASK='$GPU_MANAGER_MASK' (want auto|1|0)"; return ;; esac
+  [[ -e /etc/prime-discrete ]] && { echo "/etc/prime-discrete exists (PRIME setup in use)"; return; }
+  (( GPU_COUNT == 1 )) || { echo "$GPU_COUNT display-class GPUs (hybrid/multi-GPU: gpu-manager may be needed)"; return; }
+}
+step_gpu_manager() {
+  say "  gpu-manager.service: ${GPUMGR_STATE:-not installed}   GPUs ($GPU_COUNT): ${GPU_LIST:-none}   GPU_MANAGER_MASK=$GPU_MANAGER_MASK"
+  if [[ -z $GPUMGR_STATE ]]; then say "  skip: gpu-manager.service not installed"; return; fi
+  if [[ $CMD == revert ]]; then
+    if [[ $GPUMGR_STATE != masked ]]; then say "  ok: not masked"; return; fi
+    run systemctl unmask gpu-manager.service; return; fi
+  local why; why=$(gpu_manager_reason)
+  if [[ -n $why ]]; then
+    say "  skip: $why"
+    [[ $GPUMGR_STATE == masked ]] && say "  note: it is masked now; undo with: sudo systemctl unmask gpu-manager.service"
+    return; fi
+  if (( STATUS )); then [[ $GPUMGR_STATE == masked ]] && say "  ok: masked" || say "  DIFFERS: $GPUMGR_STATE (would mask, saves ~10 s boot)"; return; fi
+  if [[ $GPUMGR_STATE == masked ]]; then say "  ok: already masked"; return; fi
+  (( DRY )) && say "  would mask gpu-manager.service (single GPU, not hybrid; saves ~10 s boot)"
+  run systemctl mask gpu-manager.service
+}
 step_chrome_cap() {
   if (( ! HAS_CHROME )); then say "  skip: Google Chrome not installed"; return; fi
   say "  want chrome.slice MemoryHigh=$CHROME_HIGH MemoryMax=$CHROME_MAX (rule: max=37.5% RAM => ${D_CHROME_MAX}G, high=max-1G)"
@@ -293,6 +319,7 @@ print_detect() {
   [[ $(sed 1d /proc/swaps | wc -l) == 0 ]] && say "    (none)"
   say "  fstab swap lines: $(awk '$1!~/^#/ && $3=="swap"' /etc/fstab | wc -l)   foreign zram managers: ${ZRAM_FOREIGN:-none}"
   say "  config files: ${CFG_FILES[*]:-none (computed defaults only)}"
+  say "  GPUs: $GPU_COUNT display-class (${GPU_LIST:-none})   gpu-manager.service: ${GPUMGR_STATE:-not installed}"
   say "  effective: ZRAM_SIZE=$ZRAM_SIZE ARC_MAX_GIB=$ARC_MAX_GIB SWAPPINESS=$SWAPPINESS PAGE_CLUSTER=$PAGE_CLUSTER CHROME=$CHROME_HIGH/$CHROME_MAX FAST_BOOT=$ENABLE_FAST_BOOT FAST_LOGIN=$ENABLE_FAST_LOGIN LOGIN_USER=$LOGIN_USER"
 }
 NEED_INITRAMFS=0; NEED_DAEMON_RELOAD=0
@@ -323,6 +350,7 @@ case "$CMD" in
     print_detect; run_steps
     (( DRY )) || say $'\nFinished. Verify: bin/apply-tuning status' ;;
   revert)
+    if want_step gpu-manager; then hdr "gpu-manager [root]"; (( DRY || IS_ROOT )) && step_gpu_manager; fi
     if (( DRY )); then say "would run: $ROOT/scripts/storage/revert-io-tuning.sh  (fast-boot undo: sudo bin/apply-fast-boot --undo; chrome: bin/apply-chrome-cap --revert)"; exit 0; fi
     (( IS_ROOT )) || { say "run with sudo: sudo $ROOT/bin/apply-tuning revert"; exit 1; }
     exec "$ROOT/scripts/storage/revert-io-tuning.sh" ;;
