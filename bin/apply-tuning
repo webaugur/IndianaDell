@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# apply-tuning — hardware-adaptive tuning for any IndianaDell Dell. See scripts/tuning/indianadell-tuning.sh
+#   bin/apply-tuning report | status | apply [--dry-run] [--only a,b] [--skip a,b] | revert
+set -euo pipefail
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+exec "$ROOT/scripts/tuning/indianadell-tuning.sh" "$@"
