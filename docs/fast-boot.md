@@ -112,3 +112,8 @@ If something must always be up immediately after login (e.g. always-on container
 - Plymouth theme: `bin/themes-install-boot --animated-dell`
 - Preview splash safely: `bin/themes-preview-boot`
 - Autologin + face: `bin/apply-fast-login`
+
+## Other machines
+
+`bin/apply-fast-boot --dry-run` (no sudo) shows what would change on the current machine. It is also the `fast-boot` step of `bin/apply-tuning` (chapter 18). The kernel cmdline is computed from that machine's `GRUB_CMDLINE_LINUX_DEFAULT` with `crashkernel=` removed, so machine-specific options are kept. GRUB, NetworkManager and kdump steps are skipped where those are absent, and units on the deferred list that don't exist are ignored.
+

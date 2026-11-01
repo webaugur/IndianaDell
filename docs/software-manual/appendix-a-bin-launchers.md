@@ -24,6 +24,7 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 | `dellmerge` | `scripts/dell/dellmerge.sh` | 12 |
 | `gpu-stress` | `scripts/gpu/gpu-stress.sh` | 6, 12 |
 | `iotest` | `scripts/storage/iotest.sh` | 12 |
+| `apply-tuning` | `scripts/tuning/indianadell-tuning.sh` — hardware-adaptive tuning for any IndianaDell Dell: `report` / `status` (no sudo), `apply [--dry-run] [--only/--skip]`, `revert` | 18 |
 | `apply-io-tuning` | `scripts/storage/apply-io-tuning.sh` — zram swap, ARC cap, BFQ (run with sudo) | 18 |
 | `revert-io-tuning` | `scripts/storage/revert-io-tuning.sh` — undo the above | 18 |
 | `apply-chrome-cap` | `scripts/gnome/apply-chrome-cap.sh` — memory-capped Chrome slice + launcher wrapper | 18 |
@@ -74,4 +75,4 @@ All launchers live in `~/Documents/IndianaDell/bin/`. **PATH** is set automatica
 
 **Note:** `hackrf-env` must be **sourced**, not executed: `source bin/hackrf-env`
 
-**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `apply-io-tuning`, `revert-io-tuning`, `hackrf-setup-udev` (udev install), `amd-install`, `efi-timing-suite`, `mount-rpool-recovery.sh`, `mount-bpool-recovery.sh`
+**Sudo required:** `apply-amdgpu`, `themes-install-boot`, `themes-restore-boot`, `iotest`, `apply-tuning apply` (root steps), `apply-io-tuning`, `revert-io-tuning`, `resize-zram-swap`, `hackrf-setup-udev` (udev install), `amd-install`, `efi-timing-suite`, `mount-rpool-recovery.sh`, `mount-bpool-recovery.sh`

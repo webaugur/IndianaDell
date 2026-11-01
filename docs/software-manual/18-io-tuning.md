@@ -13,7 +13,49 @@
 | Pressure stall info | `/proc/pressure/io` full avg300 ≈ 10 % while CPU pressure was ≈ 2 %: the stalls were disk, not CPU. |
 | IO scheduler | `mq-deadline` on all disks; no per-process fairness, so one writer (`cargo`, ~40 MB/s) starves the desktop. |
 
-## What `apply-io-tuning` changes
+## Any IndianaDell machine: `bin/apply-tuning`
+
+The same scripts now work on every similar-era Dell (Safar, Tower5810, the others), not only Tower5810. They detect the hardware and choose sizes from it. There is one entry point:
+
+```bash
+bin/apply-tuning report            # no root: detected hardware, live status, and the plan. Paste this.
+bin/apply-tuning status            # no root: each step ok / DIFFERS / skip
+bin/apply-tuning apply --dry-run   # no root: exact actions, changes nothing
+sudo bin/apply-tuning apply        # root steps
+bin/apply-tuning apply             # user steps (chrome-cap, max-performance), no sudo
+sudo bin/apply-tuning revert       # undo the IO steps
+# --only zram,sysctl   --skip fast-boot   --config FILE
+```
+
+Steps: `arc zram sysctl diskswap bfq initramfs ionice fast-boot fast-login` (root) and `chrome-cap max-performance` (user). Running a root step without sudo prints the exact `sudo` command instead. Every step is idempotent: a file is rewritten only when its content differs.
+
+| What is detected | How it is used |
+|---|---|
+| RAM (`MemTotal`) | zram = **75 % of RAM, rounded to GiB, clamped 2G..32G** (16 GB → 12G, 8 GB → 6G, 32 GB → 24G). ZFS ARC = **25 % of RAM, clamped 1..16 GiB**. Chrome MemoryMax = 37.5 % of RAM (min 2G), MemoryHigh = max − 1G. |
+| ZFS module loaded | ARC cap and the initramfs rebuild only when ZFS is present; otherwise skipped. Swap zvols are noted, never destroyed. |
+| Root fs, initramfs tool | `update-initramfs -u` or `dracut -f`, only when the ARC file changed. |
+| Disks (`lsblk` ROTA/TRAN) | BFQ for rotational SATA/SAS disks only. SSD, NVMe and eMMC keep their default. USB disks are left alone (flash sticks report rotational=1). |
+| Disk-backed swap | `swapoff` only if its used pages fit in MemAvailable − 1.5 GB. Active fstab lines whose type field is `swap` are commented `#disabled-by-io-tuning#`, after a timestamped backup in `/root/io-tuning-backup/`. |
+| Other zram managers | zram-generator, zram-config or zramswap: our zram step is skipped (no double zram) unless `ZRAM_TAKEOVER=1`. |
+| GRUB, NetworkManager, kdump | fast-boot skips what is missing. The cmdline is built from the machine's own `GRUB_CMDLINE_LINUX_DEFAULT` with `crashkernel=` removed and `quiet splash` kept, so options such as Tower5810's `usbcore.quirks=` survive. |
+| Display manager, session | fast-login (GDM auto-login) is **opt-in** (`ENABLE_FAST_LOGIN=1`) and GDM-only. max-performance needs GNOME. |
+| Laptop (DMI chassis or battery) | max-performance is skipped unless `FORCE_DESKTOP_POWER=1`. |
+
+**Configuration** (later wins): computed defaults < `etc/indianadell/hosts/<hostname>.conf` in the repo < `/etc/indianadell/tuning.conf` < `--config FILE` < environment variables. The keys are listed in `etc/indianadell/tuning.conf.example`. `etc/indianadell/hosts/Tower5810.conf` pins Tower5810 to what was tuned there: 13G zram, 4 GiB ARC, Chrome 5G/6G, and auto-login for `user`. A new machine needs no file. To pin it, copy the example to `/etc/indianadell/tuning.conf`, or add `hosts/<name>.conf` to the repo.
+
+### New machine (e.g. Safar)
+
+```bash
+cd ~/Documents/IndianaDell && git pull
+bin/apply-tuning report > /tmp/tuning-$(hostname).txt; cat /tmp/tuning-$(hostname).txt   # review / paste
+sudo bin/apply-tuning apply            # root steps
+bin/apply-tuning apply                 # Chrome cap + GNOME max performance (as yourself)
+bin/apply-tuning status                # everything ok; reboot, then systemd-analyze
+```
+
+The older launchers still work and call the same code. `sudo bin/apply-io-tuning` runs the IO steps only, and `bin/apply-io-tuning --report` reports them. `sudo bin/resize-zram-swap` without a size uses the configured size. `bin/apply-fast-boot --dry-run` needs no sudo.
+
+## What `apply-io-tuning` changes (Tower5810 history)
 
 ```bash
 sudo bin/apply-io-tuning
@@ -24,7 +66,7 @@ sudo bin/apply-io-tuning
 2. **zram swap** — `zram-swap.service`: 13 GiB (was 8 GiB; resize live with `sudo bin/resize-zram-swap 13G`), zstd, priority 100. Swap lives in compressed RAM, zero disk IO.
 3. **sysctl** — `/etc/sysctl.d/60-zram.conf`: `vm.swappiness=100`, `vm.page-cluster=0` (the right values when swap is zram; high swappiness is cheap there).
 4. **Disk swap off** — each non-zram entry in `/proc/swaps` is `swapoff`'d only if its used pages fit in `MemAvailable` minus 1.5 GB; matching `/etc/fstab` lines are commented with `#disabled-by-io-tuning#`. Original fstab is saved at `/root/io-tuning-backup/fstab.orig`.
-5. **BFQ scheduler** — `modprobe bfq`, loaded at boot, plus `/etc/udev/rules.d/60-hdd-bfq.rules` for every rotational `sd*` disk. BFQ gives interactive/latency-sensitive IO priority over bulk writers.
+5. **BFQ scheduler** — `modprobe bfq`, loaded at boot, plus `/etc/udev/rules.d/60-hdd-bfq.rules` for every rotational `sd*` disk (USB disks are skipped by the live step). BFQ gives interactive/latency-sensitive IO priority over bulk writers.
 6. **initramfs** — `update-initramfs -u` so the ARC cap applies from boot (ZFS root).
 7. **Idle IO class** for running `cargo`, `rustc`, `dsd-fme`, `commander`.
 
