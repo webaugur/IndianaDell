@@ -2472,6 +2472,16 @@ Undo: copy `/etc/crypttab.pre-datastore1` and `/etc/fstab.pre-datastore1` back o
 
 One entry per change, newest first. Scripts live in `scripts/system/` (and `scripts/storage/`). They need root, so David runs them with `sudo`; the status line records whether the result has been checked.
 
+## 2026-11-01 --- `scripts/system/make-freedos-flash-stick.sh` (Safar, any Ubuntu)
+
+- **Machine:** run on Safar (Ubuntu 22.04) to build a USB stick for flashing the E6410 BIOS. Works on any machine with the tools below.
+- **What it does:** checks the target is a whole, removable USB disk under 128 GB that holds no mounted system filesystem, shows model and size, and asks you to type the device name. It then wipes the stick and writes an MBR with one active FAT32 partition labelled `FLASH`, plus the syslinux `mbr.bin`. Boot runs syslinux → `chain.c32 freedos=KERNEL.SYS` → FreeDOS 1.4. Files come from the FreeDOS ISO: `KERNEL.SYS`, `COMMAND.COM`, and `EDIT.EXE` and `EDIT.HLP` in `C:\FDOS\BIN`. The script writes `FDCONFIG.SYS` and an `AUTOEXEC.BAT` that sets `PATH=C:\;C:\FDOS\BIN` and lists the steps. Each BIOS .exe is copied under an 8.3 name (`E6410Ann.EXE`) and gets its own `FLASHn.BAT`, numbered in ascending revision order so A11 comes first. Each batch file says what it will do and pauses before it runs the .exe. Everything is written with mtools and the stick is never mounted. Re-running rebuilds the stick from scratch.
+- **Needs:** `parted dosfstools syslinux syslinux-common mtools p7zip-full fdisk` (all present on Safar). The FreeDOS ISO must be on the machine running the script. Set `FREEDOS_ISO`, or the script uses `/run/media/user/Wiggly/FreeDOS_14.iso`, then `~/Grok_Automation/FreeDOS_14.iso`. A copy is at `~/Grok_Automation/FreeDOS_14.iso` on Safar.
+- **Run:** `sudo bash ~/Documents/IndianaDell/scripts/system/make-freedos-flash-stick.sh /dev/sdX ~/Downloads/e6410/E6410A11.exe ~/Downloads/e6410/Latitude_E6410_E6410ATG_A17.exe`. If DataStore1 is locked, use `~/Grok_Automation/make-freedos-flash-stick.sh` instead. Then boot the E6410 with F12 → USB Storage Device, and run `FLASH1`, reboot, then `FLASH2`.
+- **Test without root:** `bash make-freedos-flash-stick.sh --image test.img <bios files>` builds a 256 MiB disk image. Booted in qemu on Safar, it reached the FreeDOS prompt with the menu, `PATH` was correct, and `EDIT` opened.
+- **Undo:** reformat the stick (for example with GNOME Disks). The script changes nothing on the host.
+- **Status:** written, not yet run on a real stick. The image boot was tested in qemu only.
+
 ## 2026-11-01 --- `scripts/system/remove-snapd.sh` (Tower5810)
 
 - **Machine:** Tower5810 (Ubuntu 26.04). Safar (Ubuntu 22.04) has no snapd at all, so it does not need this.
