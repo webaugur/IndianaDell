@@ -2,7 +2,7 @@
 # Fast boot + GDM auto-login + greeter face icon (wizard watermark).
 #
 # - GRUB: zero menu timeout (including ZFS recordfail / os-prober delays)
-# - GDM: AutomaticLogin for user "user"
+# - GDM: AutomaticLogin for $LOGIN_USER (default: the sudo caller, else uid 1000)
 # - Greeter avatar: Themes/boot/overlay/wizard-watermark.png (or wizard.png)
 #
 # Usage:
@@ -13,7 +13,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ETC="$ROOT/etc"
-LOGIN_USER="${LOGIN_USER:-user}"
+LOGIN_USER="${LOGIN_USER:-${SUDO_USER:-$(getent passwd 1000 | cut -d: -f1)}}"
 HOME_DIR="$(getent passwd "$LOGIN_USER" | cut -d: -f6)"
 WIZARD_CANDIDATES=(
   "$ROOT/Themes/boot/overlay/wizard-watermark.png"
@@ -44,6 +44,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ "$(id -u)" -eq 0 ]] || { echo "Run with sudo" >&2; exit 1; }
+if [[ "$DO_GDM" -eq 1 ]] && ! command -v gdm3 >/dev/null && [[ ! -d /etc/gdm3 ]]; then
+  log "GDM not installed — skipping auto-login"; DO_GDM=0
+fi
+if [[ "$DO_GRUB" -eq 1 ]] && ! command -v update-grub >/dev/null; then
+  log "update-grub not found — skipping GRUB step"; DO_GRUB=0
+fi
 [[ -n "$HOME_DIR" && -d "$HOME_DIR" ]] || {
   echo "ERROR: home for user '$LOGIN_USER' not found" >&2
   exit 1

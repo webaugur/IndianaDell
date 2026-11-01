@@ -1,0 +1,18 @@
+# /etc/indianadell/tuning.conf — per-machine overrides for bin/apply-tuning.
+# Copy to /etc/indianadell/tuning.conf and uncomment what you want. Env vars override this file.
+#ZRAM_SIZE=12G            # default: 75% of RAM, rounded to GiB, clamped 2G..32G
+#ZRAM_ALGO=zstd
+#ARC_MAX_GIB=4            # default: 25% of RAM, rounded, clamped 1..16 (only if ZFS is loaded)
+#SWAPPINESS=100
+#PAGE_CLUSTER=0
+#BG_PROCS="cargo rustc dsd-fme commander"
+#CHROME_HIGH=5G CHROME_MAX=6G   # default: max = 37.5% of RAM (min 2G), high = max - 1G
+#ENABLE_FAST_LOGIN=0      # GDM auto-login + 0s GRUB menu: off unless you opt in
+#ENABLE_FAST_BOOT=1       # 0 = skip the fast-boot step (service deferral, crashkernel strip)
+#ZRAM_PRIO=100
+#SWAPOFF_MARGIN_KB=1500000 # keep this much RAM free when emptying a disk swap
+#LOGIN_USER=user          # default: $SUDO_USER, else the uid-1000 user
+#ZRAM_TAKEOVER=0          # 1 = disable zram-generator/zram-config/zramswap and use ours
+#FORCE_DESKTOP_POWER=0    # 1 = apply max-performance even on a laptop
+#SKIP="fast-boot"         # steps to always skip (comma list)
+#ONLY=""                 # restrict to these steps

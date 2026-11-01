@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
-# resize-zram-swap — change the size of the zram swap device (default 13G) without a reboot.
-# Usage:  sudo bin/resize-zram-swap [SIZE]      e.g. 13G, 16G
+# resize-zram-swap — change the size of the zram swap device without a reboot.
+# Usage:  sudo bin/resize-zram-swap [SIZE]      e.g. 12G, 16G
+# Default SIZE = ZRAM_SIZE from the tuning config (host profile / /etc/indianadell/tuning.conf),
+# else 75% of RAM clamped 2G..32G (Tower5810 profile: 13G). See `bin/apply-tuning report`.
 # Updates /etc/systemd/system/zram-swap.service (so it survives reboot), then, only if the
 # pages now in zram fit in free RAM, swaps off, resets and re-creates the device at the new size.
-# Cost: zram only uses RAM for what is stored (~3.5:1 compression), so a bigger device is cheap.
 set -euo pipefail
-[[ $EUID -eq 0 ]] || { echo "run with sudo" >&2; exit 1; }
-SIZE="${1:-13G}"
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../.." && pwd)"
+[[ $EUID -eq 0 ]] || { echo "run with sudo: sudo $ROOT/bin/resize-zram-swap ${1:-}" >&2; exit 1; }
+if [[ -n ${1:-} ]]; then SIZE=$1
+else SIZE=$("$ROOT/scripts/tuning/indianadell-tuning.sh" report 2>/dev/null | sed -n 's/.*effective: ZRAM_SIZE=\([^ ]*\).*/\1/p' | head -1); fi
+[[ -n $SIZE ]] || { echo "could not determine size; pass one, e.g. 12G" >&2; exit 1; }
 UNIT=/etc/systemd/system/zram-swap.service
-[[ -f $UNIT ]] || { echo "$UNIT not found; run sudo bin/apply-io-tuning first" >&2; exit 1; }
+[[ -f $UNIT ]] || { echo "$UNIT not found; run sudo bin/apply-tuning apply --only zram first" >&2; exit 1; }
 want=$(numfmt --from=iec "$SIZE")
 cur=$(cat /sys/block/zram0/disksize 2>/dev/null || echo 0)
 sed -i -E "s#echo [0-9]+[KMGT]? > /sys/block/zram0/disksize#echo ${SIZE} > /sys/block/zram0/disksize#" "$UNIT"
